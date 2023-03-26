@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:horarios_web/principal_screen.dart';
+import 'package:horarios_web/screens/main_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,11 +24,25 @@ class Pantalla extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var principalColor = const Color.fromARGB(255, 99, 1, 1);
+    var resaltadoColor = Colors.orange;
     return MaterialApp(
+      theme: ThemeData(
+          tabBarTheme: TabBarTheme(
+              unselectedLabelColor: Colors.white, labelColor: resaltadoColor),
+          navigationRailTheme: NavigationRailThemeData(
+              useIndicator: true,
+              indicatorColor: Colors.black12,
+              unselectedLabelTextStyle: const TextStyle(color: Colors.white),
+              unselectedIconTheme: const IconThemeData(color: Colors.white),
+              backgroundColor: principalColor,
+              selectedLabelTextStyle: TextStyle(color: resaltadoColor),
+              selectedIconTheme: IconThemeData(color: resaltadoColor)),
+          appBarTheme: AppBarTheme(backgroundColor: principalColor)),
       debugShowCheckedModeBanner: false,
       title: 'Guaireña Horarios',
       routes: {
-        'principal': (context) => PantallaPrincipal(),
+        'principal': (context) => const MainScreen(),
       },
       initialRoute: 'principal',
     );
