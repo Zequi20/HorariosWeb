@@ -28,6 +28,14 @@ class Pantalla extends StatelessWidget {
     var resaltadoColor = Colors.orange;
     return MaterialApp(
       theme: ThemeData(
+          floatingActionButtonTheme:
+              FloatingActionButtonThemeData(backgroundColor: principalColor),
+          inputDecorationTheme: InputDecorationTheme(
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: principalColor)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: principalColor)),
+          ),
           tabBarTheme: TabBarTheme(
               unselectedLabelColor: Colors.white, labelColor: resaltadoColor),
           navigationRailTheme: NavigationRailThemeData(

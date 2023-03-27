@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/screens/datos_screen.dart';
+import 'package:horarios_web/screens/home_screen.dart';
 import 'package:horarios_web/screens/horarios_screen.dart';
 
 // ignore: unused_import
@@ -17,14 +18,20 @@ class _MainScreenState extends State<MainScreen> {
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
+  bool extended = true;
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width < 600) {
+      extended = false;
+    } else {
+      extended = true;
+    }
     return Scaffold(
       body: Row(
         children: [
           NavigationRail(
             elevation: 5,
-            extended: true,
+            extended: extended,
             destinations: const [
               NavigationRailDestination(
                   icon: Icon(Icons.home), label: Text('Inicio')),
@@ -74,6 +81,8 @@ class _MainScreenState extends State<MainScreen> {
       return const DatosScreen();
     } else if (index == 2) {
       return const HorariosScreen();
+    } else if (index == 0) {
+      return const ScreenHome();
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,

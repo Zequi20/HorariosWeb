@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/screens/choferes_screen.dart';
+import 'package:horarios_web/screens/grupos_screen.dart';
+import 'package:horarios_web/screens/vehiculos_screen.dart';
 
 class DatosScreen extends StatefulWidget {
   const DatosScreen({super.key});
@@ -38,10 +40,10 @@ class _DatosScreenState extends State<DatosScreen> {
               child: TabBarView(children: [
                 Center(child: ScreenChoferes()),
                 Center(
-                  child: Text('aqui van vehiculos'),
+                  child: ScreenVehiculos(),
                 ),
                 Center(
-                  child: Text('aqui van grupos'),
+                  child: ScreenGrupos(),
                 )
               ]),
             )
