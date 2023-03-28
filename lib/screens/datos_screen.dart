@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:horarios_web/screens/choferes_screen.dart';
-import 'package:horarios_web/screens/grupos_screen.dart';
-import 'package:horarios_web/screens/vehiculos_screen.dart';
+import 'package:horarios_web/subScreens/choferes_screen.dart';
+import 'package:horarios_web/subScreens/grupos_screen.dart';
+
+import '../subScreens/vehiculos_screen.dart';
 
 class DatosScreen extends StatefulWidget {
   const DatosScreen({super.key});

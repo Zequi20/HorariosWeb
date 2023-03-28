@@ -14,7 +14,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int selected = 0;
+  int selected = 1;
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;

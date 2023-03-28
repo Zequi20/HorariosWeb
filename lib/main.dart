@@ -28,6 +28,19 @@ class Pantalla extends StatelessWidget {
     var resaltadoColor = Colors.orange;
     return MaterialApp(
       theme: ThemeData(
+          dialogTheme: const DialogTheme(
+              titleTextStyle: TextStyle(
+                fontSize: 30,
+                color: Colors.white,
+              ),
+              contentTextStyle: TextStyle(color: Colors.white)),
+          dialogBackgroundColor: principalColor,
+          filledButtonTheme: FilledButtonThemeData(
+              style: ButtonStyle(
+                  iconColor: const MaterialStatePropertyAll(Colors.white),
+                  side: const MaterialStatePropertyAll(
+                      BorderSide(color: Colors.white)),
+                  backgroundColor: MaterialStatePropertyAll(principalColor))),
           floatingActionButtonTheme:
               FloatingActionButtonThemeData(backgroundColor: principalColor),
           inputDecorationTheme: InputDecorationTheme(
@@ -39,11 +52,11 @@ class Pantalla extends StatelessWidget {
           tabBarTheme: TabBarTheme(
               unselectedLabelColor: Colors.white, labelColor: resaltadoColor),
           navigationRailTheme: NavigationRailThemeData(
+              backgroundColor: principalColor,
               useIndicator: true,
               indicatorColor: Colors.black12,
               unselectedLabelTextStyle: const TextStyle(color: Colors.white),
               unselectedIconTheme: const IconThemeData(color: Colors.white),
-              backgroundColor: principalColor,
               selectedLabelTextStyle: TextStyle(color: resaltadoColor),
               selectedIconTheme: IconThemeData(color: resaltadoColor)),
           appBarTheme: AppBarTheme(backgroundColor: principalColor)),
