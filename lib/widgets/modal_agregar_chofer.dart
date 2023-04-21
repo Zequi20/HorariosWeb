@@ -11,6 +11,7 @@ class ModalAgregarChofer extends StatefulWidget {
 class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
   String tipoValue = 'Chofer';
   String estadoValue = 'Soltero';
+  var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
   var fechaNacController = TextEditingController();
   var fechaAltaController = TextEditingController();
@@ -184,7 +185,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                           return Theme(
                               data: ThemeData(
                                   colorScheme: ColorScheme.light(
-                                      primary: resaltadoColor,
+                                      primary: principalColor,
                                       secondary: Colors.white)),
                               child: DatePickerDialog(
                                 initialDate: DateTime.now(),
@@ -236,7 +237,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                           return Theme(
                               data: ThemeData(
                                   colorScheme: ColorScheme.light(
-                                      primary: resaltadoColor,
+                                      primary: principalColor,
                                       secondary: Colors.white)),
                               child: DatePickerDialog(
                                 initialDate: DateTime.now(),

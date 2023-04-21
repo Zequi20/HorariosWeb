@@ -11,7 +11,7 @@ class ModalAgregarVehiculo extends StatefulWidget {
 
 class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
   String tipoValue = 'G8';
-
+  var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
   var fechaNacController = TextEditingController();
   var fechaAltaController = TextEditingController();

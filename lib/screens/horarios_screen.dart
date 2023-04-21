@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:horarios_web/subScreens/horarios_guardados_screen.dart';
+import 'package:horarios_web/subScreens/horarios_mantenimiento_screen.dart';
 
 class HorariosScreen extends StatefulWidget {
   const HorariosScreen({super.key});
@@ -20,22 +22,22 @@ class _HorariosScreenState extends State<HorariosScreen> {
               color: principalColor,
               child: TabBar(indicatorColor: resaltadoColor, tabs: const [
                 Tab(
-                  text: 'Horarios Guardados',
-                  icon: Icon(Icons.timelapse),
+                  text: 'Mantenimiento',
+                  icon: Icon(Icons.history_edu),
                 ),
                 Tab(
-                  text: 'Mantenimiento',
-                  icon: Icon(Icons.edit_square),
+                  text: 'Historial',
+                  icon: Icon(Icons.history),
                 ),
               ]),
             ),
             const Expanded(
               child: TabBarView(children: [
                 Center(
-                  child: Text('aqui van horarios'),
+                  child: HorariosMantenimiento(),
                 ),
                 Center(
-                  child: Text('aqui van opciones de mantenimiento'),
+                  child: HorariosGuardados(),
                 ),
               ]),
             )
