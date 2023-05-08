@@ -1,21 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // ignore: unused_import
 import 'package:intl/intl.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../widgets/modal_agregar_chofer.dart';
 
 class ScreenChoferes extends StatefulWidget {
-  const ScreenChoferes({super.key});
-
+  const ScreenChoferes({super.key, this.userId = 0});
+  final int? userId;
   @override
   State<ScreenChoferes> createState() => _ScreenChoferesState();
 }
 
 class _ScreenChoferesState extends State<ScreenChoferes>
     with AutomaticKeepAliveClientMixin {
+  final verticalController = ScrollController();
+  final horizontalController = ScrollController();
+  List<int> idList = [];
   DateTime curDate = DateTime.now();
   var resaltadoColor = Colors.orange;
   int valorTipo = 0;
+  List<DataRow> rows = [];
+
+  DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
+  var deleteController = TextEditingController();
+  var searchController = TextEditingController();
+
+  String getTipoChofer(String letra) {
+    String tipo = '';
+    if (letra == 'C' || letra == '1') {
+      tipo = 'Chofer';
+    } else if (letra == 'G' || letra == '0') {
+      tipo = 'Guarda';
+    } else {
+      tipo = 'Indefinido';
+    }
+    return tipo;
+  }
+
+  String getEstadoCivil(String letra) {
+    String tipo = '';
+    if (letra == 'C' || letra == '1') {
+      tipo = 'Casado';
+    } else if (letra == 'S' || letra == '0') {
+      tipo = 'Soltero';
+    } else {
+      tipo = 'Indefinido';
+    }
+    return tipo;
+  }
+
+  void deleteReg(String reg) async {
+    if (idList.contains(int.parse(reg))) {
+      var requestPost = http.Request(
+          'DELETE', Uri.parse('http://190.52.165.206:3000/delete_drivers'));
+
+      requestPost.bodyFields = {'id': reg};
+      http.StreamedResponse responseStream = await requestPost.send();
+
+      if (responseStream.statusCode == 200) {
+        if (mounted) {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Operacion exitosa'),
+                  content: const Text('Operacion realizada con exito :)'),
+                  actions: [
+                    TextButton(
+                      style: const ButtonStyle(
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.white)),
+                      child: const Text('Aceptar'),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                        Navigator.of(context).pop(true);
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ],
+                );
+              });
+        }
+      } else {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Operacion fallida'),
+                  content: const Text('Algo ha salido mal :('),
+                  actions: [
+                    TextButton(
+                      style: const ButtonStyle(
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.white)),
+                      child: const Text('Aceptar'),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ],
+                );
+              });
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -23,137 +117,235 @@ class _ScreenChoferesState extends State<ScreenChoferes>
     return Scaffold(
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                    flex: 2,
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                          hintText: 'Buscar', icon: Icon(Icons.search)),
-                    )),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    direction: Axis.horizontal,
-                    children: [
-                      FloatingActionButton(
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return const ModalAgregarChofer();
-                              });
-                        },
-                        child: const Icon(
-                          Icons.add,
-                          size: 30,
-                        ),
-                      ),
-                      FloatingActionButton(
-                        onPressed: () {
-                          setState(() {});
-                        },
-                        child: const Icon(
-                          Icons.edit,
-                        ),
-                      ),
-                      FloatingActionButton(
-                        onPressed: () {
-                          setState(() {});
-                        },
-                        child: const Icon(
-                          Icons.delete,
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
           Row(
             children: [
               Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: DataTable(showCheckboxColumn: true, columns: const [
-                    DataColumn(label: Text('Codigo')),
-                    DataColumn(label: Text('Tipo')),
-                    DataColumn(label: Text('Nombre')),
-                    DataColumn(label: Text('Documento')),
-                    DataColumn(label: Text('Registro')),
-                    DataColumn(label: Text('Nacimiento')),
-                    DataColumn(label: Text('Estado Civil')),
-                    DataColumn(label: Text('Direccion')),
-                    DataColumn(label: Text('Telefono')),
-                    DataColumn(label: Text('Usuario')),
-                    DataColumn(label: Text('Alta'))
-                  ], rows: [
-                    DataRow(
-                        onSelectChanged: (value) {
-                          setState(() {});
-                        },
-                        cells: const [
-                          DataCell(Text('129')),
-                          DataCell(Text('Guarda')),
-                          DataCell(Text('Super Mario')),
-                          DataCell(Text('4.700.788')),
-                          DataCell(Text('1244')),
-                          DataCell(Text('2000/03/03')),
-                          DataCell(Text('Casado')),
-                          DataCell(Text('Reino champinon')),
-                          DataCell(Text('0998654345')),
-                          DataCell(Text('Rambo')),
-                          DataCell(Text('2023/03/27'))
-                        ]),
-                    DataRow(
-                        onSelectChanged: (value) {
-                          setState(() {});
-                        },
-                        cells: const [
-                          DataCell(Text('137')),
-                          DataCell(Text('Chofer')),
-                          DataCell(Text('Ezequiel Pereira')),
-                          DataCell(Text('5.101.788')),
-                          DataCell(Text('1344')),
-                          DataCell(Text('2000/03/03')),
-                          DataCell(Text('Soltero')),
-                          DataCell(Text('Pasp Pucu')),
-                          DataCell(Text('0994521491')),
-                          DataCell(Text('Calixto')),
-                          DataCell(Text('2023/03/27'))
-                        ]),
-                    DataRow(
-                        onSelectChanged: (value) {
-                          setState(() {});
-                        },
-                        cells: const [
-                          DataCell(Text('145')),
-                          DataCell(Text('Chofer')),
-                          DataCell(Text('Carl Johnson')),
-                          DataCell(Text('7.500.788')),
-                          DataCell(Text('4567')),
-                          DataCell(Text('2000/03/03')),
-                          DataCell(Text('Soltero')),
-                          DataCell(Text('Grove Street')),
-                          DataCell(Text('0995524491')),
-                          DataCell(Text('Jasinto')),
-                          DataCell(Text('2023/03/27'))
-                        ])
-                  ]),
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: searchController,
+                      onChanged: (value) {
+                        setState(() {});
+                      },
+                      decoration: const InputDecoration(
+                          prefixIconColor: Colors.black54,
+                          hintText: 'Buscar',
+                          prefixIcon: Icon(Icons.search)),
+                    ),
+                  )),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 8,
+                  direction: Axis.horizontal,
+                  children: [
+                    FloatingActionButton(
+                      heroTag: 'b1',
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return const ModalAgregarChofer();
+                            });
+                      },
+                      child: const Icon(
+                        Icons.add,
+                        size: 30,
+                      ),
+                    ),
+                    FloatingActionButton(
+                      heroTag: 'b2',
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Eliminar registro'),
+                              content: Wrap(
+                                children: [
+                                  const Text(
+                                      'Introduzca el Id del registro a borrar'),
+                                  TextFormField(
+                                    decoration: const InputDecoration(
+                                        filled: true, fillColor: Colors.white),
+                                    controller: deleteController,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9\.]'))
+                                    ],
+                                  )
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  style: const ButtonStyle(
+                                      foregroundColor: MaterialStatePropertyAll(
+                                          Colors.white)),
+                                  child: const Text('Eliminar registro'),
+                                  onPressed: () {
+                                    if (deleteController.text.isNotEmpty) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: const Text('Confirmar'),
+                                              content: const Text(
+                                                  'Seguro que desea eliminar un registro?'),
+                                              actions: [
+                                                TextButton(
+                                                  style: const ButtonStyle(
+                                                      foregroundColor:
+                                                          MaterialStatePropertyAll(
+                                                              Colors.white)),
+                                                  child: const Text('Si'),
+                                                  onPressed: () {
+                                                    deleteReg(deleteController
+                                                        .text
+                                                        .trim()
+                                                        .replaceAll('.', ''));
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  style: const ButtonStyle(
+                                                      foregroundColor:
+                                                          MaterialStatePropertyAll(
+                                                              Colors.white)),
+                                                  child: const Text('No'),
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(true);
+                                                    Navigator.of(context)
+                                                        .pop(true);
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                    }
+                                  },
+                                ),
+                                TextButton(
+                                  style: const ButtonStyle(
+                                      foregroundColor: MaterialStatePropertyAll(
+                                          Colors.white)),
+                                  child: const Text('Cancelar'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: const Icon(
+                        Icons.delete,
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+          Expanded(
+            child: Scrollbar(
+              controller: horizontalController,
+              scrollbarOrientation: ScrollbarOrientation.bottom,
+              thumbVisibility: true,
+              trackVisibility: true,
+              thickness: 14,
+              child: SingleChildScrollView(
+                controller: horizontalController,
+                scrollDirection: Axis.horizontal,
+                child: FutureBuilder(
+                  future: getRows(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (searchController.text.trim().isEmpty) {
+                        rows = snapshot.data!;
+                      } else {
+                        rows = snapshot.data!.where((row) {
+                          String rowText = row.cells
+                              .map((cell) => cell.child.toString())
+                              .join()
+                              .toLowerCase();
+                          String searchTerm =
+                              searchController.text.toLowerCase();
+                          return rowText.contains(searchTerm);
+                        }).toList();
+                      }
+                      return SingleChildScrollView(
+                        controller: verticalController,
+                        scrollDirection: Axis.vertical,
+                        child: DataTable(columns: const [
+                          DataColumn(label: Text('ID')),
+                          DataColumn(label: Text('Codigo')),
+                          DataColumn(label: Text('Tipo')),
+                          DataColumn(label: Text('Nombre')),
+                          DataColumn(label: Text('Documento')),
+                          DataColumn(label: Text('Registro')),
+                          DataColumn(label: Text('Nacimiento')),
+                          DataColumn(label: Text('Estado Civil')),
+                          DataColumn(label: Text('Direccion')),
+                          DataColumn(label: Text('Telefono')),
+                          DataColumn(label: Text('Usuario')),
+                          DataColumn(label: Text('Alta'))
+                        ], rows: rows),
+                      );
+                    } else {
+                      return const Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.red,
+                      ));
+                    }
+                  },
                 ),
               ),
-            ],
+            ),
           ),
         ],
       ),
     );
   }
 
+  Future<List<DataRow>> getRows() async {
+    List<DataRow> retorno = [];
+    var headers = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    };
+    var request =
+        http.Request('GET', Uri.parse('http://190.52.165.206:3000/DRIVERS'));
+    request.headers.addAll(headers);
+    http.StreamedResponse responseStream = await request.send();
+    var response = await http.Response.fromStream(responseStream);
+    List jsonResponse = json.decode(response.body);
+    for (var element in jsonResponse) {
+      idList.add(element['ID']);
+      retorno.add(DataRow(cells: [
+        DataCell(Text(element['ID'].toString())),
+        DataCell(Text(element['CODE'].toString())),
+        DataCell(Text(getTipoChofer(element['TYPE']))),
+        DataCell(Text(element['NAME'])),
+        DataCell(Text(element['CI'].toString().trim())),
+        DataCell(Text(element['DRIVING_LICENSE'].toString().trim())),
+        DataCell(Text(element['BIRTH_DATE'].toString().split('T')[0])),
+        DataCell(
+            Text(getEstadoCivil(element['MARITAL_STATUS'].toString().trim()))),
+        DataCell(Text(element['ADDRESS'].toString().trim())),
+        DataCell(Text(element['PHONE'].toString().trim())),
+        DataCell(Text(element['USUARIO'].toString().trim())),
+        DataCell(
+            Text(element['DISCHARGE_DATE'].toString().trim().split('T')[0])),
+      ]));
+    }
+    return retorno;
+  }
+
+//{"ID","TYPE","NAME","CI","DRIVING_LICENSE","BIRTH_DATE","MARITAL_STATUS","ADDRESS","PHONE","USUARIO","DISCHARGE_DATE""}
   @override
   bool get wantKeepAlive => true;
 }

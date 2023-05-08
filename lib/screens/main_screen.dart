@@ -7,8 +7,8 @@ import 'package:horarios_web/screens/horarios_screen.dart';
 import '../models/model_empresa.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
-
+  const MainScreen({super.key, this.userId = 0});
+  final int? userId;
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -30,6 +30,7 @@ class _MainScreenState extends State<MainScreen> {
       body: Row(
         children: [
           NavigationRail(
+            minExtendedWidth: 150,
             elevation: 5,
             extended: extended,
             destinations: const [
@@ -40,9 +41,7 @@ class _MainScreenState extends State<MainScreen> {
               NavigationRailDestination(
                   icon: Icon(Icons.access_time), label: Text('Horarios')),
               NavigationRailDestination(
-                  icon: Icon(Icons.settings), label: Text('Configuracion')),
-              NavigationRailDestination(
-                  icon: Icon(Icons.login), label: Text('Sesion')),
+                  icon: Icon(Icons.login), label: Text('Salir')),
             ],
             selectedIndex: selected,
             onDestinationSelected: (int index) {

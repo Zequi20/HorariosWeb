@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class ModalAgregarChofer extends StatefulWidget {
-  const ModalAgregarChofer({super.key});
-
+  const ModalAgregarChofer({super.key, this.userId = 0});
+  final int? userId;
   @override
   State<ModalAgregarChofer> createState() => _ModalAgregarChoferState();
 }
@@ -15,6 +18,13 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
   var resaltadoColor = Colors.orange;
   var fechaNacController = TextEditingController();
   var fechaAltaController = TextEditingController();
+  var codigoController = TextEditingController();
+  var nombreController = TextEditingController();
+  var documentoController = TextEditingController();
+  var registroController = TextEditingController();
+  var direccionController = TextEditingController();
+  var telefonoController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     var dropEstadoCivil = DropdownButtonFormField(
@@ -62,8 +72,110 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
     return AlertDialog(
       actions: [
         FilledButton.icon(
-            onPressed: () {
-              setState(() {});
+            onPressed: () async {
+              if (nombreController.text.isNotEmpty &&
+                  documentoController.text.isNotEmpty &&
+                  registroController.text.isNotEmpty &&
+                  direccionController.text.isNotEmpty &&
+                  telefonoController.text.isNotEmpty &&
+                  codigoController.text.isNotEmpty &&
+                  fechaAltaController.text.isNotEmpty &&
+                  fechaNacController.text.isNotEmpty) {
+                final response = await http.get(
+                    Uri.parse('http://190.52.165.206:3000/max_drivers_id'));
+                int idMax = json.decode(response.body)[0]['MAX'];
+
+                var requestPost = http.Request('POST',
+                    Uri.parse('http://190.52.165.206:3000/add_drivers'));
+
+                idMax += 1;
+                requestPost.bodyFields = {
+                  'idkk': idMax.toString(),
+                  'codigo': codigoController.text,
+                  'nombre': nombreController.text,
+                  'documento': documentoController.text,
+                  'registro': registroController.text,
+                  'direccion': direccionController.text,
+                  'telefono': telefonoController.text,
+                  'fecha_nacimiento': fechaNacController.text,
+                  'fecha_alta': fechaAltaController.text,
+                  'tipo': tipoValue[0],
+                  'estado': estadoValue[0],
+                  'id_usuario': '1'
+                };
+                http.StreamedResponse responseStream = await requestPost.send();
+
+                if (responseStream.statusCode == 200) {
+                  if (mounted) {
+                    Navigator.of(context).pop(true);
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Operacion exitosa'),
+                            content:
+                                const Text('Operacion realizada con exito :)'),
+                            actions: [
+                              TextButton(
+                                style: const ButtonStyle(
+                                    foregroundColor:
+                                        MaterialStatePropertyAll(Colors.white)),
+                                child: const Text('Aceptar'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  }
+                } else {
+                  if (mounted) {
+                    Navigator.of(context).pop(true);
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Operacion fallida'),
+                            content: const Text('Algo ha salido mal :('),
+                            actions: [
+                              TextButton(
+                                style: const ButtonStyle(
+                                    foregroundColor:
+                                        MaterialStatePropertyAll(Colors.white)),
+                                child: const Text('Aceptar'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  }
+                }
+              } else {
+                if (mounted) {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Campos vacios'),
+                          content: const Text('Faltan campos por completar :)'),
+                          actions: [
+                            TextButton(
+                              style: const ButtonStyle(
+                                  foregroundColor:
+                                      MaterialStatePropertyAll(Colors.white)),
+                              child: const Text('Aceptar'),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                }
+              }
             },
             icon: const Icon(Icons.save),
             label: const Text(
@@ -92,6 +204,11 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
+                    ],
+                    maxLength: 10,
+                    controller: codigoController,
                     decoration: const InputDecoration(
                         hintText: 'Ingrese el codigo',
                         filled: true,
@@ -106,8 +223,29 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    maxLength: 50,
+                    controller: nombreController,
                     decoration: const InputDecoration(
                         hintText: 'Ingrese un nombre',
+                        filled: true,
+                        fillColor: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Expanded(child: Text('Telefono')),
+                Expanded(
+                  flex: 2,
+                  child: TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
+                    ],
+                    maxLength: 12,
+                    controller: telefonoController,
+                    decoration: const InputDecoration(
+                        hintText: 'Ingrese nro de telefono',
                         filled: true,
                         fillColor: Colors.white),
                   ),
@@ -122,6 +260,11 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
+                    ],
+                    maxLength: 12,
+                    controller: documentoController,
                     decoration: const InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -138,6 +281,8 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    maxLength: 12,
+                    controller: registroController,
                     decoration: const InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -152,6 +297,8 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    maxLength: 50,
+                    controller: direccionController,
                     decoration: const InputDecoration(
                       hintText: 'Ingrese direccion',
                       filled: true,

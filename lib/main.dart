@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:horarios_web/screens/login_screen.dart';
 import 'package:horarios_web/screens/main_screen.dart';
 
 void main() {
@@ -44,6 +45,7 @@ class Pantalla extends StatelessWidget {
           floatingActionButtonTheme:
               FloatingActionButtonThemeData(backgroundColor: principalColor),
           inputDecorationTheme: InputDecorationTheme(
+            counterStyle: const TextStyle(color: Colors.white),
             enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: principalColor)),
             focusedBorder: OutlineInputBorder(
@@ -64,8 +66,9 @@ class Pantalla extends StatelessWidget {
       title: 'Guaireña Horarios',
       routes: {
         'principal': (context) => const MainScreen(),
+        'login': (context) => const LoginScreen(),
       },
-      initialRoute: 'principal',
+      initialRoute: 'login',
     );
   }
 }

@@ -1,27 +1,46 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:horarios_web/models/model_empresa.dart';
 import 'package:http/http.dart' as http;
 
-class ModalAgregarVehiculo extends StatefulWidget {
-  const ModalAgregarVehiculo({super.key, this.userId = 0});
+class ModalAgregarGrupo extends StatefulWidget {
+  const ModalAgregarGrupo({super.key, this.userId = 0});
   final int? userId;
   @override
-  State<ModalAgregarVehiculo> createState() => _ModalAgregarVehiculoState();
+  State<ModalAgregarGrupo> createState() => _ModalAgregarGrupoState();
 }
 
-class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
-  String tipoValue = 'Chofer';
-  String estadoValue = 'Soltero';
+class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
+  int empresaValue = 0;
+  late List<Empresa> listaEmpresas;
+
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
 
-  var nroController = TextEditingController();
-  var tipoController = TextEditingController();
+  var nombreController = TextEditingController();
   var descripcionController = TextEditingController();
-  var matriculaController = TextEditingController();
-  var asientosController = TextEditingController();
-  var usuarioController = TextEditingController();
+  var kmController = TextEditingController();
+
+  Future<List<Empresa>> obtenerEmpresas() async {
+    final response =
+        await http.get(Uri.parse('http://190.52.165.206:3000/companies'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      listaEmpresas = data
+          .map((registro) => Empresa(registro['ID'], registro['NAME']))
+          .toList();
+      return listaEmpresas;
+    } else {
+      throw Exception('Error al obtener registros');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,26 +48,23 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
       actions: [
         FilledButton.icon(
             onPressed: () async {
-              if (nroController.text.isNotEmpty &&
-                  tipoController.text.isNotEmpty &&
+              if (nombreController.text.isNotEmpty &&
                   descripcionController.text.isNotEmpty &&
-                  matriculaController.text.isNotEmpty &&
-                  asientosController.text.isNotEmpty) {
-                final response = await http.get(
-                    Uri.parse('http://190.52.165.206:3000/max_vehicles_id'));
+                  kmController.text.isNotEmpty) {
+                final response = await http
+                    .get(Uri.parse('http://190.52.165.206:3000/max_groups_id'));
                 int idMax = json.decode(response.body)[0]['MAX'];
 
-                var requestPost = http.Request('POST',
-                    Uri.parse('http://190.52.165.206:3000/add_vehicles'));
+                var requestPost = http.Request(
+                    'POST', Uri.parse('http://190.52.165.206:3000/add_groups'));
 
                 idMax += 1;
                 requestPost.bodyFields = {
                   'id': idMax.toString(),
-                  'number': nroController.text,
-                  'type': tipoController.text,
+                  'name': nombreController.text,
+                  'company': empresaValue.toString(),
                   'description': descripcionController.text,
-                  'license_plate': matriculaController.text,
-                  'seats': asientosController.text,
+                  'km': kmController.text.trim().replaceAll('.', ''),
                   'id_user': '1'
                 };
                 http.StreamedResponse responseStream = await requestPost.send();
@@ -139,7 +155,7 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
             ))
       ],
       title: const Text(
-        'Agregar Vehiculo',
+        'Agregar Grupo',
         textAlign: TextAlign.center,
       ),
       content: SingleChildScrollView(
@@ -148,17 +164,14 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
           children: [
             Row(
               children: [
-                const Expanded(child: Text('Nro')),
+                const Expanded(child: Text('Nombre')),
                 Expanded(
                   flex: 2,
                   child: TextFormField(
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 10,
-                    controller: nroController,
+                    maxLength: 50,
+                    controller: nombreController,
                     decoration: const InputDecoration(
-                        hintText: 'Ingrese el numero',
+                        hintText: 'Ingrese el nombre',
                         filled: true,
                         fillColor: Colors.white),
                   ),
@@ -167,22 +180,42 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
             ),
             Row(
               children: [
-                const Expanded(child: Text('Tipo')),
+                const Expanded(child: Text('Empresa')),
                 Expanded(
                   flex: 2,
-                  child: TextFormField(
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 50,
-                    controller: tipoController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese el tipo',
-                        filled: true,
-                        fillColor: Colors.white),
+                  child: FutureBuilder(
+                    future: obtenerEmpresas(),
+                    builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.hasData) {
+                        return DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                              filled: true, fillColor: Colors.white),
+                          value: empresaValue,
+                          items: List.generate(
+                              listaEmpresas.length,
+                              (index) => DropdownMenuItem(
+                                    value: listaEmpresas[index].id,
+                                    child: Text(listaEmpresas[index].nombre),
+                                  )),
+                          onChanged: (int? value) {
+                            setState(() {
+                              empresaValue = value!;
+                            });
+                          },
+                        );
+                      } else {
+                        return const CircularProgressIndicator(
+                          color: Colors.white,
+                        );
+                      }
+                    },
                   ),
                 ),
               ],
+            ),
+            const Divider(
+              height: 8,
+              color: Colors.transparent,
             ),
             Row(
               children: [
@@ -190,7 +223,7 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
-                    maxLength: 12,
+                    maxLength: 50,
                     controller: descripcionController,
                     decoration: const InputDecoration(
                         hintText: 'Ingrese descripcion',
@@ -203,25 +236,7 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
             Row(
               children: [
                 const Expanded(
-                  child: Text('Matricula'),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    maxLength: 12,
-                    controller: matriculaController,
-                    decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Ingrese la matricula'),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(
-                  child: Text('Asientos'),
+                  child: Text('Km'),
                 ),
                 Expanded(
                   flex: 2,
@@ -230,11 +245,11 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
                     ],
                     maxLength: 12,
-                    controller: asientosController,
+                    controller: kmController,
                     decoration: const InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
-                        hintText: 'Ingrese la cantidad de asientos'),
+                        hintText: 'Ingrese el Km'),
                   ),
                 ),
               ],

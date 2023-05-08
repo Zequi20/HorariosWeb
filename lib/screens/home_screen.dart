@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ScreenHome extends StatefulWidget {
-  const ScreenHome({super.key});
-
+  const ScreenHome({super.key, this.userId = 0});
+  final int? userId;
   @override
   State<ScreenHome> createState() => _ScreenHomeState();
 }

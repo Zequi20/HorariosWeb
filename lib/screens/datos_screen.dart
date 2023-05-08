@@ -5,8 +5,8 @@ import 'package:horarios_web/subScreens/grupos_screen.dart';
 import '../subScreens/vehiculos_screen.dart';
 
 class DatosScreen extends StatefulWidget {
-  const DatosScreen({super.key});
-
+  const DatosScreen({super.key, this.userId = 0});
+  final int? userId;
   @override
   State<DatosScreen> createState() => _DatosScreenState();
 }

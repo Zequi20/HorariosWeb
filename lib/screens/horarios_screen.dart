@@ -3,8 +3,8 @@ import 'package:horarios_web/subScreens/horarios_guardados_screen.dart';
 import 'package:horarios_web/subScreens/horarios_mantenimiento_screen.dart';
 
 class HorariosScreen extends StatefulWidget {
-  const HorariosScreen({super.key});
-
+  const HorariosScreen({super.key, this.userId = 0});
+  final int? userId;
   @override
   State<HorariosScreen> createState() => _HorariosScreenState();
 }
@@ -22,7 +22,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
               color: principalColor,
               child: TabBar(indicatorColor: resaltadoColor, tabs: const [
                 Tab(
-                  text: 'Mantenimiento',
+                  text: 'Reportes',
                   icon: Icon(Icons.history_edu),
                 ),
                 Tab(
