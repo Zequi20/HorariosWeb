@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:horarios_web/subScreens/horarios_guardados_screen.dart';
+import 'package:horarios_web/subScreens/horarios_historial_screen.dart';
 import 'package:horarios_web/subScreens/horarios_mantenimiento_screen.dart';
 
 class HorariosScreen extends StatefulWidget {
@@ -31,13 +31,17 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 ),
               ]),
             ),
-            const Expanded(
+            Expanded(
               child: TabBarView(children: [
                 Center(
-                  child: HorariosMantenimiento(),
+                  child: HorariosMantenimiento(
+                    userId: widget.userId,
+                  ),
                 ),
                 Center(
-                  child: HorariosGuardados(),
+                  child: HorariosGuardados(
+                    userId: widget.userId,
+                  ),
                 ),
               ]),
             )

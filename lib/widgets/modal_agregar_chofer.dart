@@ -27,48 +27,54 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
 
   @override
   Widget build(BuildContext context) {
-    var dropEstadoCivil = DropdownButtonFormField(
-        decoration: const InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-        ),
-        value: estadoValue,
-        items: const [
-          DropdownMenuItem(
-            value: 'Soltero',
-            child: Text('Soltero'),
+    var dropEstadoCivil = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: DropdownButtonFormField(
+          decoration: const InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
           ),
-          DropdownMenuItem(
-            value: 'Casado',
-            child: Text('Casado'),
-          )
-        ],
-        onChanged: (value) {
-          setState(() {
-            estadoValue = value!;
-          });
-        });
-    var dropTipo = DropdownButtonFormField(
-        decoration: const InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-        ),
-        value: tipoValue,
-        items: const [
-          DropdownMenuItem(
-            value: 'Chofer',
-            child: Text('Chofer'),
+          value: estadoValue,
+          items: const [
+            DropdownMenuItem(
+              value: 'Soltero',
+              child: Text('Soltero'),
+            ),
+            DropdownMenuItem(
+              value: 'Casado',
+              child: Text('Casado'),
+            )
+          ],
+          onChanged: (value) {
+            setState(() {
+              estadoValue = value!;
+            });
+          }),
+    );
+    var dropTipo = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: DropdownButtonFormField(
+          decoration: const InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
           ),
-          DropdownMenuItem(
-            value: 'Guarda',
-            child: Text('Guarda'),
-          )
-        ],
-        onChanged: (value) {
-          setState(() {
-            tipoValue = value!;
-          });
-        });
+          value: tipoValue,
+          items: const [
+            DropdownMenuItem(
+              value: 'Chofer',
+              child: Text('Chofer'),
+            ),
+            DropdownMenuItem(
+              value: 'Guarda',
+              child: Text('Guarda'),
+            )
+          ],
+          onChanged: (value) {
+            setState(() {
+              tipoValue = value!;
+            });
+          }),
+    );
     return AlertDialog(
       actions: [
         FilledButton.icon(
@@ -101,7 +107,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                   'fecha_alta': fechaAltaController.text,
                   'tipo': tipoValue[0],
                   'estado': estadoValue[0],
-                  'id_usuario': '1'
+                  'id_usuario': widget.userId.toString()
                 };
                 http.StreamedResponse responseStream = await requestPost.send();
 
@@ -358,6 +364,10 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                   ),
                 ),
               ],
+            ),
+            const Divider(
+              height: 16,
+              color: Colors.transparent,
             ),
             Row(
               children: [

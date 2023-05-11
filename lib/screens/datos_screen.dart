@@ -37,14 +37,21 @@ class _DatosScreenState extends State<DatosScreen> {
                 )
               ]),
             ),
-            const Expanded(
+            Expanded(
               child: TabBarView(children: [
-                Center(child: ScreenChoferes()),
                 Center(
-                  child: ScreenVehiculos(),
+                    child: ScreenChoferes(
+                  userId: widget.userId,
+                )),
+                Center(
+                  child: ScreenVehiculos(
+                    userId: widget.userId,
+                  ),
                 ),
                 Center(
-                  child: ScreenGrupos(),
+                  child: ScreenGrupos(
+                    userId: widget.userId,
+                  ),
                 )
               ]),
             )

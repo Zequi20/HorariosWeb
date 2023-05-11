@@ -12,6 +12,8 @@ class HorariosGuardados extends StatefulWidget {
 
 class _HorariosGuardadosState extends State<HorariosGuardados>
     with AutomaticKeepAliveClientMixin {
+  var horizontalController = ScrollController();
+  var verticalController = ScrollController();
   @override
   Widget build(BuildContext context) {
     super.build(context);

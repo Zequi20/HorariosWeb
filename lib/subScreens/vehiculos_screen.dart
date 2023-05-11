@@ -93,6 +93,7 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
 
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
@@ -124,7 +125,9 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
                         showDialog(
                             context: context,
                             builder: (context) {
-                              return const ModalAgregarVehiculo();
+                              return ModalAgregarVehiculo(
+                                userId: widget.userId,
+                              );
                             });
                       },
                       child: const Icon(

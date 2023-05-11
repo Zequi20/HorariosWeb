@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:horarios_web/models/model_usuario.dart';
 import 'package:horarios_web/screens/datos_screen.dart';
 import 'package:horarios_web/screens/home_screen.dart';
 import 'package:horarios_web/screens/horarios_screen.dart';
@@ -7,17 +8,25 @@ import 'package:horarios_web/screens/horarios_screen.dart';
 import '../models/model_empresa.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, this.userId = 0});
-  final int? userId;
+  const MainScreen({super.key});
+
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int selected = 1;
+  int selected = 0;
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
+  User? getUser() {
+    if (ModalRoute.of(context)?.settings.arguments == null) {
+      return User(2, 'Pelao', '23424pelao');
+    } else {
+      return ModalRoute.of(context)?.settings.arguments as User;
+    }
+  }
+
   bool extended = true;
   @override
   Widget build(BuildContext context) {
@@ -77,11 +86,18 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget screenBuilder(int index) {
     if (index == 1) {
-      return const DatosScreen();
+      return DatosScreen(
+        userId: getUser()?.id,
+      );
     } else if (index == 2) {
-      return const HorariosScreen();
+      return HorariosScreen(
+        userId: getUser()?.id,
+      );
     } else if (index == 0) {
-      return const ScreenHome();
+      return ScreenHome(
+        userId: getUser()?.id,
+        userName: getUser()?.nombre,
+      );
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,

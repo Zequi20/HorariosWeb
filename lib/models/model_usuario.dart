@@ -5,8 +5,8 @@ class Usuario {
 }
 
 class User {
-  User(this.nombre, this.clave);
-
+  User(this.id, this.nombre, this.clave);
+  final int id;
   final String nombre;
   final String clave;
 }

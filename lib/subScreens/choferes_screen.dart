@@ -116,6 +116,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
 
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
@@ -147,7 +148,9 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                         showDialog(
                             context: context,
                             builder: (context) {
-                              return const ModalAgregarChofer();
+                              return ModalAgregarChofer(
+                                userId: widget.userId,
+                              );
                             });
                       },
                       child: const Icon(
@@ -296,9 +299,10 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                       );
                     } else {
                       return const Center(
-                          child: CircularProgressIndicator(
-                        color: Colors.red,
-                      ));
+                        child: CircularProgressIndicator(
+                          color: Colors.red,
+                        ),
+                      );
                     }
                   },
                 ),

@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var loginAlertColor = Colors.transparent;
   var userController = TextEditingController();
   var passController = TextEditingController();
+  late User argumento;
   List<User> listaUsers = [];
 
   validar(String user, String pass) async {
@@ -32,14 +33,15 @@ class _LoginScreenState extends State<LoginScreen> {
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       listaUsers = data
-          .map((registro) => User(registro['NAME'], registro['PASS']))
+          .map((registro) =>
+              User(registro['ID'], registro['NAME'], registro['PASS']))
           .toList();
     } else {
       throw Exception('Error al obtener registros');
     }
     if (comprobar(listaUsers, user, pass)) {
       if (mounted) {
-        Navigator.of(context).pushNamed('principal');
+        Navigator.of(context).pushNamed('principal', arguments: argumento);
       }
     } else {
       loginAlertColor = Colors.white;
@@ -52,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
     for (var element in lista) {
       if (element.nombre == user && element.clave == pass) {
         retorno = true;
+        argumento = element;
       }
     }
 

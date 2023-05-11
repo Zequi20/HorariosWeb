@@ -65,7 +65,7 @@ class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
                   'company': empresaValue.toString(),
                   'description': descripcionController.text,
                   'km': kmController.text.trim().replaceAll('.', ''),
-                  'id_user': '1'
+                  'id_user': widget.userId.toString()
                 };
                 http.StreamedResponse responseStream = await requestPost.send();
 
@@ -183,32 +183,39 @@ class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
                 const Expanded(child: Text('Empresa')),
                 Expanded(
                   flex: 2,
-                  child: FutureBuilder(
-                    future: obtenerEmpresas(),
-                    builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                      if (snapshot.hasData) {
-                        return DropdownButtonFormField(
-                          decoration: const InputDecoration(
-                              filled: true, fillColor: Colors.white),
-                          value: empresaValue,
-                          items: List.generate(
-                              listaEmpresas.length,
-                              (index) => DropdownMenuItem(
-                                    value: listaEmpresas[index].id,
-                                    child: Text(listaEmpresas[index].nombre),
-                                  )),
-                          onChanged: (int? value) {
-                            setState(() {
-                              empresaValue = value!;
-                            });
-                          },
-                        );
-                      } else {
-                        return const CircularProgressIndicator(
-                          color: Colors.white,
-                        );
-                      }
-                    },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: FutureBuilder(
+                      future: obtenerEmpresas(),
+                      builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                        if (snapshot.hasData) {
+                          return Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: DropdownButtonFormField(
+                              decoration: const InputDecoration(
+                                  filled: true, fillColor: Colors.white),
+                              value: empresaValue,
+                              items: List.generate(
+                                  listaEmpresas.length,
+                                  (index) => DropdownMenuItem(
+                                        value: listaEmpresas[index].id,
+                                        child:
+                                            Text(listaEmpresas[index].nombre),
+                                      )),
+                              onChanged: (int? value) {
+                                setState(() {
+                                  empresaValue = value!;
+                                });
+                              },
+                            ),
+                          );
+                        } else {
+                          return const CircularProgressIndicator(
+                            color: Colors.white,
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ),
               ],

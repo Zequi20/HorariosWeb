@@ -92,6 +92,7 @@ class _ScreenGruposState extends State<ScreenGrupos>
 
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
@@ -123,7 +124,9 @@ class _ScreenGruposState extends State<ScreenGrupos>
                         showDialog(
                             context: context,
                             builder: (context) {
-                              return const ModalAgregarGrupo();
+                              return ModalAgregarGrupo(
+                                userId: widget.userId,
+                              );
                             });
                       },
                       child: const Icon(

@@ -49,7 +49,7 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
                   'description': descripcionController.text,
                   'license_plate': matriculaController.text,
                   'seats': asientosController.text,
-                  'id_user': '1'
+                  'id_user': widget.userId.toString()
                 };
                 http.StreamedResponse responseStream = await requestPost.send();
 

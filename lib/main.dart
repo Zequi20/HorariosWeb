@@ -68,7 +68,7 @@ class Pantalla extends StatelessWidget {
         'principal': (context) => const MainScreen(),
         'login': (context) => const LoginScreen(),
       },
-      initialRoute: 'login',
+      initialRoute: 'principal',
     );
   }
 }
