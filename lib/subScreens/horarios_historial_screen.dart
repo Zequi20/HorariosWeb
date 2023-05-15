@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,6 +15,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
     with AutomaticKeepAliveClientMixin {
   var horizontalController = ScrollController();
   var verticalController = ScrollController();
+  List selectedRows = [];
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -24,18 +26,54 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
             future: getRows(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                return SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: DataTable(columns: const [
-                      DataColumn(label: Text('ID')),
-                      DataColumn(label: Text('Fecha')),
-                      DataColumn(label: Text('Hora')),
-                      DataColumn(label: Text('Usuario')),
-                      DataColumn(label: Text('Compania')),
-                    ], rows: snapshot.data),
-                  ),
+                List<DataRow> row = snapshot.data;
+                return Column(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          int ver = -1;
+                          if (selectedRows.isNotEmpty) {
+                            ver = selectedRows.first;
+                          }
+                          if (ver > -1) {
+                            if (kDebugMode) {
+                              print(row[ver]
+                                  .cells
+                                  .map((e) => (e.child as Text).data)
+                                  .toList());
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.view_array)),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: DataTable(
+                            onSelectAll: (value) {
+                              int indice = -1;
+                              setState(() {
+                                if (value!) {
+                                  selectedRows.addAll(row.map((e) {
+                                    ++indice;
+                                    return indice;
+                                  }).toList());
+                                } else {
+                                  selectedRows.clear();
+                                }
+                              });
+                            },
+                            columns: const [
+                              DataColumn(label: Text('ID')),
+                              DataColumn(label: Text('Fecha')),
+                              DataColumn(label: Text('Hora')),
+                              DataColumn(label: Text('Usuario')),
+                              DataColumn(label: Text('Compania')),
+                            ],
+                            rows: row),
+                      ),
+                    ),
+                  ],
                 );
               } else {
                 return const Center(
@@ -64,22 +102,31 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
     http.StreamedResponse responseStream = await request.send();
     var response = await http.Response.fromStream(responseStream);
     List jsonResponse = json.decode(response.body);
-    for (var element in jsonResponse) {
+
+    for (var i = 0; i < jsonResponse.length; i++) {
       retorno.add(DataRow(
+          selected: selectedRows.contains(i),
           onSelectChanged: (value) {
-            setState(() {});
+            setState(() {
+              if (value!) {
+                selectedRows.add(i);
+              } else {
+                selectedRows.remove(i);
+              }
+            });
           },
           cells: [
-            DataCell(Text(element['ID'].toString())),
-            DataCell(Text(element['DATE_OF'].toString().split('T')[0])),
-            DataCell(Text(element['TIME_OF']
+            DataCell(Text(jsonResponse[i]['ID'].toString())),
+            DataCell(Text(jsonResponse[i]['DATE_OF'].toString().split('T')[0])),
+            DataCell(Text(jsonResponse[i]['TIME_OF']
                 .toString()
                 .split('T')[1]
                 .replaceAll('Z', ''))),
-            DataCell(Text(element['NAME'])),
-            DataCell(Text(element['COMPANIE'])),
+            DataCell(Text(jsonResponse[i]['NAME'])),
+            DataCell(Text(jsonResponse[i]['COMPANIE'])),
           ]));
     }
+
     return retorno;
   }
 

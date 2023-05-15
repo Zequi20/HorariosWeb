@@ -50,8 +50,14 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
             element['NAME'].toString(),
             travelList
                 .map((e) => DataRow(cells: [
-                      DataCell(Text(e['DEPARTURE_TIME'])),
-                      DataCell(Text(e['ARRIVAL_TIME'])),
+                      DataCell(Text(e['DEPARTURE_TIME']
+                          .toString()
+                          .split('T')[1]
+                          .replaceAll('z', ''))),
+                      DataCell(Text(e['ARRIVAL_TIME']
+                          .toString()
+                          .split('T')[1]
+                          .replaceAll('z', ''))),
                       DataCell(Text(e['VEHICLE'])),
                       DataCell(Text(e['DRIVER1'])),
                       DataCell(Text(e['DRIVER2'])),
@@ -99,19 +105,38 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                             children: [
                               Container(
                                 color: colorBlanco,
-                                child: DataTable(
-                                    columns: const [
-                                      DataColumn(label: Text('PARTIDA')),
-                                      DataColumn(label: Text('LLEGADA')),
-                                      DataColumn(label: Text('VEHICULO')),
-                                      DataColumn(label: Text('CONDUCTOR')),
-                                      DataColumn(label: Text('GUARDA')),
-                                      DataColumn(label: Text('NOTA')),
-                                      DataColumn(label: Text('KM')),
-                                    ],
-                                    rows: datos[index].data.isNotEmpty
-                                        ? datos[index].data
-                                        : []),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: DataTable(
+                                          columns: const [
+                                            DataColumn(label: Text('PARTIDA')),
+                                            DataColumn(label: Text('LLEGADA')),
+                                            DataColumn(label: Text('VEHICULO')),
+                                            DataColumn(
+                                                label: Text('CONDUCTOR')),
+                                            DataColumn(label: Text('GUARDA')),
+                                            DataColumn(label: Text('NOTA')),
+                                            DataColumn(label: Text('KM')),
+                                          ],
+                                          rows: datos[index].data.isNotEmpty
+                                              ? datos[index].data
+                                              : []),
+                                    ),
+                                    Expanded(
+                                        child: Center(
+                                      child: TextButton(
+                                        child: const Text('Actualizar'),
+                                        onPressed: () {
+                                          setState(() {
+                                            fetchTravelsByGroup();
+                                          });
+                                        },
+                                      ),
+                                    ))
+                                  ],
+                                ),
                               )
                             ],
                           )),

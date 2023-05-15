@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // ignore: unused_import
@@ -9,6 +11,7 @@ import '../widgets/modal_agregar_chofer.dart';
 class ScreenChoferes extends StatefulWidget {
   const ScreenChoferes({super.key, this.userId = 0});
   final int? userId;
+
   @override
   State<ScreenChoferes> createState() => _ScreenChoferesState();
 }
@@ -22,11 +25,13 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   var resaltadoColor = Colors.orange;
   int valorTipo = 0;
   List<DataRow> rows = [];
+  List<DataRow> fetchedRows = [];
 
   DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
   var deleteController = TextEditingController();
   var searchController = TextEditingController();
 
+  StreamController driversController = StreamController<List<DataRow>>();
   String getTipoChofer(String letra) {
     String tipo = '';
     if (letra == 'C' || letra == '1') {
@@ -111,6 +116,18 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchRows();
+  }
+
+  @override
+  void dispose() {
+    driversController.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
 
@@ -144,14 +161,17 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                   children: [
                     FloatingActionButton(
                       heroTag: 'b1',
-                      onPressed: () {
-                        showDialog(
+                      onPressed: () async {
+                        await showDialog(
                             context: context,
                             builder: (context) {
                               return ModalAgregarChofer(
                                 userId: widget.userId,
                               );
                             });
+                        setState(() {
+                          fetchRows();
+                        });
                       },
                       child: const Icon(
                         Icons.add,
@@ -262,50 +282,52 @@ class _ScreenChoferesState extends State<ScreenChoferes>
               child: SingleChildScrollView(
                 controller: horizontalController,
                 scrollDirection: Axis.horizontal,
-                child: FutureBuilder(
-                  future: getRows(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (searchController.text.trim().isEmpty) {
-                        rows = snapshot.data!;
+                child: StreamBuilder(
+                    stream: driversController.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (searchController.text.trim().isEmpty) {
+                          rows = fetchedRows;
+                        } else {
+                          rows = fetchedRows.where((row) {
+                            String rowText = row.cells
+                                .map((cell) => cell.child.toString())
+                                .join()
+                                .toLowerCase();
+                            String searchTerm =
+                                searchController.text.toLowerCase();
+                            return rowText.contains(searchTerm);
+                          }).toList();
+                        }
+                        return SingleChildScrollView(
+                          controller: verticalController,
+                          scrollDirection: Axis.vertical,
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(label: Text('ID')),
+                              DataColumn(label: Text('Codigo')),
+                              DataColumn(label: Text('Tipo')),
+                              DataColumn(label: Text('Nombre')),
+                              DataColumn(label: Text('Documento')),
+                              DataColumn(label: Text('Registro')),
+                              DataColumn(label: Text('Nacimiento')),
+                              DataColumn(label: Text('Estado Civil')),
+                              DataColumn(label: Text('Direccion')),
+                              DataColumn(label: Text('Telefono')),
+                              DataColumn(label: Text('Usuario')),
+                              DataColumn(label: Text('Alta'))
+                            ],
+                            rows: rows,
+                          ),
+                        );
                       } else {
-                        rows = snapshot.data!.where((row) {
-                          String rowText = row.cells
-                              .map((cell) => cell.child.toString())
-                              .join()
-                              .toLowerCase();
-                          String searchTerm =
-                              searchController.text.toLowerCase();
-                          return rowText.contains(searchTerm);
-                        }).toList();
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.red,
+                          ),
+                        );
                       }
-                      return SingleChildScrollView(
-                        controller: verticalController,
-                        scrollDirection: Axis.vertical,
-                        child: DataTable(columns: const [
-                          DataColumn(label: Text('ID')),
-                          DataColumn(label: Text('Codigo')),
-                          DataColumn(label: Text('Tipo')),
-                          DataColumn(label: Text('Nombre')),
-                          DataColumn(label: Text('Documento')),
-                          DataColumn(label: Text('Registro')),
-                          DataColumn(label: Text('Nacimiento')),
-                          DataColumn(label: Text('Estado Civil')),
-                          DataColumn(label: Text('Direccion')),
-                          DataColumn(label: Text('Telefono')),
-                          DataColumn(label: Text('Usuario')),
-                          DataColumn(label: Text('Alta'))
-                        ], rows: rows),
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.red,
-                        ),
-                      );
-                    }
-                  },
-                ),
+                    }),
               ),
             ),
           ),
@@ -314,8 +336,8 @@ class _ScreenChoferesState extends State<ScreenChoferes>
     );
   }
 
-  Future<List<DataRow>> getRows() async {
-    List<DataRow> retorno = [];
+  void fetchRows() async {
+    fetchedRows.clear();
     var headers = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
@@ -329,7 +351,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
     List jsonResponse = json.decode(response.body);
     for (var element in jsonResponse) {
       idList.add(element['ID']);
-      retorno.add(DataRow(cells: [
+      fetchedRows.add(DataRow(cells: [
         DataCell(Text(element['ID'].toString())),
         DataCell(Text(element['CODE'].toString())),
         DataCell(Text(getTipoChofer(element['TYPE']))),
@@ -346,7 +368,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
             Text(element['DISCHARGE_DATE'].toString().trim().split('T')[0])),
       ]));
     }
-    return retorno;
+    driversController.sink.add(fetchedRows);
   }
 
 //{"ID","TYPE","NAME","CI","DRIVING_LICENSE","BIRTH_DATE","MARITAL_STATUS","ADDRESS","PHONE","USUARIO","DISCHARGE_DATE""}

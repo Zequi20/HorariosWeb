@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // ignore: unused_import
@@ -22,10 +24,24 @@ class _ScreenGruposState extends State<ScreenGrupos>
   var resaltadoColor = Colors.orange;
   int valorTipo = 0;
   List<DataRow> rows = [];
+  List<DataRow> fetchedRows = [];
+  StreamController groupsController = StreamController<List<DataRow>>();
 
   DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
   var deleteController = TextEditingController();
   var searchController = TextEditingController();
+
+  @override
+  void initState() {
+    fetchRows();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    groupsController.close();
+    super.dispose();
+  }
 
   void deleteReg(String reg) async {
     if (idList.contains(int.parse(reg))) {
@@ -120,14 +136,17 @@ class _ScreenGruposState extends State<ScreenGrupos>
                   children: [
                     FloatingActionButton(
                       heroTag: 'b4',
-                      onPressed: () {
-                        showDialog(
+                      onPressed: () async {
+                        await showDialog(
                             context: context,
                             builder: (context) {
                               return ModalAgregarGrupo(
                                 userId: widget.userId,
                               );
                             });
+                        setState(() {
+                          fetchRows();
+                        });
                       },
                       child: const Icon(
                         Icons.add,
@@ -238,8 +257,8 @@ class _ScreenGruposState extends State<ScreenGrupos>
               child: SingleChildScrollView(
                 controller: horizontalController,
                 scrollDirection: Axis.horizontal,
-                child: FutureBuilder(
-                  future: getRows(),
+                child: StreamBuilder(
+                  stream: groupsController.stream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       if (searchController.text.trim().isEmpty) {
@@ -283,8 +302,8 @@ class _ScreenGruposState extends State<ScreenGrupos>
     );
   }
 
-  Future<List<DataRow>> getRows() async {
-    List<DataRow> retorno = [];
+  void fetchRows() async {
+    fetchedRows.clear();
     var headers = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
@@ -298,7 +317,7 @@ class _ScreenGruposState extends State<ScreenGrupos>
     List jsonResponse = json.decode(response.body);
     for (var element in jsonResponse) {
       idList.add(element['ID']);
-      retorno.add(DataRow(cells: [
+      fetchedRows.add(DataRow(cells: [
         DataCell(Text(element['ID'].toString())),
         DataCell(Text(element['NAME'].toString())),
         DataCell(Text(element['COMPANY'].toString())),
@@ -307,7 +326,7 @@ class _ScreenGruposState extends State<ScreenGrupos>
         DataCell(Text(element['KM'].toString().trim())),
       ]));
     }
-    return retorno;
+    groupsController.sink.add(fetchedRows);
   }
 
 //{"ID","TYPE","NAME","CI","DRIVING_LICENSE","BIRTH_DATE","MARITAL_STATUS","ADDRESS","PHONE","USUARIO","DISCHARGE_DATE""}
