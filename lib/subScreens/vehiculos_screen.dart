@@ -25,7 +25,7 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
   var resaltadoColor = Colors.orange;
   int valorTipo = 0;
   List<DataRow> rows = [];
-  List<DataRow> fetchedRows = [];
+
   DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
   var deleteController = TextEditingController();
   var searchController = TextEditingController();
@@ -257,8 +257,8 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
               child: SingleChildScrollView(
                 controller: horizontalController,
                 scrollDirection: Axis.horizontal,
-                child: StreamBuilder(
-                  stream: vehiController.stream,
+                child: FutureBuilder(
+                  future: fetchRows(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       if (searchController.text.trim().isEmpty) {
@@ -303,8 +303,8 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
     );
   }
 
-  void fetchRows() async {
-    fetchedRows.clear();
+  Future<List<DataRow>> fetchRows() async {
+    List<DataRow> fetchedRows = [];
     var headers = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
@@ -329,7 +329,7 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
       ]));
     }
 
-    vehiController.sink.add(fetchedRows);
+    return fetchedRows;
   }
 
 //{"ID","TYPE","NAME","CI","DRIVING_LICENSE","BIRTH_DATE","MARITAL_STATUS","ADDRESS","PHONE","USUARIO","DISCHARGE_DATE""}

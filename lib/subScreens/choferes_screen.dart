@@ -25,13 +25,13 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   var resaltadoColor = Colors.orange;
   int valorTipo = 0;
   List<DataRow> rows = [];
-  List<DataRow> fetchedRows = [];
+
+  List selectedRows = [];
 
   DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
   var deleteController = TextEditingController();
   var searchController = TextEditingController();
 
-  StreamController driversController = StreamController<List<DataRow>>();
   String getTipoChofer(String letra) {
     String tipo = '';
     if (letra == 'C' || letra == '1') {
@@ -116,14 +116,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   }
 
   @override
-  void initState() {
-    super.initState();
-    fetchRows();
-  }
-
-  @override
   void dispose() {
-    driversController.close();
     super.dispose();
   }
 
@@ -169,9 +162,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                                 userId: widget.userId,
                               );
                             });
-                        setState(() {
-                          fetchRows();
-                        });
+                        setState(() {});
                       },
                       child: const Icon(
                         Icons.add,
@@ -282,14 +273,14 @@ class _ScreenChoferesState extends State<ScreenChoferes>
               child: SingleChildScrollView(
                 controller: horizontalController,
                 scrollDirection: Axis.horizontal,
-                child: StreamBuilder(
-                    stream: driversController.stream,
+                child: FutureBuilder(
+                    future: fetchRows(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         if (searchController.text.trim().isEmpty) {
-                          rows = fetchedRows;
+                          rows = snapshot.data!;
                         } else {
-                          rows = fetchedRows.where((row) {
+                          rows = snapshot.data!.where((row) {
                             String rowText = row.cells
                                 .map((cell) => cell.child.toString())
                                 .join()
@@ -303,6 +294,17 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                           controller: verticalController,
                           scrollDirection: Axis.vertical,
                           child: DataTable(
+                            onSelectAll: (value) {
+                              setState(() {
+                                if (value!) {
+                                  selectedRows.addAll(rows
+                                      .map((e) => rows.indexOf(e))
+                                      .toList());
+                                } else {
+                                  selectedRows.clear();
+                                }
+                              });
+                            },
                             columns: const [
                               DataColumn(label: Text('ID')),
                               DataColumn(label: Text('Codigo')),
@@ -336,8 +338,8 @@ class _ScreenChoferesState extends State<ScreenChoferes>
     );
   }
 
-  void fetchRows() async {
-    fetchedRows.clear();
+  Future<List<DataRow>> fetchRows() async {
+    List<DataRow> fetched = [];
     var headers = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
@@ -349,26 +351,41 @@ class _ScreenChoferesState extends State<ScreenChoferes>
     http.StreamedResponse responseStream = await request.send();
     var response = await http.Response.fromStream(responseStream);
     List jsonResponse = json.decode(response.body);
-    for (var element in jsonResponse) {
-      idList.add(element['ID']);
-      fetchedRows.add(DataRow(cells: [
-        DataCell(Text(element['ID'].toString())),
-        DataCell(Text(element['CODE'].toString())),
-        DataCell(Text(getTipoChofer(element['TYPE']))),
-        DataCell(Text(element['NAME'])),
-        DataCell(Text(element['CI'].toString().trim())),
-        DataCell(Text(element['DRIVING_LICENSE'].toString().trim())),
-        DataCell(Text(element['BIRTH_DATE'].toString().split('T')[0])),
-        DataCell(
-            Text(getEstadoCivil(element['MARITAL_STATUS'].toString().trim()))),
-        DataCell(Text(element['ADDRESS'].toString().trim())),
-        DataCell(Text(element['PHONE'].toString().trim())),
-        DataCell(Text(element['USUARIO'].toString().trim())),
-        DataCell(
-            Text(element['DISCHARGE_DATE'].toString().trim().split('T')[0])),
-      ]));
+
+    for (var i = 0; i < jsonResponse.length; i++) {
+      idList.add(jsonResponse[i]['ID']);
+      fetched.add(DataRow(
+          selected: selectedRows.contains(i),
+          onSelectChanged: (value) {
+            if (value!) {
+              selectedRows.add(i);
+            } else {
+              selectedRows.remove(i);
+            }
+            setState(() {});
+          },
+          cells: [
+            DataCell(Text(jsonResponse[i]['ID'].toString())),
+            DataCell(Text(jsonResponse[i]['CODE'].toString())),
+            DataCell(Text(getTipoChofer(jsonResponse[i]['TYPE']))),
+            DataCell(Text(jsonResponse[i]['NAME'])),
+            DataCell(Text(jsonResponse[i]['CI'].toString().trim())),
+            DataCell(
+                Text(jsonResponse[i]['DRIVING_LICENSE'].toString().trim())),
+            DataCell(
+                Text(jsonResponse[i]['BIRTH_DATE'].toString().split('T')[0])),
+            DataCell(Text(getEstadoCivil(
+                jsonResponse[i]['MARITAL_STATUS'].toString().trim()))),
+            DataCell(Text(jsonResponse[i]['ADDRESS'].toString().trim())),
+            DataCell(Text(jsonResponse[i]['PHONE'].toString().trim())),
+            DataCell(Text(jsonResponse[i]['USUARIO'].toString().trim())),
+            DataCell(Text(jsonResponse[i]['DISCHARGE_DATE']
+                .toString()
+                .trim()
+                .split('T')[0])),
+          ]));
     }
-    driversController.sink.add(fetchedRows);
+    return fetched;
   }
 
 //{"ID","TYPE","NAME","CI","DRIVING_LICENSE","BIRTH_DATE","MARITAL_STATUS","ADDRESS","PHONE","USUARIO","DISCHARGE_DATE""}

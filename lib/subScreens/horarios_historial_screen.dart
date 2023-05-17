@@ -16,6 +16,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
   var horizontalController = ScrollController();
   var verticalController = ScrollController();
   List selectedRows = [];
+  List<DataRow> rows = [];
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -26,7 +27,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
             future: getRows(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                List<DataRow> row = snapshot.data;
+                rows = snapshot.data;
                 return Column(
                   children: [
                     IconButton(
@@ -37,7 +38,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
                           }
                           if (ver > -1) {
                             if (kDebugMode) {
-                              print(row[ver]
+                              print(rows[ver]
                                   .cells
                                   .map((e) => (e.child as Text).data)
                                   .toList());
@@ -54,7 +55,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
                               int indice = -1;
                               setState(() {
                                 if (value!) {
-                                  selectedRows.addAll(row.map((e) {
+                                  selectedRows.addAll(rows.map((e) {
                                     ++indice;
                                     return indice;
                                   }).toList());
@@ -70,7 +71,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
                               DataColumn(label: Text('Usuario')),
                               DataColumn(label: Text('Compania')),
                             ],
-                            rows: row),
+                            rows: rows),
                       ),
                     ),
                   ],
