@@ -19,6 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
+
   User? getUser() {
     if (ModalRoute.of(context)?.settings.arguments == null) {
       return User(2, 'Pelao', '23424pelao');

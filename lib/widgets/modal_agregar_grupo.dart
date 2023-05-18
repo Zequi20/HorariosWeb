@@ -182,7 +182,7 @@ class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
               children: [
                 const Expanded(child: Text('Empresa')),
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: FutureBuilder(

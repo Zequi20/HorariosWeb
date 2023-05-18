@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 // ignore: unused_import
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -20,7 +19,7 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
     with AutomaticKeepAliveClientMixin {
   final verticalController = ScrollController();
   final horizontalController = ScrollController();
-  List<int> idList = [];
+
   DateTime curDate = DateTime.now();
   var resaltadoColor = Colors.orange;
   int valorTipo = 0;
@@ -31,73 +30,79 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
   var searchController = TextEditingController();
   StreamController vehiController = StreamController<List<DataRow>>();
 
-  @override
-  void initState() {
-    fetchRows();
-    super.initState();
-  }
+  List<int> selectedRows = [];
 
   @override
   void dispose() {
-    vehiController.close();
     super.dispose();
   }
 
-  void deleteReg(String reg) async {
-    if (idList.contains(int.parse(reg))) {
-      var requestPost = http.Request(
-          'DELETE', Uri.parse('http://190.52.165.206:3000/delete_vehicles'));
+  String formatId(List<int> lista) {
+    return lista
+        .map((e) => (rows[e].cells[0].child as Text).data)
+        .toList()
+        .toString()
+        .replaceAll("[", "")
+        .replaceAll("]", "");
+  }
 
-      requestPost.bodyFields = {'id': reg};
-      http.StreamedResponse responseStream = await requestPost.send();
+  void deleteReg() async {
+    var requestPost = http.Request(
+        'DELETE', Uri.parse('http://190.52.165.206:3000/delete_vehicles'));
 
-      if (responseStream.statusCode == 200) {
-        if (mounted) {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Operacion exitosa'),
-                  content: const Text('Operacion realizada con exito :)'),
-                  actions: [
-                    TextButton(
-                      style: const ButtonStyle(
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.white)),
-                      child: const Text('Aceptar'),
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                        Navigator.of(context).pop(true);
-                        Navigator.of(context).pop(true);
-                      },
-                    ),
-                  ],
-                );
-              });
-        }
-      } else {
-        if (mounted) {
-          Navigator.of(context).pop(true);
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Operacion fallida'),
-                  content: const Text('Algo ha salido mal :('),
-                  actions: [
-                    TextButton(
-                      style: const ButtonStyle(
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.white)),
-                      child: const Text('Aceptar'),
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      },
-                    ),
-                  ],
-                );
-              });
-        }
+    String idList = formatId(selectedRows);
+
+    requestPost.bodyFields = {'id': idList};
+    http.StreamedResponse responseStream = await requestPost.send();
+
+    if (responseStream.statusCode == 200) {
+      if (mounted) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Operacion exitosa'),
+                content: const Text('Operacion realizada con exito :)'),
+                actions: [
+                  TextButton(
+                    style: const ButtonStyle(
+                        foregroundColor:
+                            MaterialStatePropertyAll(Colors.white)),
+                    child: const Text('Aceptar'),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                      Navigator.of(context).pop(true);
+                      setState(() {
+                        selectedRows.clear();
+                      });
+                    },
+                  ),
+                ],
+              );
+            });
+      }
+    } else {
+      if (mounted) {
+        Navigator.of(context).pop(true);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Operacion fallida'),
+                content: const Text('Algo ha salido mal :('),
+                actions: [
+                  TextButton(
+                    style: const ButtonStyle(
+                        foregroundColor:
+                            MaterialStatePropertyAll(Colors.white)),
+                    child: const Text('Aceptar'),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                ],
+              );
+            });
       }
     }
   }
@@ -156,87 +161,71 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
                     FloatingActionButton(
                       heroTag: 'b6',
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Eliminar registro'),
-                              content: Wrap(
-                                children: [
-                                  const Text(
-                                      'Introduzca el Id del registro a borrar'),
-                                  TextFormField(
-                                    decoration: const InputDecoration(
-                                        filled: true, fillColor: Colors.white),
-                                    controller: deleteController,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'[0-9\.]'))
-                                    ],
+                        if (selectedRows.isNotEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Eliminar registro'),
+                                content: Wrap(
+                                  children: [
+                                    Text(
+                                        'Seguro que desea eliminar ${selectedRows.length} ${selectedRows.length > 1 ? 'registros' : 'registro'}?')
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    style: const ButtonStyle(
+                                        foregroundColor:
+                                            MaterialStatePropertyAll(
+                                                Colors.white)),
+                                    child: const Text('Si, continuar'),
+                                    onPressed: () {
+                                      deleteReg();
+                                    },
+                                  ),
+                                  TextButton(
+                                    style: const ButtonStyle(
+                                        foregroundColor:
+                                            MaterialStatePropertyAll(
+                                                Colors.white)),
+                                    child: const Text('Cancelar'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
                                   )
                                 ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  style: const ButtonStyle(
-                                      foregroundColor: MaterialStatePropertyAll(
-                                          Colors.white)),
-                                  child: const Text('Eliminar registro'),
-                                  onPressed: () {
-                                    if (deleteController.text.isNotEmpty) {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: const Text('Confirmar'),
-                                              content: const Text(
-                                                  'Seguro que desea eliminar un registro?'),
-                                              actions: [
-                                                TextButton(
-                                                  style: const ButtonStyle(
-                                                      foregroundColor:
-                                                          MaterialStatePropertyAll(
-                                                              Colors.white)),
-                                                  child: const Text('Si'),
-                                                  onPressed: () {
-                                                    deleteReg(deleteController
-                                                        .text
-                                                        .trim()
-                                                        .replaceAll('.', ''));
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  style: const ButtonStyle(
-                                                      foregroundColor:
-                                                          MaterialStatePropertyAll(
-                                                              Colors.white)),
-                                                  child: const Text('No'),
-                                                  onPressed: () {
-                                                    Navigator.of(context)
-                                                        .pop(true);
-                                                    Navigator.of(context)
-                                                        .pop(true);
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          });
-                                    }
-                                  },
+                              );
+                            },
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Seleccionar registro(s)'),
+                                content: Wrap(
+                                  children: const [
+                                    Text(
+                                        'Para borrar un registro debe seleccionarlo de la lista')
+                                  ],
                                 ),
-                                TextButton(
-                                  style: const ButtonStyle(
-                                      foregroundColor: MaterialStatePropertyAll(
-                                          Colors.white)),
-                                  child: const Text('Cancelar'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop(true);
-                                  },
-                                )
-                              ],
-                            );
-                          },
-                        );
+                                actions: [
+                                  TextButton(
+                                    style: const ButtonStyle(
+                                        foregroundColor:
+                                            MaterialStatePropertyAll(
+                                                Colors.white)),
+                                    child: const Text('Aceptar'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       },
                       child: const Icon(
                         Icons.delete,
@@ -266,7 +255,7 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
                       } else {
                         rows = snapshot.data!.where((row) {
                           String rowText = row.cells
-                              .map((cell) => cell.child.toString())
+                              .map((cell) => (cell.child as Text).data)
                               .join()
                               .toLowerCase();
                           String searchTerm =
@@ -277,15 +266,27 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
                       return SingleChildScrollView(
                         controller: verticalController,
                         scrollDirection: Axis.vertical,
-                        child: DataTable(columns: const [
-                          DataColumn(label: Text('ID')),
-                          DataColumn(label: Text('Nro')),
-                          DataColumn(label: Text('Tipo')),
-                          DataColumn(label: Text('Descripcion')),
-                          DataColumn(label: Text('Matricula')),
-                          DataColumn(label: Text('Asientos')),
-                          DataColumn(label: Text('Usuario')),
-                        ], rows: rows),
+                        child: DataTable(
+                            onSelectAll: (value) {
+                              setState(() {
+                                if (value!) {
+                                  selectedRows
+                                      .addAll(rows.map((e) => rows.indexOf(e)));
+                                } else {
+                                  selectedRows.clear();
+                                }
+                              });
+                            },
+                            columns: const [
+                              DataColumn(label: Text('ID')),
+                              DataColumn(label: Text('Nro')),
+                              DataColumn(label: Text('Tipo')),
+                              DataColumn(label: Text('Descripcion')),
+                              DataColumn(label: Text('Matricula')),
+                              DataColumn(label: Text('Asientos')),
+                              DataColumn(label: Text('Usuario')),
+                            ],
+                            rows: rows),
                       );
                     } else {
                       return const Center(
@@ -316,17 +317,26 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
     http.StreamedResponse responseStream = await request.send();
     var response = await http.Response.fromStream(responseStream);
     List jsonResponse = json.decode(response.body);
-    for (var element in jsonResponse) {
-      idList.add(element['ID']);
-      fetchedRows.add(DataRow(cells: [
-        DataCell(Text(element['ID'].toString())),
-        DataCell(Text(element['NUMBER'].toString())),
-        DataCell(Text(element['TYPE'].toString())),
-        DataCell(Text(element['DESCRIPTION'])),
-        DataCell(Text(element['LICENSE_PLATE'].toString().trim())),
-        DataCell(Text(element['SEATS'].toString().trim())),
-        DataCell(Text(element['NAME'].toString().split('T')[0])),
-      ]));
+    for (var i = 0; i < jsonResponse.length; i++) {
+      fetchedRows.add(DataRow(
+          selected: selectedRows.contains(i),
+          onSelectChanged: (value) {
+            if (value!) {
+              selectedRows.add(i);
+            } else {
+              selectedRows.remove(i);
+            }
+            setState(() {});
+          },
+          cells: [
+            DataCell(Text(jsonResponse[i]['ID'].toString())),
+            DataCell(Text(jsonResponse[i]['NUMBER'].toString())),
+            DataCell(Text(jsonResponse[i]['TYPE'].toString())),
+            DataCell(Text(jsonResponse[i]['DESCRIPTION'])),
+            DataCell(Text(jsonResponse[i]['LICENSE_PLATE'].toString().trim())),
+            DataCell(Text(jsonResponse[i]['SEATS'].toString().trim())),
+            DataCell(Text(jsonResponse[i]['NAME'].toString().split('T')[0])),
+          ]));
     }
 
     return fetchedRows;
