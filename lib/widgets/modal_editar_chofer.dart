@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +7,7 @@ class ModalEditarChofer extends StatefulWidget {
   const ModalEditarChofer(
       {super.key,
       this.userId = 0,
+      required this.rowId,
       required this.fechaNac,
       required this.fechaAlta,
       required this.codigo,
@@ -18,7 +18,9 @@ class ModalEditarChofer extends StatefulWidget {
       required this.telefono,
       required this.tipo,
       required this.estado});
+
   final int? userId;
+  final int rowId;
   final String fechaNac;
   final String fechaAlta;
   final String codigo;
@@ -123,16 +125,11 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
                   codigoController.text.isNotEmpty &&
                   fechaAltaController.text.isNotEmpty &&
                   fechaNacController.text.isNotEmpty) {
-                final response = await http.get(
-                    Uri.parse('http://190.52.165.206:3000/max_drivers_id'));
-                int idMax = json.decode(response.body)[0]['MAX'];
-
                 var requestPost = http.Request('POST',
-                    Uri.parse('http://190.52.165.206:3000/add_drivers'));
+                    Uri.parse('http://190.52.165.206:3000/edit_drivers'));
 
-                idMax += 1;
                 requestPost.bodyFields = {
-                  'idkk': idMax.toString(),
+                  'id': widget.rowId.toString(),
                   'codigo': codigoController.text,
                   'nombre': nombreController.text,
                   'documento': documentoController.text,
@@ -143,7 +140,6 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
                   'fecha_alta': fechaAltaController.text,
                   'tipo': tipoValue[0],
                   'estado': estadoValue[0],
-                  'id_usuario': widget.userId.toString()
                 };
                 http.StreamedResponse responseStream = await requestPost.send();
 
@@ -221,7 +217,7 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
             },
             icon: const Icon(Icons.save),
             label: const Text(
-              'Agregar',
+              'Editar',
             )),
         FilledButton.icon(
             onPressed: () {
@@ -233,7 +229,7 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
             ))
       ],
       title: const Text(
-        'Agregar Chofer/Guarda',
+        'Editar Chofer/Guarda',
         textAlign: TextAlign.center,
       ),
       content: SingleChildScrollView(

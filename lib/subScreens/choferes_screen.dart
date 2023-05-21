@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:horarios_web/models/model_campos_choferes.dart';
+import 'package:horarios_web/widgets/modal_editar_chofer.dart';
 // ignore: unused_import
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -140,6 +142,21 @@ class _ScreenChoferesState extends State<ScreenChoferes>
         children: [
           Row(
             children: [
+              Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: searchController,
+                      onChanged: (value) {
+                        setState(() {});
+                      },
+                      decoration: const InputDecoration(
+                          prefixIconColor: Colors.black54,
+                          hintText: 'Buscar',
+                          prefixIcon: Icon(Icons.search)),
+                    ),
+                  )),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Wrap(
@@ -163,6 +180,65 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                         Icons.add,
                         size: 30,
                       ),
+                    ),
+                    FloatingActionButton(
+                      heroTag: 'normal',
+                      onPressed: () async {
+                        if (selectedRows.isNotEmpty &&
+                            selectedRows.length < 2) {
+                          CamposChoferes campos =
+                              CamposChoferes.fromRow(rows, selectedRows.first);
+                          await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ModalEditarChofer(
+                                  rowId: campos.id,
+                                  userId: widget.userId,
+                                  codigo: campos.codigo,
+                                  direccion: campos.direccion,
+                                  documento: campos.documento,
+                                  estado: campos.estado,
+                                  fechaAlta: campos.fechaAlta,
+                                  fechaNac: campos.fechaNac,
+                                  nombre: campos.nombre,
+                                  registro: campos.registro,
+                                  telefono: campos.telefono,
+                                  tipo: campos.tipo,
+                                );
+                              });
+                          setState(() {
+                            selectedRows.clear();
+                          });
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                    title:
+                                        const Text('Seleccion unica requerida'),
+                                    content: Wrap(
+                                      children: [
+                                        Text(selectedRows.isEmpty
+                                            ? 'Usted no ha seleeccionado ningun elemento'
+                                            : 'Seleccione un unico elemento')
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        style: const ButtonStyle(
+                                            foregroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Colors.white)),
+                                        child: const Text('Aceptar'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true);
+                                        },
+                                      ),
+                                    ]);
+                              });
+                        }
+                      },
+                      child: const Icon(Icons.edit),
                     ),
                     FloatingActionButton(
                       heroTag: 'b2',
@@ -240,21 +316,6 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                   ],
                 ),
               ),
-              Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: searchController,
-                      onChanged: (value) {
-                        setState(() {});
-                      },
-                      decoration: const InputDecoration(
-                          prefixIconColor: Colors.black54,
-                          hintText: 'Buscar',
-                          prefixIcon: Icon(Icons.search)),
-                    ),
-                  )),
             ],
           ),
           Expanded(

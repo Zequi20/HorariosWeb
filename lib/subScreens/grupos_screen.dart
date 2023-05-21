@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:horarios_web/models/model_campos_grupos.dart';
+import 'package:horarios_web/widgets/modal_editar_grupo.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -154,6 +156,58 @@ class _ScreenGruposState extends State<ScreenGrupos>
                         Icons.add,
                         size: 30,
                       ),
+                    ),
+                    FloatingActionButton(
+                      heroTag: 'normal11',
+                      onPressed: () async {
+                        if (selectedRows.isNotEmpty &&
+                            selectedRows.length < 2) {
+                          CamposGrupos campos =
+                              CamposGrupos.fromRow(rows, selectedRows.first);
+                          await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ModalEditarGrupo(
+                                  id: campos.rowId,
+                                  nombreController: campos.nombre,
+                                  empresaController: int.parse(campos.empresa),
+                                  descripcionController: campos.descripcion,
+                                  kmController: campos.km,
+                                );
+                              });
+                          setState(() {
+                            selectedRows.clear();
+                          });
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                    title:
+                                        const Text('Seleccion unica requerida'),
+                                    content: Wrap(
+                                      children: [
+                                        Text(selectedRows.isEmpty
+                                            ? 'Usted no ha seleeccionado ningun elemento'
+                                            : 'Seleccione un unico elemento')
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        style: const ButtonStyle(
+                                            foregroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Colors.white)),
+                                        child: const Text('Aceptar'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true);
+                                        },
+                                      ),
+                                    ]);
+                              });
+                        }
+                      },
+                      child: const Icon(Icons.edit),
                     ),
                     FloatingActionButton(
                       heroTag: 'b3',
@@ -328,7 +382,10 @@ class _ScreenGruposState extends State<ScreenGrupos>
           cells: [
             DataCell(Text(jsonResponse[i]['ID'].toString())),
             DataCell(Text(jsonResponse[i]['NAME'].toString())),
-            DataCell(Text(jsonResponse[i]['COMPANY'].toString())),
+            DataCell(Text(
+              jsonResponse[i]['COMPANY'].toString(),
+              key: Key(jsonResponse[i]['COMPANYID'].toString()),
+            )),
             DataCell(Text(jsonResponse[i]['DESCRIPTION'])),
             DataCell(Text(jsonResponse[i]['USERNAME'].toString().trim())),
             DataCell(Text(jsonResponse[i]['KM'].toString().trim())),

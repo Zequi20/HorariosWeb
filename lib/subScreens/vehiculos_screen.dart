@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:horarios_web/models/model_campos_vehiculos.dart';
+import 'package:horarios_web/widgets/modal_editar_vehiculo.dart';
 // ignore: unused_import
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -157,6 +159,61 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
                         Icons.add,
                         size: 30,
                       ),
+                    ),
+                    FloatingActionButton(
+                      heroTag: 'normal1',
+                      onPressed: () async {
+                        if (selectedRows.isNotEmpty &&
+                            selectedRows.length < 2) {
+                          CamposVehiculos campos =
+                              CamposVehiculos.fromRow(rows, selectedRows.first);
+                          await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ModalEditarVehiculo(
+                                  asientosController: campos.asientosController,
+                                  descripcionController:
+                                      campos.descripcionController,
+                                  matriculaController:
+                                      campos.matriculaController,
+                                  nroController: campos.nroController,
+                                  rowId: campos.rowId,
+                                  tipoController: campos.tipoController,
+                                );
+                              });
+                          setState(() {
+                            selectedRows.clear();
+                          });
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                    title:
+                                        const Text('Seleccion unica requerida'),
+                                    content: Wrap(
+                                      children: [
+                                        Text(selectedRows.isEmpty
+                                            ? 'Usted no ha seleeccionado ningun elemento'
+                                            : 'Seleccione un unico elemento')
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        style: const ButtonStyle(
+                                            foregroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Colors.white)),
+                                        child: const Text('Aceptar'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true);
+                                        },
+                                      ),
+                                    ]);
+                              });
+                        }
+                      },
+                      child: const Icon(Icons.edit),
                     ),
                     FloatingActionButton(
                       heroTag: 'b6',

@@ -16,6 +16,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int selected = 0;
+  bool isVisible = true;
+
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
@@ -28,37 +30,48 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  void visibilityCheck() {
+    if (isVisible) {
+      isVisible = false;
+    } else {
+      isVisible = true;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   bool extended = true;
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).size.width < 600) {
-      extended = false;
-    } else {
-      extended = true;
-    }
     return Scaffold(
       body: Row(
         children: [
-          NavigationRail(
-            minExtendedWidth: 150,
-            elevation: 5,
-            extended: extended,
-            destinations: const [
-              NavigationRailDestination(
-                  icon: Icon(Icons.home), label: Text('Inicio')),
-              NavigationRailDestination(
-                  icon: Icon(Icons.edit_note), label: Text('Datos')),
-              NavigationRailDestination(
-                  icon: Icon(Icons.access_time), label: Text('Horarios')),
-              NavigationRailDestination(
-                  icon: Icon(Icons.login), label: Text('Salir')),
-            ],
-            selectedIndex: selected,
-            onDestinationSelected: (int index) {
-              setState(() {
-                selected = index;
-              });
-            },
+          Visibility(
+            visible: isVisible,
+            child: NavigationRail(
+              minExtendedWidth: 150,
+              elevation: 5,
+              extended: extended,
+              destinations: const [
+                NavigationRailDestination(
+                    icon: Icon(Icons.home), label: Text('Inicio')),
+                NavigationRailDestination(
+                    icon: Icon(Icons.edit_note), label: Text('Datos')),
+                NavigationRailDestination(
+                    icon: Icon(Icons.access_time), label: Text('Horarios')),
+                NavigationRailDestination(
+                    icon: Icon(Icons.login), label: Text('Salir')),
+              ],
+              selectedIndex: selected,
+              onDestinationSelected: (int index) {
+                setState(() {
+                  selected = index;
+                });
+              },
+            ),
           ),
           Expanded(
             child: screenBuilder(selected),
@@ -66,6 +79,13 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              setState(() {
+                visibilityCheck();
+              });
+            },
+            icon: const Icon(Icons.list)),
         flexibleSpace: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
