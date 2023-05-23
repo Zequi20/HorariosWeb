@@ -91,11 +91,7 @@ class _MainScreenState extends State<MainScreen> {
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                principalColor,
-                gradPrincipalColor,
-                principalColor
-              ])),
+                  colors: [principalColor, gradPrincipalColor])),
         ),
         title: const Text(
           'Guairena Horarios',

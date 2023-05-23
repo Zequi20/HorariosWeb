@@ -27,6 +27,7 @@ class Pantalla extends StatelessWidget {
   Widget build(BuildContext context) {
     var principalColor = const Color.fromARGB(255, 99, 1, 1);
     var resaltadoColor = Colors.orange;
+    var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
     return MaterialApp(
       theme: ThemeData(
           dialogTheme: const DialogTheme(
@@ -44,19 +45,18 @@ class Pantalla extends StatelessWidget {
                   backgroundColor: MaterialStatePropertyAll(principalColor))),
           floatingActionButtonTheme:
               FloatingActionButtonThemeData(backgroundColor: principalColor),
-          inputDecorationTheme: InputDecorationTheme(
-            counterStyle: const TextStyle(color: Colors.white),
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: principalColor)),
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: principalColor)),
+          inputDecorationTheme: const InputDecorationTheme(
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            counterStyle: TextStyle(color: Colors.white),
           ),
           tabBarTheme: TabBarTheme(
               unselectedLabelColor: Colors.white, labelColor: resaltadoColor),
           navigationRailTheme: NavigationRailThemeData(
-              backgroundColor: principalColor,
+              backgroundColor: gradPrincipalColor,
               useIndicator: true,
-              indicatorColor: Colors.black12,
+              indicatorColor: principalColor,
               unselectedLabelTextStyle: const TextStyle(color: Colors.white),
               unselectedIconTheme: const IconThemeData(color: Colors.white),
               selectedLabelTextStyle: TextStyle(color: resaltadoColor),

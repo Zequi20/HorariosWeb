@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/subScreens/choferes_screen.dart';
 import 'package:horarios_web/subScreens/grupos_screen.dart';
+import 'package:horarios_web/widgets/tab_title.dart';
 
 import '../subScreens/vehiculos_screen.dart';
 
@@ -13,6 +14,7 @@ class DatosScreen extends StatefulWidget {
 
 class _DatosScreenState extends State<DatosScreen> {
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
   @override
   Widget build(BuildContext context) {
@@ -21,19 +23,21 @@ class _DatosScreenState extends State<DatosScreen> {
         child: Column(
           children: [
             Container(
-              color: principalColor,
+              color: gradPrincipalColor,
               child: TabBar(indicatorColor: resaltadoColor, tabs: const [
                 Tab(
-                  text: 'Choferes',
-                  icon: Icon(Icons.account_circle_rounded),
+                  child: TabTitle(
+                      iconoTitulo: Icon(Icons.supervisor_account),
+                      titulo: 'Choferes'),
                 ),
                 Tab(
-                  text: 'Vehiculos',
-                  icon: Icon(Icons.drive_eta),
+                  child: TabTitle(
+                      iconoTitulo: Icon(Icons.car_rental), titulo: 'Coches'),
                 ),
                 Tab(
-                  text: 'Grupos',
-                  icon: Icon(Icons.view_timeline_sharp),
+                  child: TabTitle(
+                      iconoTitulo: Icon(Icons.mode_of_travel),
+                      titulo: 'Grupos'),
                 )
               ]),
             ),

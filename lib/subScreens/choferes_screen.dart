@@ -26,9 +26,58 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   var resaltadoColor = Colors.orange;
   int valorTipo = 0;
   List<DataRow> rows = [];
-
+  int searchIndex = 0;
   List<int> selectedRows = [];
-
+  List<DropdownMenuItem<int>> itemList = const [
+    DropdownMenuItem(
+      value: 0,
+      child: Text('Id'),
+    ),
+    DropdownMenuItem(
+      value: 1,
+      child: Text('Codigo'),
+    ),
+    DropdownMenuItem(
+      value: 2,
+      child: Text('Tipo'),
+    ),
+    DropdownMenuItem(
+      value: 3,
+      child: Text('Nombre'),
+    ),
+    DropdownMenuItem(
+      value: 4,
+      child: Text('Documento'),
+    ),
+    DropdownMenuItem(
+      value: 5,
+      child: Text('Registro'),
+    ),
+    DropdownMenuItem(
+      value: 6,
+      child: Text('Nacimiento'),
+    ),
+    DropdownMenuItem(
+      value: 7,
+      child: Text('Estado Civil'),
+    ),
+    DropdownMenuItem(
+      value: 8,
+      child: Text('Direccion'),
+    ),
+    DropdownMenuItem(
+      value: 9,
+      child: Text('Telefono'),
+    ),
+    DropdownMenuItem(
+      value: 10,
+      child: Text('Usuario'),
+    ),
+    DropdownMenuItem(
+      value: 11,
+      child: Text('Alta'),
+    )
+  ];
   DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
   var deleteController = TextEditingController();
   var searchController = TextEditingController();
@@ -142,6 +191,12 @@ class _ScreenChoferesState extends State<ScreenChoferes>
         children: [
           Row(
             children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 28),
+                child: Text(
+                  'Lista de Choferes',
+                ),
+              ),
               Expanded(
                   flex: 2,
                   child: Padding(
@@ -152,170 +207,179 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                         setState(() {});
                       },
                       decoration: const InputDecoration(
-                          prefixIconColor: Colors.black54,
+                          suffixIconColor: Colors.black54,
                           hintText: 'Buscar',
-                          prefixIcon: Icon(Icons.search)),
+                          suffixIcon: Icon(Icons.search)),
                     ),
                   )),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 8,
-                  direction: Axis.horizontal,
-                  children: [
-                    FloatingActionButton(
-                      heroTag: 'b1',
-                      onPressed: () async {
-                        await showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ModalAgregarChofer(
-                                userId: widget.userId,
-                              );
-                            });
-                        setState(() {});
-                      },
-                      child: const Icon(
-                        Icons.add,
-                        size: 30,
-                      ),
-                    ),
-                    FloatingActionButton(
-                      heroTag: 'normal',
-                      onPressed: () async {
-                        if (selectedRows.isNotEmpty &&
-                            selectedRows.length < 2) {
-                          CamposChoferes campos =
-                              CamposChoferes.fromRow(rows, selectedRows.first);
+                padding: const EdgeInsets.all(18),
+                child: DropdownButton(
+                  underline: Container(),
+                  isExpanded: false,
+                  focusColor: Colors.transparent,
+                  borderRadius: BorderRadius.circular(24),
+                  menuMaxHeight: 256,
+                  hint: const Text('Buscar por:'),
+                  value: searchIndex,
+                  items: itemList,
+                  onChanged: (int? value) {
+                    searchIndex = value!;
+                    setState(() {});
+                  },
+                ),
+              ),
+              Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ButtonBar(
+                    children: [
+                      IconButton(
+                        onPressed: () async {
                           await showDialog(
                               context: context,
                               builder: (context) {
-                                return ModalEditarChofer(
-                                  rowId: campos.id,
+                                return ModalAgregarChofer(
                                   userId: widget.userId,
-                                  codigo: campos.codigo,
-                                  direccion: campos.direccion,
-                                  documento: campos.documento,
-                                  estado: campos.estado,
-                                  fechaAlta: campos.fechaAlta,
-                                  fechaNac: campos.fechaNac,
-                                  nombre: campos.nombre,
-                                  registro: campos.registro,
-                                  telefono: campos.telefono,
-                                  tipo: campos.tipo,
                                 );
                               });
-                          setState(() {
-                            selectedRows.clear();
-                          });
-                        } else {
-                          showDialog(
+                          setState(() {});
+                        },
+                        icon: const Icon(
+                          Icons.person_add,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          if (selectedRows.isNotEmpty &&
+                              selectedRows.length < 2) {
+                            CamposChoferes campos = CamposChoferes.fromRow(
+                                rows, selectedRows.first);
+                            await showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return ModalEditarChofer(
+                                    rowId: campos.id,
+                                    userId: widget.userId,
+                                    codigo: campos.codigo,
+                                    direccion: campos.direccion,
+                                    documento: campos.documento,
+                                    estado: campos.estado,
+                                    fechaAlta: campos.fechaAlta,
+                                    fechaNac: campos.fechaNac,
+                                    nombre: campos.nombre,
+                                    registro: campos.registro,
+                                    telefono: campos.telefono,
+                                    tipo: campos.tipo,
+                                  );
+                                });
+                            setState(() {
+                              selectedRows.clear();
+                            });
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      title: const Text(
+                                          'Seleccion unica requerida'),
+                                      content: Wrap(
+                                        children: [
+                                          Text(selectedRows.isEmpty
+                                              ? 'Usted no ha seleeccionado ningun elemento'
+                                              : 'Seleccione un unico elemento')
+                                        ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          style: const ButtonStyle(
+                                              foregroundColor:
+                                                  MaterialStatePropertyAll(
+                                                      Colors.white)),
+                                          child: const Text('Aceptar'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(true);
+                                          },
+                                        ),
+                                      ]);
+                                });
+                          }
+                        },
+                        icon: const Icon(Icons.mode_edit),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          if (selectedRows.isNotEmpty) {
+                            showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                    title:
-                                        const Text('Seleccion unica requerida'),
-                                    content: Wrap(
-                                      children: [
-                                        Text(selectedRows.isEmpty
-                                            ? 'Usted no ha seleeccionado ningun elemento'
-                                            : 'Seleccione un unico elemento')
-                                      ],
+                                  title: const Text('Eliminar registro'),
+                                  content: Wrap(
+                                    children: [
+                                      Text(
+                                          'Seguro que desea eliminar ${selectedRows.length} ${selectedRows.length > 1 ? 'registros' : 'registro'}?')
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      style: const ButtonStyle(
+                                          foregroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.white)),
+                                      child: const Text('Si, continuar'),
+                                      onPressed: () {
+                                        deleteReg();
+                                      },
                                     ),
-                                    actions: [
-                                      TextButton(
-                                        style: const ButtonStyle(
-                                            foregroundColor:
-                                                MaterialStatePropertyAll(
-                                                    Colors.white)),
-                                        child: const Text('Aceptar'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop(true);
-                                        },
-                                      ),
-                                    ]);
-                              });
-                        }
-                      },
-                      child: const Icon(Icons.edit),
-                    ),
-                    FloatingActionButton(
-                      heroTag: 'b2',
-                      onPressed: () {
-                        if (selectedRows.isNotEmpty) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Eliminar registro'),
-                                content: Wrap(
-                                  children: [
-                                    Text(
-                                        'Seguro que desea eliminar ${selectedRows.length} ${selectedRows.length > 1 ? 'registros' : 'registro'}?')
+                                    TextButton(
+                                      style: const ButtonStyle(
+                                          foregroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.white)),
+                                      child: const Text('Cancelar'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    )
                                   ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    style: const ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                Colors.white)),
-                                    child: const Text('Si, continuar'),
-                                    onPressed: () {
-                                      deleteReg();
-                                    },
+                                );
+                              },
+                            );
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Seleccionar registro(s)'),
+                                  content: Wrap(
+                                    children: const [
+                                      Text(
+                                          'Para borrar un registro debe seleccionarlo de la lista')
+                                    ],
                                   ),
-                                  TextButton(
-                                    style: const ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                Colors.white)),
-                                    child: const Text('Cancelar'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                  )
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Seleccionar registro(s)'),
-                                content: Wrap(
-                                  children: const [
-                                    Text(
-                                        'Para borrar un registro debe seleccionarlo de la lista')
+                                  actions: [
+                                    TextButton(
+                                      style: const ButtonStyle(
+                                          foregroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.white)),
+                                      child: const Text('Aceptar'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    ),
                                   ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    style: const ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                Colors.white)),
-                                    child: const Text('Aceptar'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                      },
-                      child: const Icon(
-                        Icons.delete,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                                );
+                              },
+                            );
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.person_remove,
+                        ),
+                      )
+                    ],
+                  )),
             ],
           ),
           Expanded(
@@ -336,10 +400,10 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                           rows = snapshot.data!;
                         } else {
                           rows = snapshot.data!.where((row) {
-                            String rowText = row.cells
-                                .map((cell) => (cell.child as Text).data)
-                                .join()
-                                .toLowerCase();
+                            String rowText =
+                                (row.cells[searchIndex].child as Text)
+                                    .data!
+                                    .toLowerCase();
                             String searchTerm =
                                 searchController.text.toLowerCase();
                             return rowText.contains(searchTerm);

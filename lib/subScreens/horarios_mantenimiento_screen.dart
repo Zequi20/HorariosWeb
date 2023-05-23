@@ -124,17 +124,27 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                                               ? datos[index].data
                                               : []),
                                     ),
-                                    Expanded(
-                                        child: Center(
-                                      child: TextButton(
-                                        child: const Text('Actualizar'),
-                                        onPressed: () {
-                                          setState(() {
-                                            fetchTravelsByGroup();
-                                          });
-                                        },
+                                    Center(
+                                      child: Wrap(
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                setState(() {});
+                                              },
+                                              icon: const Icon(Icons.add)),
+                                          IconButton(
+                                              onPressed: () {
+                                                setState(() {});
+                                              },
+                                              icon: const Icon(Icons.edit)),
+                                          IconButton(
+                                              onPressed: () {
+                                                setState(() {});
+                                              },
+                                              icon: const Icon(Icons.delete))
+                                        ],
                                       ),
-                                    ))
+                                    )
                                   ],
                                 ),
                               )
