@@ -52,6 +52,7 @@ class _MainScreenState extends State<MainScreen> {
           Visibility(
             visible: isVisible,
             child: NavigationRail(
+              backgroundColor: gradPrincipalColor,
               minExtendedWidth: 150,
               elevation: 5,
               extended: extended,
@@ -91,7 +92,11 @@ class _MainScreenState extends State<MainScreen> {
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [principalColor, gradPrincipalColor])),
+                  colors: [
+                principalColor,
+                gradPrincipalColor,
+                gradPrincipalColor
+              ])),
         ),
         title: const Text(
           'Guairena Horarios',

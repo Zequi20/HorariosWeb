@@ -27,7 +27,7 @@ class Pantalla extends StatelessWidget {
   Widget build(BuildContext context) {
     var principalColor = const Color.fromARGB(255, 99, 1, 1);
     var resaltadoColor = Colors.orange;
-    var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
+    //var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
     return MaterialApp(
       theme: ThemeData(
           dialogTheme: const DialogTheme(
@@ -54,7 +54,6 @@ class Pantalla extends StatelessWidget {
           tabBarTheme: TabBarTheme(
               unselectedLabelColor: Colors.white, labelColor: resaltadoColor),
           navigationRailTheme: NavigationRailThemeData(
-              backgroundColor: gradPrincipalColor,
               useIndicator: true,
               indicatorColor: principalColor,
               unselectedLabelTextStyle: const TextStyle(color: Colors.white),

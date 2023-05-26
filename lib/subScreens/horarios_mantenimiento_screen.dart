@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
+import 'package:horarios_web/widgets/modal_agregar_viaje.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -128,7 +129,14 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                                       child: Wrap(
                                         children: [
                                           IconButton(
-                                              onPressed: () {
+                                              onPressed: () async {
+                                                await showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return const ModalAgregarViaje(
+                                                        grupoId: 1,
+                                                      );
+                                                    });
                                                 setState(() {});
                                               },
                                               icon: const Icon(Icons.add)),

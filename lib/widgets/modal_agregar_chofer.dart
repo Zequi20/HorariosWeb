@@ -24,16 +24,16 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
   var registroController = TextEditingController();
   var direccionController = TextEditingController();
   var telefonoController = TextEditingController();
-
+  var defaultDecoration = const InputDecoration(
+    filled: true,
+    fillColor: Colors.white,
+  );
   @override
   Widget build(BuildContext context) {
     var dropEstadoCivil = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: DropdownButtonFormField(
-          decoration: const InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-          ),
+          decoration: defaultDecoration,
           value: estadoValue,
           items: const [
             DropdownMenuItem(
@@ -54,10 +54,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
     var dropTipo = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: DropdownButtonFormField(
-          decoration: const InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-          ),
+          decoration: defaultDecoration,
           value: tipoValue,
           items: const [
             DropdownMenuItem(
