@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/modal_agregar_viaje.dart';
+import 'package:horarios_web/widgets/tabla_grupos.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -36,8 +37,8 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     super.dispose();
   }
 
-  void fetchTravelsByGroup() async {
-    travels.clear();
+  Future fetchTravelsByGroup() async {
+    List<Group> travels = [];
     final response = await http
         .get(Uri.parse('http://190.52.165.206:3000/travels_by_group'));
 
@@ -67,94 +68,95 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                     ]))
                 .toList()));
       }
-
-      groupController.sink.add(travels);
     } else {
       throw Exception('Fallo al obtener viajes por grupos');
     }
+    return travels;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-        body: StreamBuilder(
-            stream: groupController.stream,
+        body: FutureBuilder(
+            future: fetchTravelsByGroup(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                List<Group> datos = snapshot.data;
+                travels = snapshot.data;
                 return Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: ListView.separated(
                       separatorBuilder: (context, index) => Divider(
-                            height: 2,
+                            height: 3,
                             color: colorBlanco,
                           ),
-                      itemCount: datos.length,
+                      itemCount: travels.length,
                       itemBuilder: (context, index) => ExpansionTile(
+                            collapsedShape: const BeveledRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            shape: const BeveledRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15))),
                             iconColor: colorBlanco,
                             collapsedIconColor: colorBlanco,
                             collapsedTextColor: colorBlanco,
-                            collapsedBackgroundColor: principalColor,
+                            collapsedBackgroundColor: gradPrincipalColor,
                             textColor: colorBlanco,
                             backgroundColor: principalColor,
                             title: Text(
-                              datos[index].name,
+                              travels[index].name,
                               textAlign: TextAlign.center,
                             ),
-                            leading: Text('grupo ${datos[index].id}'),
+                            leading: Text('grupo ${travels[index].id}'),
                             children: [
-                              Container(
-                                color: colorBlanco,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: DataTable(
-                                          columns: const [
-                                            DataColumn(label: Text('PARTIDA')),
-                                            DataColumn(label: Text('LLEGADA')),
-                                            DataColumn(label: Text('VEHICULO')),
-                                            DataColumn(
-                                                label: Text('CONDUCTOR')),
-                                            DataColumn(label: Text('GUARDA')),
-                                            DataColumn(label: Text('NOTA')),
-                                            DataColumn(label: Text('KM')),
-                                          ],
-                                          rows: datos[index].data.isNotEmpty
-                                              ? datos[index].data
-                                              : []),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                      color: colorBlanco,
+                                      child: GroupTable(
+                                          travels: travels, index: index),
                                     ),
-                                    Center(
-                                      child: Wrap(
-                                        children: [
-                                          IconButton(
-                                              onPressed: () async {
-                                                await showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return const ModalAgregarViaje(
-                                                        grupoId: 1,
-                                                      );
-                                                    });
-                                                setState(() {});
-                                              },
-                                              icon: const Icon(Icons.add)),
-                                          IconButton(
-                                              onPressed: () {
-                                                setState(() {});
-                                              },
-                                              icon: const Icon(Icons.edit)),
-                                          IconButton(
-                                              onPressed: () {
-                                                setState(() {});
-                                              },
-                                              icon: const Icon(Icons.delete))
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
+                                  ),
+                                  Wrap(
+                                    direction: Axis.vertical,
+                                    children: [
+                                      IconButton(
+                                          onPressed: () async {
+                                            await showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return ModalAgregarViaje(
+                                                    grupoId: travels[index].id,
+                                                  );
+                                                });
+                                            setState(() {});
+                                          },
+                                          icon: Icon(
+                                            Icons.add,
+                                            color: colorBlanco,
+                                          )),
+                                      IconButton(
+                                          onPressed: () {
+                                            setState(() {});
+                                          },
+                                          icon: Icon(
+                                            Icons.edit,
+                                            color: colorBlanco,
+                                          )),
+                                      IconButton(
+                                          onPressed: () {
+                                            setState(() {});
+                                          },
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: colorBlanco,
+                                          ))
+                                    ],
+                                  )
+                                ],
                               )
                             ],
                           )),

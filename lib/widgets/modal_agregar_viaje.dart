@@ -14,6 +14,7 @@ class ModalAgregarViaje extends StatefulWidget {
 }
 
 class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   int selectedVehicle = -1;
   int selectedDriver = -1;
   int selectedGuarda = -2;
@@ -209,6 +210,7 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
       ],
       title: const Text('Agregar Viaje'),
       content: SingleChildScrollView(
+        clipBehavior: Clip.antiAlias,
         controller: controller,
         child: Column(
           children: [
@@ -314,115 +316,135 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
               ],
             ),
             defaultDivider,
-            Row(
-              children: const [
-                Expanded(child: Text('Chofer')),
-                Expanded(flex: 2, child: Text('Guarda'))
-              ],
-            ),
-            defaultDivider,
-            FutureBuilder(
-                future: fetchVehicles(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    listaVehiculos = snapshot.data;
-                    return Row(
-                      children: [
-                        const Expanded(child: Text('Vehiculo')),
-                        Expanded(
-                          flex: 2,
-                          child: DropdownButtonFormField(
-                            decoration: defaultDecoration,
-                            isExpanded: false,
-                            focusColor: Colors.transparent,
-                            borderRadius: BorderRadius.circular(24),
-                            menuMaxHeight: 256,
-                            value: selectedVehicle,
-                            items: listaVehiculos
-                                .map((e) => DropdownMenuItem(
-                                      value: e.id,
-                                      child: Text(e.placa),
-                                    ))
-                                .toList(),
-                            onChanged: (int? value) {
-                              setState(() {
-                                selectedVehicle = value!;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.red,
-                    ));
-                  }
-                }),
-            defaultDivider,
-            FutureBuilder(
-                future: fetchDrivers(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    listaConductores = snapshot.data[0];
-                    listaGuardas = snapshot.data[1];
-                    return Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: DropdownButtonFormField(
-                            decoration: defaultDecoration,
-                            isExpanded: false,
-                            focusColor: Colors.transparent,
-                            borderRadius: BorderRadius.circular(24),
-                            menuMaxHeight: 256,
-                            value: selectedDriver,
-                            items: listaConductores
-                                .map((e) => DropdownMenuItem(
-                                      value: e.id,
-                                      child: Text(e.nombre),
-                                    ))
-                                .toList(),
-                            onChanged: (int? value) {
-                              setState(() {
-                                selectedDriver = value!;
-                              });
-                            },
-                          ),
-                        ),
-                        const Divider(
-                          indent: 12,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: DropdownButtonFormField(
-                            decoration: defaultDecoration,
-                            isExpanded: false,
-                            focusColor: Colors.transparent,
-                            borderRadius: BorderRadius.circular(24),
-                            menuMaxHeight: 256,
-                            value: selectedGuarda,
-                            items: listaGuardas
-                                .map((e) => DropdownMenuItem(
-                                    value: e.id, child: Text(e.nombre)))
-                                .toList(),
-                            onChanged: (int? value) {
-                              setState(() {
-                                selectedGuarda = value!;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.red,
-                    ));
-                  }
-                })
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: gradPrincipalColor),
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  FutureBuilder(
+                      future: fetchVehicles(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          listaVehiculos = snapshot.data;
+                          return Row(
+                            children: [
+                              const Expanded(child: Text('Vehiculo')),
+                              Expanded(
+                                flex: 2,
+                                child: DropdownButtonFormField(
+                                  decoration: defaultDecoration,
+                                  isExpanded: true,
+                                  focusColor: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(24),
+                                  menuMaxHeight: 256,
+                                  value: selectedVehicle,
+                                  items: listaVehiculos
+                                      .map((e) => DropdownMenuItem(
+                                            value: e.id,
+                                            child: Text(
+                                              e.placa,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
+                                      .toList(),
+                                  onChanged: (int? value) {
+                                    setState(() {
+                                      selectedVehicle = value!;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator(
+                            color: Colors.red,
+                          ));
+                        }
+                      }),
+                  defaultDivider,
+                  Row(
+                    children: const [
+                      Expanded(child: Text('Chofer')),
+                      Expanded(child: Text('Guarda'))
+                    ],
+                  ),
+                  defaultDivider,
+                  FutureBuilder(
+                      future: fetchDrivers(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          listaConductores = snapshot.data[0];
+                          listaGuardas = snapshot.data[1];
+                          return Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: DropdownButtonFormField(
+                                  decoration: defaultDecoration,
+                                  isExpanded: true,
+                                  focusColor: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(24),
+                                  menuMaxHeight: 256,
+                                  value: selectedDriver,
+                                  items: listaConductores
+                                      .map((e) => DropdownMenuItem(
+                                            value: e.id,
+                                            child: Text(
+                                              e.nombre,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
+                                      .toList(),
+                                  onChanged: (int? value) {
+                                    setState(() {
+                                      selectedDriver = value!;
+                                    });
+                                  },
+                                ),
+                              ),
+                              const Divider(
+                                indent: 12,
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: DropdownButtonFormField(
+                                  decoration: defaultDecoration,
+                                  isExpanded: true,
+                                  focusColor: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(24),
+                                  menuMaxHeight: 256,
+                                  value: selectedGuarda,
+                                  items: listaGuardas
+                                      .map((e) => DropdownMenuItem(
+                                          value: e.id,
+                                          child: Text(
+                                            e.nombre,
+                                            overflow: TextOverflow.ellipsis,
+                                          )))
+                                      .toList(),
+                                  onChanged: (int? value) {
+                                    setState(() {
+                                      selectedGuarda = value!;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator(
+                            color: Colors.red,
+                          ));
+                        }
+                      })
+                ],
+              ),
+            )
           ],
         ),
       ),
