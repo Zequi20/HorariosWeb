@@ -23,6 +23,9 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   final horizontalController = ScrollController();
 
   DateTime curDate = DateTime.now();
+
+  var principalColor = const Color.fromARGB(255, 99, 1, 1);
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
   int valorTipo = 0;
   List<DataRow> rows = [];
@@ -191,12 +194,6 @@ class _ScreenChoferesState extends State<ScreenChoferes>
         children: [
           Row(
             children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 28),
-                child: Text(
-                  'Lista de Choferes',
-                ),
-              ),
               Expanded(
                   flex: 2,
                   child: Padding(
@@ -234,6 +231,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                   child: ButtonBar(
                     children: [
                       IconButton(
+                        hoverColor: resaltadoColor,
                         onPressed: () async {
                           await showDialog(
                               context: context,
@@ -244,11 +242,13 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                               });
                           setState(() {});
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.person_add,
+                          color: principalColor,
                         ),
                       ),
                       IconButton(
+                        hoverColor: resaltadoColor,
                         onPressed: () async {
                           if (selectedRows.isNotEmpty &&
                               selectedRows.length < 2) {
@@ -304,9 +304,13 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                                 });
                           }
                         },
-                        icon: const Icon(Icons.mode_edit),
+                        icon: Icon(
+                          Icons.mode_edit,
+                          color: principalColor,
+                        ),
                       ),
                       IconButton(
+                        hoverColor: resaltadoColor,
                         onPressed: () {
                           if (selectedRows.isNotEmpty) {
                             showDialog(
@@ -374,9 +378,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                             );
                           }
                         },
-                        icon: const Icon(
-                          Icons.person_remove,
-                        ),
+                        icon: Icon(Icons.person_remove, color: principalColor),
                       )
                     ],
                   )),
