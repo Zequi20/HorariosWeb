@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
-
 class Group {
-  Group(this.id, this.name, this.data);
+  Group(this.id, this.name, this.travelsData);
   int id;
   String name;
-  List<DataRow> data;
+  List travelsData;
 }

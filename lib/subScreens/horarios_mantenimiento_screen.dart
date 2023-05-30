@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
-import 'package:horarios_web/widgets/modal_agregar_viaje.dart';
 import 'package:horarios_web/widgets/tabla_grupos.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -23,6 +22,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   var resaltadoColor = Colors.orange;
   var colorBlanco = Colors.white;
 //varios
+  bool childUpdate = false;
   StreamController groupController = StreamController<List<Group>>();
   List<Group> travels = [];
   @override
@@ -47,26 +47,8 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
 
       for (var element in jsonData) {
         List travelList = element['TRAVELS'];
-        travels.add(Group(
-            element['ID'],
-            element['NAME'].toString(),
-            travelList
-                .map((e) => DataRow(cells: [
-                      DataCell(Text(e['DEPARTURE_TIME']
-                          .toString()
-                          .split('T')[1]
-                          .replaceAll('z', ''))),
-                      DataCell(Text(e['ARRIVAL_TIME']
-                          .toString()
-                          .split('T')[1]
-                          .replaceAll('z', ''))),
-                      DataCell(Text(e['VEHICLE'])),
-                      DataCell(Text(e['DRIVER1'])),
-                      DataCell(Text(e['DRIVER2'])),
-                      DataCell(Text(e['NOTE'])),
-                      DataCell(Text(e['KM'].toString())),
-                    ]))
-                .toList()));
+        travels
+            .add(Group(element['ID'], element['NAME'].toString(), travelList));
       }
     } else {
       throw Exception('Fallo al obtener viajes por grupos');
@@ -91,75 +73,34 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                             color: colorBlanco,
                           ),
                       itemCount: travels.length,
-                      itemBuilder: (context, index) => ExpansionTile(
-                            collapsedShape: const BeveledRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5))),
-                            shape: const BeveledRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15))),
-                            iconColor: colorBlanco,
-                            collapsedIconColor: colorBlanco,
-                            collapsedTextColor: colorBlanco,
-                            collapsedBackgroundColor: gradPrincipalColor,
-                            textColor: colorBlanco,
-                            backgroundColor: principalColor,
-                            title: Text(
-                              travels[index].name,
-                              textAlign: TextAlign.center,
+                      itemBuilder: (context, index) {
+                        return ExpansionTile(
+                          collapsedShape: const BeveledRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                          shape: const BeveledRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          iconColor: colorBlanco,
+                          collapsedIconColor: colorBlanco,
+                          collapsedTextColor: colorBlanco,
+                          collapsedBackgroundColor: gradPrincipalColor,
+                          textColor: colorBlanco,
+                          backgroundColor: principalColor,
+                          title: Text(
+                            travels[index].name,
+                            textAlign: TextAlign.center,
+                          ),
+                          leading: Text('grupo ${travels[index].id}'),
+                          children: [
+                            GroupTable(
+                              travels: travels,
+                              index: index,
+                              updateParent: updateParent,
                             ),
-                            leading: Text('grupo ${travels[index].id}'),
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      color: colorBlanco,
-                                      child: GroupTable(
-                                          travels: travels, index: index),
-                                    ),
-                                  ),
-                                  Wrap(
-                                    direction: Axis.vertical,
-                                    children: [
-                                      IconButton(
-                                          onPressed: () async {
-                                            await showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return ModalAgregarViaje(
-                                                    grupoId: travels[index].id,
-                                                  );
-                                                });
-                                            setState(() {});
-                                          },
-                                          icon: Icon(
-                                            Icons.add,
-                                            color: colorBlanco,
-                                          )),
-                                      IconButton(
-                                          onPressed: () {
-                                            setState(() {});
-                                          },
-                                          icon: Icon(
-                                            Icons.edit,
-                                            color: colorBlanco,
-                                          )),
-                                      IconButton(
-                                          onPressed: () {
-                                            setState(() {});
-                                          },
-                                          icon: Icon(
-                                            Icons.delete,
-                                            color: colorBlanco,
-                                          ))
-                                    ],
-                                  )
-                                ],
-                              )
-                            ],
-                          )),
+                          ],
+                        );
+                      }),
                 );
               } else {
                 return const Center(
@@ -168,6 +109,12 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                 ));
               }
             }));
+  }
+
+  void updateParent() {
+    setState(() {
+      childUpdate = true;
+    });
   }
 
   @override

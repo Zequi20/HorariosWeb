@@ -30,6 +30,9 @@ class Pantalla extends StatelessWidget {
     //var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
     return MaterialApp(
       theme: ThemeData(
+          checkboxTheme: CheckboxThemeData(
+              checkColor: MaterialStatePropertyAll(principalColor),
+              fillColor: MaterialStatePropertyAll(resaltadoColor)),
           dialogTheme: const DialogTheme(
               titleTextStyle: TextStyle(
                 fontSize: 30,
