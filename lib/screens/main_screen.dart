@@ -24,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
 
   User? getUser() {
     if (ModalRoute.of(context)?.settings.arguments == null) {
-      return User(2, 'Pelao', '23424pelao');
+      return User(2, 'Zequi', '23424pelao');
     } else {
       return ModalRoute.of(context)?.settings.arguments as User;
     }
@@ -49,29 +49,33 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: Row(
         children: [
-          Visibility(
-            visible: isVisible,
-            child: NavigationRail(
-              backgroundColor: gradPrincipalColor,
-              minExtendedWidth: 150,
-              elevation: 5,
-              extended: extended,
-              destinations: const [
-                NavigationRailDestination(
-                    icon: Icon(Icons.home), label: Text('Inicio')),
-                NavigationRailDestination(
-                    icon: Icon(Icons.edit_note), label: Text('Datos')),
-                NavigationRailDestination(
-                    icon: Icon(Icons.access_time), label: Text('Horarios')),
-                NavigationRailDestination(
-                    icon: Icon(Icons.login), label: Text('Salir')),
-              ],
-              selectedIndex: selected,
-              onDestinationSelected: (int index) {
-                setState(() {
-                  selected = index;
-                });
-              },
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            opacity: isVisible ? 1.0 : 00,
+            child: Visibility(
+              visible: isVisible,
+              child: NavigationRail(
+                backgroundColor: gradPrincipalColor,
+                minExtendedWidth: 150,
+                elevation: 5,
+                extended: extended,
+                destinations: const [
+                  NavigationRailDestination(
+                      icon: Icon(Icons.home), label: Text('Inicio')),
+                  NavigationRailDestination(
+                      icon: Icon(Icons.edit_note), label: Text('Datos')),
+                  NavigationRailDestination(
+                      icon: Icon(Icons.note_add), label: Text('Reporte')),
+                  NavigationRailDestination(
+                      icon: Icon(Icons.login), label: Text('Salir')),
+                ],
+                selectedIndex: selected,
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    selected = index;
+                  });
+                },
+              ),
             ),
           ),
           Expanded(
@@ -80,26 +84,17 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       appBar: AppBar(
+        titleTextStyle: const TextStyle(fontSize: 18, color: Colors.white),
         leading: IconButton(
+            tooltip: 'desplegar/ocultar navegacion',
             onPressed: () {
-              setState(() {
-                visibilityCheck();
-              });
+              visibilityCheck();
+              setState(() {});
             },
-            icon: const Icon(Icons.list)),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                principalColor,
-                gradPrincipalColor,
-                gradPrincipalColor
-              ])),
-        ),
+            icon: const Icon(Icons.menu)),
+        toolbarHeight: 38,
         title: const Text(
-          'Guairena Horarios',
+          'Reporte horarios',
         ),
         elevation: 0,
       ),
@@ -121,17 +116,8 @@ class _MainScreenState extends State<MainScreen> {
         userName: getUser()?.nombre,
       );
     } else {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
-          Text(
-            'Pantalla en desarrollo',
-          ),
-          Text(
-            'Esta pantalla se encuentra en desarrollo',
-          ),
-        ],
+      return const Center(
+        child: Text('En desarrollo'),
       );
     }
   }

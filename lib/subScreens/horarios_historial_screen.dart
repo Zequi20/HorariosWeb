@@ -21,16 +21,17 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
     super.build(context);
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FutureBuilder(
             future: getRows(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 rows = snapshot.data;
-                return SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SizedBox(
-                    width: double.infinity,
+                return Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
                     child: DataTable(columns: const [
                       DataColumn(label: Text('ID')),
                       DataColumn(label: Text('Fecha')),

@@ -115,7 +115,7 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
 
     return Scaffold(
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             children: [

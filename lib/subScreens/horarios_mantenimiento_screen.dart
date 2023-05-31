@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
+import 'package:horarios_web/widgets/report.dart';
 import 'package:horarios_web/widgets/tabla_grupos.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -23,18 +24,11 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   var colorBlanco = Colors.white;
 //varios
   bool childUpdate = false;
-  StreamController groupController = StreamController<List<Group>>();
   List<Group> travels = [];
   @override
   void initState() {
     super.initState();
     fetchTravelsByGroup();
-  }
-
-  @override
-  void dispose() {
-    groupController.close();
-    super.dispose();
   }
 
   Future fetchTravelsByGroup() async {
@@ -60,6 +54,20 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+        floatingActionButton: TextButton.icon(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      child: Report(
+                        lista: travels,
+                      ),
+                    );
+                  });
+            },
+            icon: const Icon(Icons.note_add),
+            label: const Text('Generar reporte')),
         body: FutureBuilder(
             future: fetchTravelsByGroup(),
             builder: (context, snapshot) {
@@ -84,9 +92,9 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                           iconColor: colorBlanco,
                           collapsedIconColor: colorBlanco,
                           collapsedTextColor: colorBlanco,
-                          collapsedBackgroundColor: gradPrincipalColor,
+                          collapsedBackgroundColor: principalColor,
                           textColor: colorBlanco,
-                          backgroundColor: principalColor,
+                          backgroundColor: gradPrincipalColor,
                           title: Text(
                             travels[index].name,
                             textAlign: TextAlign.center,

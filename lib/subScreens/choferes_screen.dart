@@ -30,57 +30,59 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   int valorTipo = 0;
   List<DataRow> rows = [];
   int searchIndex = 0;
+  bool titleVisible = true;
   List<int> selectedRows = [];
   List<DropdownMenuItem<int>> itemList = const [
     DropdownMenuItem(
       value: 0,
-      child: Text('Id'),
+      child: Text('Id', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 1,
-      child: Text('Codigo'),
+      child: Text('Codigo', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 2,
-      child: Text('Tipo'),
+      child: Text('Tipo', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 3,
-      child: Text('Nombre'),
+      child: Text('Nombre', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 4,
-      child: Text('Documento'),
+      child: Text('Documento', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 5,
-      child: Text('Registro'),
+      child: Text('Registro', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 6,
-      child: Text('Nacimiento'),
+      child: Text('Nacimiento', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 7,
-      child: Text('Estado Civil'),
+      child: Text('Estado Civil', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 8,
-      child: Text('Direccion'),
+      child: Text('Direccion', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 9,
-      child: Text('Telefono'),
+      child: Text('Telefono', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 10,
-      child: Text('Usuario'),
+      child: Text('Usuario', overflow: TextOverflow.ellipsis),
     ),
     DropdownMenuItem(
       value: 11,
-      child: Text('Alta'),
+      child: Text('Alta', overflow: TextOverflow.ellipsis),
     )
   ];
+
   DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
   var deleteController = TextEditingController();
   var searchController = TextEditingController();
@@ -187,51 +189,87 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              Expanded(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Visibility(
+                    visible: titleVisible,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 44),
+                      child: FittedBox(
+                        child: Text(
+                          'Choferes',
+                          style: TextStyle(fontSize: 18, color: principalColor),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
                   flex: 2,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: searchController,
-                      onChanged: (value) {
-                        setState(() {});
-                      },
-                      decoration: const InputDecoration(
-                          suffixIconColor: Colors.black54,
-                          hintText: 'Buscar',
-                          suffixIcon: Icon(Icons.search)),
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    child: SizedBox(
+                      height: 48,
+                      child: DropdownButtonFormField(
+                        isExpanded: true,
+                        focusColor: Colors.transparent,
+                        borderRadius: BorderRadius.circular(24),
+                        menuMaxHeight: 256,
+                        value: searchIndex,
+                        items: itemList,
+                        onChanged: (int? value) {
+                          searchIndex = value!;
+                          setState(() {});
+                        },
+                      ),
                     ),
-                  )),
-              Padding(
-                padding: const EdgeInsets.all(18),
-                child: DropdownButton(
-                  underline: Container(),
-                  isExpanded: false,
-                  focusColor: Colors.transparent,
-                  borderRadius: BorderRadius.circular(24),
-                  menuMaxHeight: 256,
-                  hint: const Text('Buscar por:'),
-                  value: searchIndex,
-                  items: itemList,
-                  onChanged: (int? value) {
-                    searchIndex = value!;
-                    setState(() {});
-                  },
+                  ),
                 ),
-              ),
-              Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ButtonBar(
-                    children: [
-                      IconButton(
-                        hoverColor: resaltadoColor,
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: SizedBox(
+                      height: 48,
+                      child: TextFormField(
+                        controller: searchController,
+                        onChanged: (value) {
+                          setState(() {});
+                        },
+                        decoration: const InputDecoration(
+                            suffixIconColor: Colors.black54,
+                            hintText: 'Filtrar',
+                            suffixIcon: Icon(Icons.search)),
+                      ),
+                    ),
+                  ),
+                ),
+                PopupMenuButton(
+                  position: PopupMenuPosition.under,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: resaltadoColor)),
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  splashRadius: 28,
+                  icon: Icon(
+                    Icons.construction,
+                    fill: 1,
+                    color: gradPrincipalColor,
+                  ),
+                  iconSize: 32,
+                  tooltip: 'Acciones',
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      TextButton.icon(
                         onPressed: () async {
                           await showDialog(
                               context: context,
@@ -244,73 +282,14 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                         },
                         icon: Icon(
                           Icons.person_add,
-                          color: principalColor,
+                          color: gradPrincipalColor,
+                        ),
+                        label: Text(
+                          'Agregar',
+                          style: TextStyle(color: principalColor),
                         ),
                       ),
-                      IconButton(
-                        hoverColor: resaltadoColor,
-                        onPressed: () async {
-                          if (selectedRows.isNotEmpty &&
-                              selectedRows.length < 2) {
-                            CamposChoferes campos = CamposChoferes.fromRow(
-                                rows, selectedRows.first);
-                            await showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return ModalEditarChofer(
-                                    rowId: campos.id,
-                                    userId: widget.userId,
-                                    codigo: campos.codigo,
-                                    direccion: campos.direccion,
-                                    documento: campos.documento,
-                                    estado: campos.estado,
-                                    fechaAlta: campos.fechaAlta,
-                                    fechaNac: campos.fechaNac,
-                                    nombre: campos.nombre,
-                                    registro: campos.registro,
-                                    telefono: campos.telefono,
-                                    tipo: campos.tipo,
-                                  );
-                                });
-                            setState(() {
-                              selectedRows.clear();
-                            });
-                          } else {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                      title: const Text(
-                                          'Seleccion unica requerida'),
-                                      content: Wrap(
-                                        children: [
-                                          Text(selectedRows.isEmpty
-                                              ? 'Usted no ha seleeccionado ningun elemento'
-                                              : 'Seleccione un unico elemento')
-                                        ],
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          style: const ButtonStyle(
-                                              foregroundColor:
-                                                  MaterialStatePropertyAll(
-                                                      Colors.white)),
-                                          child: const Text('Aceptar'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(true);
-                                          },
-                                        ),
-                                      ]);
-                                });
-                          }
-                        },
-                        icon: Icon(
-                          Icons.mode_edit,
-                          color: principalColor,
-                        ),
-                      ),
-                      IconButton(
-                        hoverColor: resaltadoColor,
+                      TextButton.icon(
                         onPressed: () {
                           if (selectedRows.isNotEmpty) {
                             showDialog(
@@ -378,11 +357,87 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                             );
                           }
                         },
-                        icon: Icon(Icons.person_remove, color: principalColor),
+                        icon: Icon(Icons.person_remove,
+                            color: gradPrincipalColor),
+                        label: Text(
+                          'Remover',
+                          style: TextStyle(color: principalColor),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () async {
+                          if (selectedRows.isNotEmpty &&
+                              selectedRows.length < 2) {
+                            CamposChoferes campos = CamposChoferes.fromRow(
+                                rows, selectedRows.first);
+                            await showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return ModalEditarChofer(
+                                    rowId: campos.id,
+                                    userId: widget.userId,
+                                    codigo: campos.codigo,
+                                    direccion: campos.direccion,
+                                    documento: campos.documento,
+                                    estado: campos.estado,
+                                    fechaAlta: campos.fechaAlta,
+                                    fechaNac: campos.fechaNac,
+                                    nombre: campos.nombre,
+                                    registro: campos.registro,
+                                    telefono: campos.telefono,
+                                    tipo: campos.tipo,
+                                  );
+                                });
+                            setState(() {
+                              selectedRows.clear();
+                            });
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                      title: const Text(
+                                          'Seleccion unica requerida'),
+                                      content: Wrap(
+                                        children: [
+                                          Text(selectedRows.isEmpty
+                                              ? 'Usted no ha seleeccionado ningun elemento'
+                                              : 'Seleccione un unico elemento')
+                                        ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          style: const ButtonStyle(
+                                              foregroundColor:
+                                                  MaterialStatePropertyAll(
+                                                      Colors.white)),
+                                          child: const Text('Aceptar'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(true);
+                                          },
+                                        ),
+                                      ]);
+                                });
+                          }
+                        },
+                        icon: Icon(
+                          Icons.mode_edit,
+                          color: gradPrincipalColor,
+                        ),
+                        label: Text(
+                          'Editar',
+                          style: TextStyle(color: principalColor),
+                        ),
                       )
-                    ],
-                  )),
-            ],
+                    ].map((e) {
+                      return PopupMenuItem(
+                        child: e,
+                      );
+                    }).toList();
+                  },
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: Scrollbar(
@@ -414,33 +469,37 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                         return SingleChildScrollView(
                           controller: verticalController,
                           scrollDirection: Axis.vertical,
-                          child: DataTable(
-                            onSelectAll: (value) {
-                              setState(() {
-                                if (value!) {
-                                  selectedRows.addAll(rows
-                                      .map((e) => rows.indexOf(e))
-                                      .toList());
-                                } else {
-                                  selectedRows.clear();
-                                }
-                              });
-                            },
-                            columns: const [
-                              DataColumn(label: Text('ID')),
-                              DataColumn(label: Text('Codigo')),
-                              DataColumn(label: Text('Tipo')),
-                              DataColumn(label: Text('Nombre')),
-                              DataColumn(label: Text('Documento')),
-                              DataColumn(label: Text('Registro')),
-                              DataColumn(label: Text('Nacimiento')),
-                              DataColumn(label: Text('Estado Civil')),
-                              DataColumn(label: Text('Direccion')),
-                              DataColumn(label: Text('Telefono')),
-                              DataColumn(label: Text('Usuario')),
-                              DataColumn(label: Text('Alta'))
-                            ],
-                            rows: rows,
+                          child: Theme(
+                            data: Theme.of(context)
+                                .copyWith(dividerColor: principalColor),
+                            child: DataTable(
+                              onSelectAll: (value) {
+                                setState(() {
+                                  if (value!) {
+                                    selectedRows.addAll(rows
+                                        .map((e) => rows.indexOf(e))
+                                        .toList());
+                                  } else {
+                                    selectedRows.clear();
+                                  }
+                                });
+                              },
+                              columns: const [
+                                DataColumn(label: Text('ID')),
+                                DataColumn(label: Text('Codigo')),
+                                DataColumn(label: Text('Tipo')),
+                                DataColumn(label: Text('Nombre')),
+                                DataColumn(label: Text('Documento')),
+                                DataColumn(label: Text('Registro')),
+                                DataColumn(label: Text('Nacimiento')),
+                                DataColumn(label: Text('Estado Civil')),
+                                DataColumn(label: Text('Direccion')),
+                                DataColumn(label: Text('Telefono')),
+                                DataColumn(label: Text('Usuario')),
+                                DataColumn(label: Text('Alta'))
+                              ],
+                              rows: rows,
+                            ),
                           ),
                         );
                       } else {

@@ -80,7 +80,6 @@ class _GroupTableState extends State<GroupTable> {
                     }
                     setState(() {});
                   },
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
                   columns: const [
                     DataColumn(label: Text('ID')),
                     DataColumn(label: Text('PARTIDA')),
