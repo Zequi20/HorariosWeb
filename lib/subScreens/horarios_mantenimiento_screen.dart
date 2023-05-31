@@ -55,6 +55,8 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     super.build(context);
     return Scaffold(
         floatingActionButton: TextButton.icon(
+            style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(gradPrincipalColor)),
             onPressed: () {
               showDialog(
                   context: context,
