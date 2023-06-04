@@ -68,8 +68,14 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                     );
                   });
             },
-            icon: const Icon(Icons.note_add),
-            label: const Text('Generar reporte')),
+            icon: const Icon(
+              Icons.note_add,
+              color: Colors.white,
+            ),
+            label: const Text(
+              'Generar reporte',
+              style: TextStyle(color: Colors.white),
+            )),
         body: FutureBuilder(
             future: fetchTravelsByGroup(),
             builder: (context, snapshot) {
