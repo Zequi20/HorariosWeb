@@ -1,95 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:horarios_web/models/model_group.dart';
+import 'package:horarios_web/widgets/pdf_est.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:pdf/pdf.dart' as pw;
+import 'package:pdf/widgets.dart';
 
-class Report extends StatelessWidget {
-  const Report({super.key, required this.lista});
-  final List<Group> lista;
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      contentTextStyle: const TextStyle(color: Colors.black),
-      content: Column(
-        children: [
-          Table(
-            border: TableBorder.all(color: Colors.black),
-            children: const [
-              TableRow(children: [
-                Text(
-                  'Soy un titulo',
-                  textAlign: TextAlign.center,
-                )
-              ]),
-              TableRow(children: [Estructura()])
-            ],
-          ),
-          Table(
-            border: TableBorder.all(color: Colors.black),
-            children: const [
-              TableRow(children: [
-                Text(
-                  'Soy un titulo',
-                  textAlign: TextAlign.center,
-                )
-              ]),
-              TableRow(children: [Estructura()])
-            ],
-          ),
-          Table(
-            border: TableBorder.all(color: Colors.black),
-            children: const [
-              TableRow(children: [
-                Text(
-                  'Soy un titulo',
-                  textAlign: TextAlign.center,
-                )
-              ]),
-              TableRow(children: [Estructura()])
-            ],
-          ),
-          Table(
-            border: TableBorder.all(color: Colors.black),
-            children: const [
-              TableRow(children: [
-                Text(
-                  'Soy un titulo',
-                  textAlign: TextAlign.center,
-                )
-              ]),
-              TableRow(children: [Estructura()])
-            ],
-          )
-        ],
-      ),
-    );
+class Report {
+  Report(this.lista);
+  List<Group> lista;
+  void generate(BuildContext context) {
+    _printPdf(context);
   }
-}
 
-class Estructura extends StatelessWidget {
-  const Estructura({super.key});
+  Future<void> _printPdf(BuildContext context) async {
+    final pdf = await _generatePdf(pw.PdfPageFormat.a3);
 
-  @override
-  Widget build(BuildContext context) {
-    List<List<String>> tembo = [
-      ['Caca', 'Pedo', 'Culo'],
-      ['KUKA', 'EXPLAOTE', 'LA CHUhjghhghNN']
-    ];
-    return Table(
-      border: const TableBorder(
-          horizontalInside: BorderSide(color: Colors.black),
-          verticalInside: BorderSide(color: Colors.black)),
-      children: tembo
-          .map((e) => TableRow(children: [
-                TableCell(
-                    child: Text(
-                  e[0],
-                  textAlign: TextAlign.center,
-                )),
-                TableCell(child: Text(e[1], textAlign: TextAlign.center)),
-                TableCell(child: Text(e[2], textAlign: TextAlign.center))
-              ]))
-          .toList(),
+    _openPdfInNewTab(pdf);
+  }
+
+  Future<Uint8List> _generatePdf(pw.PdfPageFormat format) async {
+    final pdf = Document();
+
+    final page = MultiPage(
+      pageFormat: format,
+      build: (context) {
+        return [Titled(lista)];
+      },
     );
+
+    pdf.addPage(page);
+
+    return pdf.save();
+  }
+
+  void _openPdfInNewTab(Uint8List pdfBytes) {
+    final blob = html.Blob([pdfBytes], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    html.AnchorElement()
+      ..href = url
+      ..download = 'reporte.pdf'
+      ..click();
+    html.Url.revokeObjectUrl(url);
   }
 }

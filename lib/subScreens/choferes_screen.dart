@@ -475,7 +475,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                             child: DataTable(
                               onSelectAll: (value) {
                                 setState(() {
-                                  if (value!) {
+                                  if (value! == true) {
                                     selectedRows.addAll(rows
                                         .map((e) => rows.indexOf(e))
                                         .toList());
@@ -536,7 +536,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
       fetched.add(DataRow(
           selected: selectedRows.contains(i),
           onSelectChanged: (value) {
-            if (value!) {
+            if (value! == true) {
               selectedRows.add(i);
             } else {
               selectedRows.remove(i);
