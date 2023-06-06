@@ -54,28 +54,32 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-        floatingActionButton: TextButton.icon(
-            style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(gradPrincipalColor)),
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      child: Report(
-                        lista: travels,
-                      ),
-                    );
-                  });
-            },
-            icon: const Icon(
-              Icons.note_add,
-              color: Colors.white,
-            ),
-            label: const Text(
-              'Generar reporte',
-              style: TextStyle(color: Colors.white),
-            )),
+        floatingActionButton: FutureBuilder(
+            future: fetchTravelsByGroup(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return TextButton.icon(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(gradPrincipalColor)),
+                    onPressed: () async {
+                      var reporte = Report(snapshot.data);
+                      reporte.generate(context);
+                    },
+                    icon: const Icon(
+                      Icons.note_add,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      'Generar reporte',
+                      style: TextStyle(color: Colors.white),
+                    ));
+              } else {
+                return const CircularProgressIndicator(
+                  color: Colors.red,
+                );
+              }
+            }),
         body: FutureBuilder(
             future: fetchTravelsByGroup(),
             builder: (context, snapshot) {
