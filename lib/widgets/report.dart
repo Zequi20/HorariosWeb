@@ -14,7 +14,10 @@ class Report {
   }
 
   Future<void> _printPdf(BuildContext context) async {
-    final pdf = await _generatePdf(pw.PdfPageFormat.a3);
+    final formato = pw.PdfPageFormat.a3.copyWith(
+        marginTop: 10, marginBottom: 10, marginLeft: 10, marginRight: 10);
+
+    final pdf = await _generatePdf(formato);
 
     _openPdfInNewTab(pdf);
   }
