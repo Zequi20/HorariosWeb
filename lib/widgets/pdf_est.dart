@@ -96,8 +96,8 @@ class Titled extends StatelessWidget {
                         decoration: BoxDecoration(
                             border: Border.all(color: blackColor)),
                         child: Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: Text(e.name,
+                            padding: const EdgeInsets.all(0),
+                            child: Text(e.name.toUpperCase(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -112,16 +112,13 @@ class Titled extends StatelessWidget {
     contenido.insert(
         0,
         Table(border: TableBorder.all(color: blackColor), children: [
-          TableRow(
-              decoration: const BoxDecoration(color: PdfColors.orange50),
-              children: [
-                Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Text(
-                        'Empresa Guairena de Transporte y Turismo S.R.L',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold)))
-              ]),
+          TableRow(children: [
+            Padding(
+                padding: const EdgeInsets.all(2),
+                child: Text('EMPRESA GUAIREÑA DE TRANSPORTE Y TURISMO S.R.L',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold)))
+          ]),
           TableRow(
               decoration: const BoxDecoration(color: PdfColors.orange),
               children: [
@@ -146,16 +143,14 @@ class Titled extends StatelessWidget {
             },
             border: TableBorder.all(color: blackColor),
             children: [
-              TableRow(
-                  decoration: const BoxDecoration(color: PdfColors.orange50),
-                  children: [
-                    TableCell(Text('Salida')),
-                    TableCell(Text('Llegada')),
-                    TableCell(Text('Coche')),
-                    TableCell(Text('Conductor')),
-                    TableCell(Text('Guarda')),
-                    TableCell(Text('Nota'))
-                  ]),
+              TableRow(children: [
+                TableCell(Text('Salida')),
+                TableCell(Text('Llegada')),
+                TableCell(Text('Coche')),
+                TableCell(Text('Conductor')),
+                TableCell(Text('Guarda')),
+                TableCell(Text('Nota'))
+              ]),
             ]));
     contenido.add(Table(children: [
       TableRow(children: [
@@ -165,6 +160,9 @@ class Titled extends StatelessWidget {
             decoration: BoxDecoration(border: Border.all(color: blackColor)))
       ])
     ]));
-    return Column(children: contenido);
+    return Container(
+        decoration:
+            const BoxDecoration(boxShadow: [BoxShadow(offset: PdfPoint(2, 2))]),
+        child: Column(children: contenido));
   }
 }

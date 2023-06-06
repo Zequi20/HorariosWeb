@@ -131,6 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Expanded(
                             flex: 2,
                             child: TextFormField(
+                              obscureText: true,
                               maxLength: 50,
                               controller: passController,
                               decoration: const InputDecoration(
@@ -194,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ])),
         ),
         title: const Text(
-          'Guairena Horarios',
+          'REPORTES EMPRESA GUAIREÑA',
         ),
         elevation: 0,
       ),
