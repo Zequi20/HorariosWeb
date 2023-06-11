@@ -10,10 +10,10 @@ class Estructura extends StatelessWidget {
     var blackColor = const PdfColor(0, 0, 0);
     return Table(
       columnWidths: {
-        0: const FractionColumnWidth(0.25),
-        1: const FractionColumnWidth(0.28),
-        2: const FractionColumnWidth(0.3),
-        3: const FractionColumnWidth(0.8),
+        0: const FractionColumnWidth(0.2),
+        1: const FractionColumnWidth(0.2),
+        2: const FractionColumnWidth(0.2),
+        3: const FractionColumnWidth(1),
         4: const FractionColumnWidth(1),
         5: const FractionColumnWidth(1)
       },
@@ -40,7 +40,7 @@ class Estructura extends StatelessWidget {
                   textAlign: TextAlign.center,
                 )),
                 TableCell(Text(
-                  e['VEHICLE'],
+                  e['VEHICLE'].toString(),
                   textAlign: TextAlign.center,
                 )),
                 TableCell(Text(
@@ -109,57 +109,33 @@ class Titled extends StatelessWidget {
     contenido.add(Table(children: [
       TableRow(children: [Padding(padding: const EdgeInsets.all(8.0))])
     ]));
+
     contenido.insert(
         0,
-        Table(border: TableBorder.all(color: blackColor), children: [
-          TableRow(children: [
-            Padding(
-                padding: const EdgeInsets.all(2),
-                child: Text('EMPRESA GUAIREÑA DE TRANSPORTE Y TURISMO S.R.L',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold)))
-          ]),
-          TableRow(
-              decoration: const BoxDecoration(color: PdfColors.orange),
-              children: [
-                Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Text('HORARIO DE VIAJE: 5 DE JUNIO DE 2023',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center))
-              ])
-        ]));
-    contenido.insert(
-        1,
         Table(
             defaultVerticalAlignment: TableCellVerticalAlignment.full,
             columnWidths: {
-              0: const FractionColumnWidth(0.25),
-              1: const FractionColumnWidth(0.28),
-              2: const FractionColumnWidth(0.3),
-              3: const FractionColumnWidth(0.8),
+              0: const FractionColumnWidth(0.20),
+              1: const FractionColumnWidth(0.20),
+              2: const FractionColumnWidth(0.20),
+              3: const FractionColumnWidth(1),
               4: const FractionColumnWidth(1),
               5: const FractionColumnWidth(1)
             },
             border: TableBorder.all(color: blackColor),
             children: [
-              TableRow(children: [
-                TableCell(Text('Salida')),
-                TableCell(Text('Llegada')),
-                TableCell(Text('Coche')),
-                TableCell(Text('Conductor')),
-                TableCell(Text('Guarda')),
-                TableCell(Text('Nota'))
-              ]),
+              TableRow(
+                  decoration: const BoxDecoration(color: PdfColors.orange100),
+                  children: [
+                    TableCell(Text('Salida')),
+                    TableCell(FittedBox(child: Text('Llegada'))),
+                    TableCell(Text('Coche')),
+                    TableCell(Text('Conductor')),
+                    TableCell(Text('Guarda')),
+                    TableCell(Text('Nota'))
+                  ]),
             ]));
-    contenido.add(Table(children: [
-      TableRow(children: [
-        Container(
-            height: 1000,
-            width: double.maxFinite,
-            decoration: BoxDecoration(border: Border.all(color: blackColor)))
-      ])
-    ]));
+
     return Container(
         decoration:
             const BoxDecoration(boxShadow: [BoxShadow(offset: PdfPoint(2, 2))]),

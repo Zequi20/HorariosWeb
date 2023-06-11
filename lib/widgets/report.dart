@@ -1,31 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/pdf_est.dart';
-import 'package:universal_html/html.dart' as html;
-import 'package:pdf/pdf.dart' as pw;
-import 'package:pdf/widgets.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class Report {
   Report(this.lista);
   List<Group> lista;
-  void generate(BuildContext context) {
-    _printPdf(context);
+  void generate(BuildContext context, List<String> coments) {
+    _printPdf(context, coments);
   }
 
-  Future<void> _printPdf(BuildContext context) async {
-    final formato = pw.PdfPageFormat.a3.copyWith(
+  Future<void> _printPdf(BuildContext context, List<String> coments) async {
+    final formato = PdfPageFormat.a3.copyWith(
         marginTop: 10, marginBottom: 10, marginLeft: 10, marginRight: 10);
 
-    final pdf = await _generatePdf(formato);
-
-    _openPdfInNewTab(pdf);
+    await _generatePdf(formato, coments);
   }
 
-  Future<Uint8List> _generatePdf(pw.PdfPageFormat format) async {
-    final pdf = Document();
+  Future _generatePdf(PdfPageFormat format, List<String> coments) async {
+    final pdf = pw.Document();
 
-    final page = MultiPage(
+    final page = pw.MultiPage(
+      header: (context) {
+        return pw.Table(
+            border: pw.TableBorder.all(color: PdfColors.black),
+            children: [
+              pw.TableRow(children: [
+                pw.Padding(
+                    padding: const pw.EdgeInsets.all(2),
+                    child: pw.Text(
+                        'EMPRESA GUAIREÑA DE TRANSPORTE Y TURISMO S.R.L',
+                        textAlign: pw.TextAlign.center,
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold)))
+              ]),
+              pw.TableRow(
+                  decoration: const pw.BoxDecoration(color: PdfColors.orange),
+                  children: [
+                    pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text('HORARIO DE VIAJE: 5 DE JUNIO DE 2023',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                            textAlign: pw.TextAlign.center))
+                  ])
+            ]);
+      },
+      footer: (context) => pw.Table(
+        border: pw.TableBorder.all(color: PdfColors.black),
+        children: [
+          pw.TableRow(children: [
+            pw.Container(
+                padding: const pw.EdgeInsets.all(5),
+                child: pw.Text(coments[0])),
+            pw.Container(
+                padding: const pw.EdgeInsets.all(5), child: pw.Text(coments[1]))
+          ])
+        ],
+      ),
       pageFormat: format,
       build: (context) {
         return [Titled(lista)];
@@ -33,17 +65,7 @@ class Report {
     );
 
     pdf.addPage(page);
-
-    return pdf.save();
-  }
-
-  void _openPdfInNewTab(Uint8List pdfBytes) {
-    final blob = html.Blob([pdfBytes], 'application/pdf');
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    html.AnchorElement()
-      ..href = url
-      ..download = 'reporte.pdf'
-      ..click();
-    html.Url.revokeObjectUrl(url);
+    await Printing.layoutPdf(
+        name: 'Reporte.pdf', onLayout: (format) => pdf.save());
   }
 }

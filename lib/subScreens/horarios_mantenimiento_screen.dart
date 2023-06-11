@@ -16,6 +16,9 @@ class HorariosMantenimiento extends StatefulWidget {
 
 class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     with AutomaticKeepAliveClientMixin {
+  //campos de texto
+  var izquierdaController = TextEditingController();
+  var derechaController = TextEditingController();
   //colores
   var verticalController = ScrollController();
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
@@ -63,16 +66,154 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                         backgroundColor:
                             MaterialStatePropertyAll(gradPrincipalColor)),
                     onPressed: () async {
-                      var reporte = Report(snapshot.data);
-                      reporte.generate(context);
+                      await showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog.fullscreen(
+                              child: Column(
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.all(5.0),
+                                    child: Text(
+                                      'Generador de reporte',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 22),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: TextField(
+                                        decoration: const InputDecoration(
+                                            hintText:
+                                                'Comentario del lado derecho',
+                                            filled: true,
+                                            fillColor: Colors.white),
+                                        maxLines: null,
+                                        minLines: null,
+                                        expands: true,
+                                        controller: derechaController,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: TextField(
+                                        decoration: const InputDecoration(
+                                            hintText:
+                                                'Comentario del lado izquierdo',
+                                            filled: true,
+                                            fillColor: Colors.white),
+                                        maxLines: null,
+                                        minLines: null,
+                                        expands: true,
+                                        controller: izquierdaController,
+                                      ),
+                                    ),
+                                  ),
+                                  const Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(2.0),
+                                      child: Text(
+                                        'Fecha e id etc',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 22),
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: TextButton.icon(
+                                              icon: Icon(
+                                                Icons.arrow_back,
+                                                color: resaltadoColor,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context).pop(true);
+                                              },
+                                              label: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(6),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                    .all(
+                                                                Radius.circular(
+                                                                    5)),
+                                                        border: Border.all(
+                                                            color:
+                                                                resaltadoColor)),
+                                                    child: Text(
+                                                      'Cancelar',
+                                                      style: TextStyle(
+                                                          color:
+                                                              resaltadoColor),
+                                                    )),
+                                              )),
+                                        ),
+                                      ),
+                                      Expanded(
+                                          child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextButton.icon(
+                                            icon: Icon(
+                                              Icons.picture_as_pdf,
+                                              color: resaltadoColor,
+                                            ),
+                                            onPressed: () async {
+                                              var reporte =
+                                                  Report(snapshot.data);
+                                              reporte.generate(context, [
+                                                izquierdaController.text,
+                                                derechaController.text
+                                              ]);
+                                            },
+                                            label: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Container(
+                                                  padding:
+                                                      const EdgeInsets.all(6),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                                  .all(
+                                                              Radius.circular(
+                                                                  5)),
+                                                      border: Border.all(
+                                                          color:
+                                                              resaltadoColor)),
+                                                  child: Text(
+                                                    'Generar',
+                                                    style: TextStyle(
+                                                        color: resaltadoColor),
+                                                  )),
+                                            )),
+                                      ))
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          });
                     },
                     icon: const Icon(
                       Icons.note_add,
                       color: Colors.white,
                     ),
-                    label: const Text(
-                      'Generar reporte',
-                      style: TextStyle(color: Colors.white),
+                    label: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'Generador de reporte',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ));
               } else {
                 return const CircularProgressIndicator(
