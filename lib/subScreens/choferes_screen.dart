@@ -194,33 +194,42 @@ class _ScreenChoferesState extends State<ScreenChoferes>
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Visibility(
-                    visible: titleVisible,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 44),
-                      child: FittedBox(
-                        child: Text(
-                          'Choferes',
-                          style: TextStyle(fontSize: 18, color: principalColor),
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
+          Container(
+            color: gradPrincipalColor,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: SizedBox(
+                        height: 52,
+                        child: TextFormField(
+                          controller: searchController,
+                          onChanged: (value) {
+                            setState(() {});
+                          },
+                          decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              suffixIconColor: Colors.black54,
+                              hintText: 'Filtrar',
+                              suffixIcon: Icon(Icons.search)),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                  Expanded(
+                    flex: 1,
                     child: SizedBox(
-                      height: 48,
+                      height: 52,
                       child: DropdownButtonFormField(
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
                         isExpanded: true,
                         focusColor: Colors.transparent,
                         borderRadius: BorderRadius.circular(24),
@@ -234,209 +243,191 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: SizedBox(
-                      height: 48,
-                      child: TextFormField(
-                        controller: searchController,
-                        onChanged: (value) {
-                          setState(() {});
-                        },
-                        decoration: const InputDecoration(
-                            suffixIconColor: Colors.black54,
-                            hintText: 'Filtrar',
-                            suffixIcon: Icon(Icons.search)),
-                      ),
+                  PopupMenuButton(
+                    position: PopupMenuPosition.under,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: resaltadoColor)),
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    splashRadius: 18,
+                    icon: Icon(
+                      Icons.construction,
+                      fill: 1,
+                      color: resaltadoColor,
                     ),
-                  ),
-                ),
-                PopupMenuButton(
-                  position: PopupMenuPosition.under,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: resaltadoColor)),
-                  padding: const EdgeInsets.symmetric(horizontal: 28),
-                  splashRadius: 28,
-                  icon: Icon(
-                    Icons.construction,
-                    fill: 1,
-                    color: gradPrincipalColor,
-                  ),
-                  iconSize: 32,
-                  tooltip: 'Acciones',
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      TextButton.icon(
-                        onPressed: () async {
-                          await showDialog(
-                              context: context,
-                              builder: (context) {
-                                return ModalAgregarChofer(
-                                  userId: widget.userId,
-                                );
-                              });
-                          setState(() {});
-                        },
-                        icon: Icon(
-                          Icons.person_add,
-                          color: gradPrincipalColor,
-                        ),
-                        label: Text(
-                          'Agregar',
-                          style: TextStyle(color: principalColor),
-                        ),
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          if (selectedRows.isNotEmpty) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Eliminar registro'),
-                                  content: Wrap(
-                                    children: [
-                                      Text(
-                                          'Seguro que desea eliminar ${selectedRows.length} ${selectedRows.length > 1 ? 'registros' : 'registro'}?')
-                                    ],
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      style: const ButtonStyle(
-                                          foregroundColor:
-                                              MaterialStatePropertyAll(
-                                                  Colors.white)),
-                                      child: const Text('Si, continuar'),
-                                      onPressed: () {
-                                        deleteReg();
-                                      },
-                                    ),
-                                    TextButton(
-                                      style: const ButtonStyle(
-                                          foregroundColor:
-                                              MaterialStatePropertyAll(
-                                                  Colors.white)),
-                                      child: const Text('Cancelar'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop(true);
-                                      },
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Seleccionar registro(s)'),
-                                  content: Wrap(
-                                    children: const [
-                                      Text(
-                                          'Para borrar un registro debe seleccionarlo de la lista')
-                                    ],
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      style: const ButtonStyle(
-                                          foregroundColor:
-                                              MaterialStatePropertyAll(
-                                                  Colors.white)),
-                                      child: const Text('Aceptar'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop(true);
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
-                        },
-                        icon: Icon(Icons.person_remove,
-                            color: gradPrincipalColor),
-                        label: Text(
-                          'Remover',
-                          style: TextStyle(color: principalColor),
-                        ),
-                      ),
-                      TextButton.icon(
-                        onPressed: () async {
-                          if (selectedRows.isNotEmpty &&
-                              selectedRows.length < 2) {
-                            CamposChoferes campos = CamposChoferes.fromRow(
-                                rows, selectedRows.first);
+                    iconSize: 32,
+                    tooltip: 'Acciones',
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        TextButton.icon(
+                          onPressed: () async {
                             await showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return ModalEditarChofer(
-                                    rowId: campos.id,
+                                  return ModalAgregarChofer(
                                     userId: widget.userId,
-                                    codigo: campos.codigo,
-                                    direccion: campos.direccion,
-                                    documento: campos.documento,
-                                    estado: campos.estado,
-                                    fechaAlta: campos.fechaAlta,
-                                    fechaNac: campos.fechaNac,
-                                    nombre: campos.nombre,
-                                    registro: campos.registro,
-                                    telefono: campos.telefono,
-                                    tipo: campos.tipo,
                                   );
                                 });
-                            setState(() {
-                              selectedRows.clear();
-                            });
-                          } else {
-                            showDialog(
+                            setState(() {});
+                          },
+                          icon: Icon(
+                            Icons.person_add,
+                            color: gradPrincipalColor,
+                          ),
+                          label: Text(
+                            'Agregar',
+                            style: TextStyle(color: principalColor),
+                          ),
+                        ),
+                        TextButton.icon(
+                          onPressed: () {
+                            if (selectedRows.isNotEmpty) {
+                              showDialog(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                      title: const Text(
-                                          'Seleccion unica requerida'),
-                                      content: Wrap(
-                                        children: [
-                                          Text(selectedRows.isEmpty
-                                              ? 'Usted no ha seleeccionado ningun elemento'
-                                              : 'Seleccione un unico elemento')
-                                        ],
+                                    title: const Text('Eliminar registro'),
+                                    content: Wrap(
+                                      children: [
+                                        Text(
+                                            'Seguro que desea eliminar ${selectedRows.length} ${selectedRows.length > 1 ? 'registros' : 'registro'}?')
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        style: const ButtonStyle(
+                                            foregroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Colors.white)),
+                                        child: const Text('Si, continuar'),
+                                        onPressed: () {
+                                          deleteReg();
+                                        },
                                       ),
-                                      actions: [
-                                        TextButton(
-                                          style: const ButtonStyle(
-                                              foregroundColor:
-                                                  MaterialStatePropertyAll(
-                                                      Colors.white)),
-                                          child: const Text('Aceptar'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(true);
-                                          },
+                                      TextButton(
+                                        style: const ButtonStyle(
+                                            foregroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Colors.white)),
+                                        child: const Text('Cancelar'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true);
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title:
+                                        const Text('Seleccionar registro(s)'),
+                                    content: Wrap(
+                                      children: const [
+                                        Text(
+                                            'Para borrar un registro debe seleccionarlo de la lista')
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        style: const ButtonStyle(
+                                            foregroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Colors.white)),
+                                        child: const Text('Aceptar'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          icon: Icon(Icons.person_remove,
+                              color: gradPrincipalColor),
+                          label: Text(
+                            'Remover',
+                            style: TextStyle(color: principalColor),
+                          ),
+                        ),
+                        TextButton.icon(
+                          onPressed: () async {
+                            if (selectedRows.isNotEmpty &&
+                                selectedRows.length < 2) {
+                              CamposChoferes campos = CamposChoferes.fromRow(
+                                  rows, selectedRows.first);
+                              await showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return ModalEditarChofer(
+                                      rowId: campos.id,
+                                      userId: widget.userId,
+                                      codigo: campos.codigo,
+                                      direccion: campos.direccion,
+                                      documento: campos.documento,
+                                      estado: campos.estado,
+                                      fechaAlta: campos.fechaAlta,
+                                      fechaNac: campos.fechaNac,
+                                      nombre: campos.nombre,
+                                      registro: campos.registro,
+                                      telefono: campos.telefono,
+                                      tipo: campos.tipo,
+                                    );
+                                  });
+                              setState(() {
+                                selectedRows.clear();
+                              });
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                        title: const Text(
+                                            'Seleccion unica requerida'),
+                                        content: Wrap(
+                                          children: [
+                                            Text(selectedRows.isEmpty
+                                                ? 'Usted no ha seleeccionado ningun elemento'
+                                                : 'Seleccione un unico elemento')
+                                          ],
                                         ),
-                                      ]);
-                                });
-                          }
-                        },
-                        icon: Icon(
-                          Icons.mode_edit,
-                          color: gradPrincipalColor,
-                        ),
-                        label: Text(
-                          'Editar',
-                          style: TextStyle(color: principalColor),
-                        ),
-                      )
-                    ].map((e) {
-                      return PopupMenuItem(
-                        child: e,
-                      );
-                    }).toList();
-                  },
-                ),
-              ],
+                                        actions: [
+                                          TextButton(
+                                            style: const ButtonStyle(
+                                                foregroundColor:
+                                                    MaterialStatePropertyAll(
+                                                        Colors.white)),
+                                            child: const Text('Aceptar'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(true);
+                                            },
+                                          ),
+                                        ]);
+                                  });
+                            }
+                          },
+                          icon: Icon(
+                            Icons.mode_edit,
+                            color: gradPrincipalColor,
+                          ),
+                          label: Text(
+                            'Editar',
+                            style: TextStyle(color: principalColor),
+                          ),
+                        )
+                      ].map((e) {
+                        return PopupMenuItem(
+                          child: e,
+                        );
+                      }).toList();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(

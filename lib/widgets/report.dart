@@ -6,7 +6,9 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class Report {
-  Report(this.lista);
+  Report(this.lista, this.reportId, this.fecha);
+  final int reportId;
+  final String fecha;
   List<Group> lista;
   void generate(BuildContext context, List<String> coments) {
     _printPdf(context, coments);
@@ -40,9 +42,11 @@ class Report {
                   children: [
                     pw.Padding(
                         padding: const pw.EdgeInsets.all(4),
-                        child: pw.Text('HORARIO DE VIAJE: 5 DE JUNIO DE 2023',
-                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                            textAlign: pw.TextAlign.center))
+                        child: pw.Text(
+                            'HORARIO DE VIAJES DE LA FECHA $fecha \t NRO $reportId ',
+                            textAlign: pw.TextAlign.center,
+                            style:
+                                pw.TextStyle(fontWeight: pw.FontWeight.bold)))
                   ])
             ]);
       },
