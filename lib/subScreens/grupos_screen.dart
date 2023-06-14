@@ -145,8 +145,7 @@ class _ScreenGruposState extends State<ScreenGrupos>
                       spacing: 8,
                       direction: Axis.horizontal,
                       children: [
-                        FloatingActionButton(
-                          heroTag: 'b4',
+                        IconButton(
                           onPressed: () async {
                             await showDialog(
                                 context: context,
@@ -159,14 +158,13 @@ class _ScreenGruposState extends State<ScreenGrupos>
                               fetchRows();
                             });
                           },
-                          child: Icon(
+                          icon: Icon(
                             Icons.add,
                             size: 30,
                             color: resaltadoColor,
                           ),
                         ),
-                        FloatingActionButton(
-                          heroTag: 'normal11',
+                        IconButton(
                           onPressed: () async {
                             if (selectedRows.isNotEmpty &&
                                 selectedRows.length < 2) {
@@ -216,13 +214,12 @@ class _ScreenGruposState extends State<ScreenGrupos>
                                   });
                             }
                           },
-                          child: Icon(
+                          icon: Icon(
                             Icons.edit,
                             color: resaltadoColor,
                           ),
                         ),
-                        FloatingActionButton(
-                          heroTag: 'b3',
+                        IconButton(
                           onPressed: () {
                             if (selectedRows.isNotEmpty) {
                               showDialog(
@@ -291,7 +288,7 @@ class _ScreenGruposState extends State<ScreenGrupos>
                               );
                             }
                           },
-                          child: Icon(
+                          icon: Icon(
                             Icons.delete,
                             color: resaltadoColor,
                           ),

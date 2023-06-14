@@ -116,8 +116,18 @@ class _MainScreenState extends State<MainScreen> {
         userName: getUser()?.nombre,
       );
     } else {
-      return const Center(
-        child: Text('En desarrollo'),
+      return Center(
+        child: TextButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(gradPrincipalColor)),
+          onPressed: () {
+            Navigator.of(context).pushNamed('login');
+          },
+          child: Text(
+            'Ir al login',
+            style: TextStyle(color: resaltadoColor),
+          ),
+        ),
       );
     }
   }
