@@ -20,26 +20,28 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FutureBuilder(
+      body: Scrollbar(
+        thumbVisibility: true,
+        scrollbarOrientation: ScrollbarOrientation.bottom,
+        controller: horizontalController,
+        child: SingleChildScrollView(
+          controller: horizontalController,
+          scrollDirection: Axis.horizontal,
+          child: FutureBuilder(
             future: getRows(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 rows = snapshot.data;
-                return Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: DataTable(columns: const [
-                      DataColumn(label: Text('ID')),
-                      DataColumn(label: Text('Fecha')),
-                      DataColumn(label: Text('Hora')),
-                      DataColumn(label: Text('Usuario')),
-                      DataColumn(label: Text('Compania')),
-                    ], rows: rows),
-                  ),
+                return SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  controller: verticalController,
+                  child: DataTable(columns: const [
+                    DataColumn(label: Text('ID')),
+                    DataColumn(label: Text('Fecha')),
+                    DataColumn(label: Text('Hora')),
+                    DataColumn(label: Text('Usuario')),
+                    DataColumn(label: Text('Compania')),
+                  ], rows: rows),
                 );
               } else {
                 return const Center(
@@ -49,8 +51,8 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
                 );
               }
             },
-          )
-        ],
+          ),
+        ),
       ),
     );
   }
@@ -76,7 +78,8 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
         DataCell(Text(jsonResponse[i]['TIME_OF']
             .toString()
             .split('T')[1]
-            .replaceAll('Z', ''))),
+            .replaceAll('Z', '')
+            .split('.')[0])),
         DataCell(Text(jsonResponse[i]['NAME'])),
         DataCell(Text(jsonResponse[i]['COMPANIE'])),
       ]));

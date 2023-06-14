@@ -397,8 +397,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                                                           responseStream =
                                                           await requestPost
                                                               .send();
-                                                      print(
-                                                          'Código de estado de la respuesta: ${responseStream.statusCode}');
+
                                                       if (responseStream
                                                                   .statusCode ==
                                                               200 &&
