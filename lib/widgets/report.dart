@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/pdf_est.dart';
 import 'package:pdf/pdf.dart';
@@ -6,9 +7,13 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class Report {
-  Report(this.lista, this.reportId, this.fecha);
+  Report(this.lista, this.reportId, this.fecha, this.empresaId, this.userId,
+      this.empresas);
   final int reportId;
   final String fecha;
+  final int empresaId;
+  final int userId;
+  final List<Empresa> empresas;
   List<Group> lista;
   void generate(BuildContext context, List<String> coments) {
     _printPdf(context, coments);
@@ -33,7 +38,11 @@ class Report {
                 pw.Padding(
                     padding: const pw.EdgeInsets.all(2),
                     child: pw.Text(
-                        'EMPRESA GUAIREÑA DE TRANSPORTE Y TURISMO S.R.L',
+                        empresas
+                            .where((element) => element.id == empresaId)
+                            .first
+                            .nombre
+                            .toUpperCase(),
                         textAlign: pw.TextAlign.center,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)))
               ]),

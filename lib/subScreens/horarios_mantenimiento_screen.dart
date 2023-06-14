@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/report.dart';
 import 'package:horarios_web/widgets/tabla_grupos.dart';
@@ -30,16 +31,39 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   var resaltadoColor = Colors.orange;
   var colorBlanco = Colors.white;
 //varios
-  var fechaController = TextEditingController();
+  var fechaController = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   bool childUpdate = false;
   List<Group> travels = [];
+  List<Empresa> empresasList = [];
+  int dropDownValue = 0;
+  var defaultDecoration = const InputDecoration(
+    filled: true,
+    fillColor: Colors.white,
+  );
   @override
   void initState() {
     super.initState();
     fetchTravelsByGroup();
   }
 
-  Future fetchMaxIdTravels() async {
+  Future<List<Empresa>> obtenerEmpresas() async {
+    List<Empresa> listaEmpresas = [];
+    final response =
+        await http.get(Uri.parse('http://190.52.165.206:3000/companies'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      listaEmpresas = data
+          .map((registro) => Empresa(registro['ID'], registro['NAME']))
+          .toList();
+      return listaEmpresas;
+    } else {
+      throw Exception('Error al obtener registros');
+    }
+  }
+
+  Future fetchAll() async {
     final response =
         await http.get(Uri.parse('http://190.52.165.206:3000/max_reports_id'));
     int idMax = json.decode(response.body)[0]['MAX'];
@@ -74,6 +98,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List<Group> auxTrav = snapshot.data;
+
                 return TextButton.icon(
                     style: ButtonStyle(
                         backgroundColor:
@@ -84,7 +109,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                           builder: (context) {
                             return Dialog.fullscreen(
                               child: FutureBuilder(
-                                  future: fetchMaxIdTravels(),
+                                  future: fetchAll(),
                                   builder: (context, snapshot) {
                                     if (snapshot.hasData) {
                                       int macsimo = snapshot.data;
@@ -102,7 +127,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                                           Padding(
                                             padding: const EdgeInsets.all(3.0),
                                             child: Text(
-                                              'reporte nro: $macsimo',
+                                              'REPORTE NRO: $macsimo',
                                               textAlign: TextAlign.left,
                                               style: const TextStyle(
                                                   color: Colors.white,
@@ -219,6 +244,51 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                                               )
                                             ],
                                           ),
+                                          FutureBuilder(
+                                            future: obtenerEmpresas(),
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot snapshot) {
+                                              if (snapshot.hasData) {
+                                                List<Empresa> empresas =
+                                                    snapshot.data;
+                                                empresasList = snapshot.data;
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child:
+                                                      DropdownButtonFormField(
+                                                          value: dropDownValue,
+                                                          decoration:
+                                                              defaultDecoration,
+                                                          isExpanded: true,
+                                                          items: empresas
+                                                              .map((e) =>
+                                                                  DropdownMenuItem(
+                                                                      value:
+                                                                          e.id,
+                                                                      child:
+                                                                          Text(
+                                                                        e.nombre,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                      )))
+                                                              .toList(),
+                                                          onChanged:
+                                                              (int? valor) {
+                                                            dropDownValue =
+                                                                valor!;
+                                                          }),
+                                                );
+                                              } else {
+                                                return const Text(
+                                                  'Cargando...',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                );
+                                              }
+                                            },
+                                          ),
                                           Expanded(
                                             child: Padding(
                                               padding:
@@ -305,18 +375,51 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                                                       color: resaltadoColor,
                                                     ),
                                                     onPressed: () async {
-                                                      var reporte = Report(
-                                                          auxTrav,
-                                                          macsimo,
-                                                          fechaController.text);
-                                                      reporte.generate(
-                                                          context, [
-                                                        izquierdaController
+                                                      var requestPost =
+                                                          http.Request(
+                                                              'POST',
+                                                              Uri.parse(
+                                                                  'http://190.52.165.206:3000/reports_add'));
+                                                      requestPost.bodyFields = {
+                                                        'id':
+                                                            macsimo.toString(),
+                                                        'date': fechaController
                                                             .text,
-                                                        derechaController.text
-                                                      ]);
-                                                      Navigator.of(context)
-                                                          .pop(true);
+                                                        'time':
+                                                            timeController.text,
+                                                        'user': widget.userId
+                                                            .toString(),
+                                                        'empre': dropDownValue
+                                                            .toString()
+                                                      };
+
+                                                      http.StreamedResponse
+                                                          responseStream =
+                                                          await requestPost
+                                                              .send();
+                                                      print(
+                                                          'Código de estado de la respuesta: ${responseStream.statusCode}');
+                                                      if (responseStream
+                                                                  .statusCode ==
+                                                              200 &&
+                                                          mounted) {
+                                                        var reporte = Report(
+                                                            auxTrav,
+                                                            macsimo,
+                                                            fechaController
+                                                                .text,
+                                                            dropDownValue,
+                                                            widget.userId!,
+                                                            empresasList);
+                                                        reporte.generate(
+                                                            context, [
+                                                          izquierdaController
+                                                              .text,
+                                                          derechaController.text
+                                                        ]);
+                                                        Navigator.of(context)
+                                                            .pop(true);
+                                                      }
                                                     },
                                                     label: Padding(
                                                       padding:
@@ -372,9 +475,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                       ),
                     ));
               } else {
-                return const CircularProgressIndicator(
-                  color: Colors.red,
-                );
+                return const Text('Cargando...');
               }
             }),
         body: FutureBuilder(
