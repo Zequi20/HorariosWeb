@@ -182,40 +182,36 @@ class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
               children: [
                 const Expanded(child: Text('Empresa')),
                 Expanded(
-                  flex: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: FutureBuilder(
-                      future: obtenerEmpresas(),
-                      builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                        if (snapshot.hasData) {
-                          return Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: DropdownButtonFormField(
-                              decoration: const InputDecoration(
-                                  filled: true, fillColor: Colors.white),
-                              value: empresaValue,
-                              items: List.generate(
-                                  listaEmpresas.length,
-                                  (index) => DropdownMenuItem(
-                                        value: listaEmpresas[index].id,
-                                        child:
-                                            Text(listaEmpresas[index].nombre),
-                                      )),
-                              onChanged: (int? value) {
-                                setState(() {
-                                  empresaValue = value!;
-                                });
-                              },
-                            ),
-                          );
-                        } else {
-                          return const CircularProgressIndicator(
-                            color: Colors.white,
-                          );
-                        }
-                      },
-                    ),
+                  flex: 2,
+                  child: FutureBuilder(
+                    future: obtenerEmpresas(),
+                    builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.hasData) {
+                        return Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: DropdownButtonFormField(
+                            decoration: const InputDecoration(
+                                filled: true, fillColor: Colors.white),
+                            value: empresaValue,
+                            items: List.generate(
+                                listaEmpresas.length,
+                                (index) => DropdownMenuItem(
+                                      value: listaEmpresas[index].id,
+                                      child: Text(listaEmpresas[index].nombre),
+                                    )),
+                            onChanged: (int? value) {
+                              setState(() {
+                                empresaValue = value!;
+                              });
+                            },
+                          ),
+                        );
+                      } else {
+                        return const CircularProgressIndicator(
+                          color: Colors.white,
+                        );
+                      }
+                    },
                   ),
                 ),
               ],
