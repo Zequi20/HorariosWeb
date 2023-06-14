@@ -68,6 +68,7 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
     var dropEstadoCivil = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: DropdownButtonFormField(
+          isExpanded: true,
           decoration: const InputDecoration(
             filled: true,
             fillColor: Colors.white,
@@ -92,6 +93,7 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
     var dropTipo = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: DropdownButtonFormField(
+          isExpanded: true,
           decoration: const InputDecoration(
             filled: true,
             fillColor: Colors.white,

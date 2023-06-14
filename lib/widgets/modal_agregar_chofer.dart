@@ -33,6 +33,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
     var dropEstadoCivil = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: DropdownButtonFormField(
+          isExpanded: true,
           decoration: defaultDecoration,
           value: estadoValue,
           items: const [
@@ -54,6 +55,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
     var dropTipo = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: DropdownButtonFormField(
+          isExpanded: true,
           decoration: defaultDecoration,
           value: tipoValue,
           items: const [

@@ -190,6 +190,7 @@ class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
                         return Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: DropdownButtonFormField(
+                            isExpanded: true,
                             decoration: const InputDecoration(
                                 filled: true, fillColor: Colors.white),
                             value: empresaValue,
@@ -197,7 +198,10 @@ class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
                                 listaEmpresas.length,
                                 (index) => DropdownMenuItem(
                                       value: listaEmpresas[index].id,
-                                      child: Text(listaEmpresas[index].nombre),
+                                      child: Text(
+                                        listaEmpresas[index].nombre,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     )),
                             onChanged: (int? value) {
                               setState(() {

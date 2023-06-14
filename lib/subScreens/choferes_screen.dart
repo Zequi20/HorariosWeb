@@ -205,7 +205,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: SizedBox(
-                        height: 52,
+                        height: 55,
                         child: TextFormField(
                           controller: searchController,
                           onChanged: (value) {
@@ -224,7 +224,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                   Expanded(
                     flex: 1,
                     child: SizedBox(
-                      height: 52,
+                      height: 55,
                       child: DropdownButtonFormField(
                         decoration: const InputDecoration(
                           filled: true,

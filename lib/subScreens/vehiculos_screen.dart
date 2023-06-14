@@ -162,7 +162,7 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: SizedBox(
-                        height: 52,
+                        height: 55,
                         child: TextFormField(
                           controller: searchController,
                           onChanged: (value) {
@@ -181,7 +181,7 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
                   Expanded(
                     flex: 1,
                     child: SizedBox(
-                      height: 52,
+                      height: 55,
                       child: DropdownButtonFormField(
                         decoration: const InputDecoration(
                           filled: true,

@@ -200,6 +200,7 @@ class _ModalEditarGrupoState extends State<ModalEditarGrupo> {
                         return Padding(
                           padding: const EdgeInsets.all(6.0),
                           child: DropdownButtonFormField(
+                            isExpanded: true,
                             decoration: const InputDecoration(
                                 filled: true, fillColor: Colors.white),
                             value: empresaValue,
@@ -207,7 +208,10 @@ class _ModalEditarGrupoState extends State<ModalEditarGrupo> {
                                 listaEmpresas.length,
                                 (index) => DropdownMenuItem(
                                       value: listaEmpresas[index].id,
-                                      child: Text(listaEmpresas[index].nombre),
+                                      child: Text(
+                                        listaEmpresas[index].nombre,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     )),
                             onChanged: (int? value) {
                               setState(() {
