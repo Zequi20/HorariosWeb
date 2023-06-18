@@ -163,8 +163,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               flex: 1,
                               child: FilledButton.icon(
                                   onPressed: () {
-                                    validar(userController.text,
-                                        passController.text);
+                                    validar(userController.text.trim(),
+                                        passController.text.trim());
                                   },
                                   icon: const Icon(Icons.key),
                                   label: const Text(

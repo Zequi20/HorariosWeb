@@ -121,11 +121,12 @@ class _MainScreenState extends State<MainScreen> {
           style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(gradPrincipalColor)),
           onPressed: () {
-            Navigator.of(context).pushNamed('login');
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil('login', (route) => false);
           },
-          child: Text(
+          child: const Text(
             'Ir al login',
-            style: TextStyle(color: resaltadoColor),
+            style: TextStyle(color: Colors.white),
           ),
         ),
       );

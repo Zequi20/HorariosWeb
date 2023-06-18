@@ -40,7 +40,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
                     DataColumn(label: Text('Fecha')),
                     DataColumn(label: Text('Hora')),
                     DataColumn(label: Text('Usuario')),
-                    DataColumn(label: Text('Compania')),
+                    DataColumn(label: Text('Empresa')),
                   ], rows: rows),
                 );
               } else {
