@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:horarios_web/models/model_usuario.dart';
 import 'package:horarios_web/screens/datos_screen.dart';
 import 'package:horarios_web/screens/home_screen.dart';
@@ -101,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               'Usuario',
                               style: TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                           Expanded(
@@ -126,6 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               'Clave',
                               style: TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                           Expanded(
@@ -183,6 +186,16 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+              },
+              icon: const Icon(
+                Icons.exit_to_app,
+                color: Colors.white,
+              ))
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
