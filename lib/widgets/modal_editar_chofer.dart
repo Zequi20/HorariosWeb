@@ -279,6 +279,7 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    keyboardType: TextInputType.phone,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
                     ],
@@ -300,6 +301,7 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
                     ],

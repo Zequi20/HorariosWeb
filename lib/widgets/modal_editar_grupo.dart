@@ -259,6 +259,7 @@ class _ModalEditarGrupoState extends State<ModalEditarGrupo> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
                     ],
