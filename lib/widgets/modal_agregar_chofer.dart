@@ -209,6 +209,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
                     ],
@@ -244,6 +245,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    keyboardType: TextInputType.phone,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
                     ],
@@ -265,6 +267,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
                     ],
@@ -286,6 +289,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
                 Expanded(
                   flex: 2,
                   child: TextFormField(
+                    keyboardType: TextInputType.number,
                     maxLength: 12,
                     controller: registroController,
                     decoration: const InputDecoration(
