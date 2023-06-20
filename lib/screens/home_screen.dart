@@ -19,16 +19,46 @@ class _ScreenHomeState extends State<ScreenHome>
 
   Future<List<Stat>> fetchStats() async {
     List<Stat> estadisticas = [];
-    estadisticas.add(
-        await getStat('count_vehicles', 'Coches', const Icon(Icons.bus_alert)));
     estadisticas.add(await getStat(
-        'count_reports', 'Reportes', const Icon(Icons.picture_as_pdf)));
+        'count_vehicles',
+        'Coches',
+        const Icon(
+          Icons.bus_alert,
+          size: 42,
+          color: Colors.white,
+        )));
     estadisticas.add(await getStat(
-        'count_drivers', 'Conductores', const Icon(Icons.person_2)));
-    estadisticas.add(
-        await getStat('count_guardas', 'Guardas', const Icon(Icons.person)));
-    estadisticas
-        .add(await getStat('count_groups', 'Grupos', const Icon(Icons.map)));
+        'count_reports',
+        'Reportes',
+        const Icon(
+          Icons.picture_as_pdf,
+          size: 42,
+          color: Colors.white,
+        )));
+    estadisticas.add(await getStat(
+        'count_drivers',
+        'Choferes',
+        const Icon(
+          Icons.person_2,
+          size: 42,
+          color: Colors.white,
+        )));
+    estadisticas.add(await getStat(
+        'count_guardas',
+        'Guardas',
+        const Icon(
+          Icons.person,
+          size: 42,
+          color: Colors.white,
+        )));
+    estadisticas.add(await getStat(
+        'count_groups',
+        'Grupos',
+        const Icon(
+          Icons.map,
+          size: 42,
+          color: Colors.white,
+        )));
     return estadisticas;
   }
 
@@ -53,7 +83,11 @@ class _ScreenHomeState extends State<ScreenHome>
             padding: const EdgeInsets.all(12.0),
             child: Text(
               'Bienvenido ${widget.userName}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+                color: gradPrincipalColor,
+              ),
             ),
           ),
           Expanded(
@@ -62,25 +96,43 @@ class _ScreenHomeState extends State<ScreenHome>
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     List<Stat> datos = snapshot.data!;
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          childAspectRatio: 1.8,
-                          crossAxisCount: 2,
-                        ),
-                        itemCount: datos.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              datos[index].icono,
-                              Text(datos[index].dato)
-                            ],
-                          );
-                        },
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(12),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 1.8,
+                        crossAxisCount: 2,
                       ),
+                      itemCount: datos.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(5)),
+                                color: gradPrincipalColor),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                datos[index].icono,
+                                const Divider(
+                                  color: Colors.transparent,
+                                  height: 4,
+                                ),
+                                Text(
+                                  datos[index].dato,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24,
+                                      color: Colors.white),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     );
                   } else {
                     return const Text('Cargando...');
