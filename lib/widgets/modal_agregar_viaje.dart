@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:horarios_web/models/model_conductor.dart';
 import 'package:horarios_web/models/model_vehiculos.dart';
 import 'package:http/http.dart' as http;
@@ -18,14 +17,13 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
   int selectedVehicle = -1;
   int selectedDriver = -1;
   int selectedGuarda = -2;
-  List<Vehiculos> listaVehiculos = [Vehiculos(-1, '(vacio)')];
+  List<Vehiculos> listaVehiculos = [Vehiculos(-1, '(vacio)', '(vacio)')];
   List<Conductor> listaConductores = [Conductor(-1, '(nadie)', 'c')];
   List<Conductor> listaGuardas = [Conductor(-2, '(nadie)', 'g')];
   var controller = ScrollController();
   var partidaController = TextEditingController();
   var llegadaController = TextEditingController();
   var notaController = TextEditingController();
-  var kmController = TextEditingController();
 
   var defaultDivider = const Divider(
     color: Colors.transparent,
@@ -49,10 +47,11 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       vehiculos = data
-          .map((elem) => Vehiculos(elem['ID'], elem['LICENSE_PLATE']))
+          .map((elem) => Vehiculos(
+              elem['ID'], elem['LICENSE_PLATE'], elem['NUMBER'].toString()))
           .toList();
 
-      vehiculos.insert(0, Vehiculos(-1, '(vacio)'));
+      vehiculos.insert(0, Vehiculos(-1, '(vacio)', '(vacio)'));
     } else {
       throw Exception('Error al obtener registros');
     }
@@ -100,8 +99,7 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
                   selectedVehicle > -1 &&
                   llegadaController.text.isNotEmpty &&
                   partidaController.text.isNotEmpty &&
-                  notaController.text.isNotEmpty &&
-                  kmController.text.isNotEmpty) {
+                  notaController.text.isNotEmpty) {
                 final response = await http.get(
                     Uri.parse('http://190.52.165.206:3000/max_travels_id'));
                 int idMax = json.decode(response.body)[0]['MAX'];
@@ -116,7 +114,6 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
                   'coche': selectedVehicle.toString(),
                   'chofer': selectedDriver.toString(),
                   'guarda': selectedGuarda.toString(),
-                  'km': kmController.text.trim().split('.')[0],
                   'nota': notaController.text,
                   'partida': partidaController.text,
                   'llegada': llegadaController.text,
@@ -249,13 +246,13 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
             defaultDivider,
             Row(
               children: [
-                const Expanded(child: Text('Hora de llegada')),
+                const Expanded(child: Text('Hora de retorno')),
                 Expanded(
                   flex: 2,
                   child: TextField(
                     onTap: () async {
                       llegadaController.text = await showTimePicker(
-                        helpText: 'Fijar hora de Llegada',
+                        helpText: 'Fijar hora de retorno',
                         cancelText: 'Cancelar',
                         confirmText: 'Aceptar',
                         context: context,
@@ -270,7 +267,7 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
                       });
                     },
                     decoration: const InputDecoration(
-                        hintText: 'Hora de llegada',
+                        hintText: 'Hora de retorno',
                         filled: true,
                         fillColor: Colors.white),
                     readOnly: true,
@@ -290,26 +287,6 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
                     maxLength: 50,
                     decoration: const InputDecoration(
                         hintText: 'Ingrese una nota',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            defaultDivider,
-            Row(
-              children: [
-                const Expanded(child: Text('KM')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    controller: kmController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese el KM',
                         filled: true,
                         fillColor: Colors.white),
                   ),
@@ -345,7 +322,9 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
                                       .map((e) => DropdownMenuItem(
                                             value: e.id,
                                             child: Text(
-                                              e.placa,
+                                              e.placa == '(vacio)'
+                                                  ? '(vacio)'
+                                                  : '${e.numero} (${e.placa})',
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ))

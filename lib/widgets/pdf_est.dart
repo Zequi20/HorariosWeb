@@ -10,11 +10,11 @@ class Estructura extends StatelessWidget {
     var blackColor = const PdfColor(0, 0, 0);
     return Table(
       columnWidths: {
-        0: const FractionColumnWidth(0.2),
-        1: const FractionColumnWidth(0.2),
-        2: const FractionColumnWidth(0.2),
+        0: const FractionColumnWidth(0.30),
+        1: const FractionColumnWidth(0.30),
+        2: const FractionColumnWidth(1),
         3: const FractionColumnWidth(1),
-        4: const FractionColumnWidth(1),
+        4: const FractionColumnWidth(0.30),
         5: const FractionColumnWidth(1)
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.full,
@@ -32,14 +32,6 @@ class Estructura extends StatelessWidget {
                   textAlign: TextAlign.center,
                 )),
                 TableCell(Text(
-                  e['ARRIVAL_TIME']
-                      .toString()
-                      .split('.')[0]
-                      .replaceRange(5, 5, '.')
-                      .split('.')[0],
-                  textAlign: TextAlign.center,
-                )),
-                TableCell(Text(
                   e['VEHICLE'].toString(),
                   textAlign: TextAlign.center,
                 )),
@@ -49,6 +41,14 @@ class Estructura extends StatelessWidget {
                 )),
                 TableCell(Text(
                   e['DRIVER2'],
+                  textAlign: TextAlign.center,
+                )),
+                TableCell(Text(
+                  e['ARRIVAL_TIME']
+                      .toString()
+                      .split('.')[0]
+                      .replaceRange(5, 5, '.')
+                      .split('.')[0],
                   textAlign: TextAlign.center,
                 )),
                 TableCell(Text(
@@ -115,11 +115,11 @@ class Titled extends StatelessWidget {
         Table(
             defaultVerticalAlignment: TableCellVerticalAlignment.full,
             columnWidths: {
-              0: const FractionColumnWidth(0.20),
-              1: const FractionColumnWidth(0.20),
-              2: const FractionColumnWidth(0.20),
+              0: const FractionColumnWidth(0.30),
+              1: const FractionColumnWidth(0.30),
+              2: const FractionColumnWidth(1),
               3: const FractionColumnWidth(1),
-              4: const FractionColumnWidth(1),
+              4: const FractionColumnWidth(0.30),
               5: const FractionColumnWidth(1)
             },
             border: TableBorder.all(color: blackColor),
@@ -128,10 +128,10 @@ class Titled extends StatelessWidget {
                   decoration: const BoxDecoration(color: PdfColors.orange100),
                   children: [
                     TableCell(Text('Salida')),
-                    TableCell(FittedBox(child: Text('Llegada'))),
                     TableCell(Text('Coche')),
                     TableCell(Text('Conductor')),
                     TableCell(Text('Guarda')),
+                    TableCell(FittedBox(child: Text('Retorno'))),
                     TableCell(Text('Nota'))
                   ]),
             ]));

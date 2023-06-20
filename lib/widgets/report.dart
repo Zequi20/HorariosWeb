@@ -20,8 +20,9 @@ class Report {
   }
 
   Future<void> _printPdf(BuildContext context, List<String> coments) async {
-    final formato = PdfPageFormat.a3.copyWith(
-        marginTop: 10, marginBottom: 10, marginLeft: 10, marginRight: 10);
+    final formato = const PdfPageFormat(
+            21 * PdfPageFormat.cm, 33 * PdfPageFormat.cm)
+        .copyWith(marginTop: 2, marginBottom: 2, marginLeft: 2, marginRight: 2);
 
     await _generatePdf(formato, coments);
   }
@@ -63,11 +64,15 @@ class Report {
         border: pw.TableBorder.all(color: PdfColors.black),
         children: [
           pw.TableRow(children: [
-            pw.Container(
-                padding: const pw.EdgeInsets.all(5),
-                child: pw.Text(coments[0])),
-            pw.Container(
-                padding: const pw.EdgeInsets.all(5), child: pw.Text(coments[1]))
+            pw.Column(children: [
+              pw.Container(
+                  padding: const pw.EdgeInsets.all(5),
+                  child: pw.Text(coments[0])),
+              pw.Divider(color: PdfColors.black, height: 1),
+              pw.Container(
+                  padding: const pw.EdgeInsets.all(5),
+                  child: pw.Text(coments[1]))
+            ])
           ])
         ],
       ),

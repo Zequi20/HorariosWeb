@@ -31,6 +31,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   var resaltadoColor = Colors.orange;
   var colorBlanco = Colors.white;
 //varios
+
   var fechaController = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   bool childUpdate = false;
@@ -296,13 +297,13 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                                               child: TextField(
                                                 decoration: const InputDecoration(
                                                     hintText:
-                                                        'Comentario del lado derecho',
+                                                        'Comentario superior',
                                                     filled: true,
                                                     fillColor: Colors.white),
                                                 maxLines: null,
                                                 minLines: null,
                                                 expands: true,
-                                                controller: derechaController,
+                                                controller: izquierdaController,
                                               ),
                                             ),
                                           ),
@@ -313,13 +314,13 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                                               child: TextField(
                                                 decoration: const InputDecoration(
                                                     hintText:
-                                                        'Comentario del lado izquierdo',
+                                                        'Comentario inferior',
                                                     filled: true,
                                                     fillColor: Colors.white),
                                                 maxLines: null,
                                                 minLines: null,
                                                 expands: true,
-                                                controller: izquierdaController,
+                                                controller: derechaController,
                                               ),
                                             ),
                                           ),
