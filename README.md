@@ -1,6 +1,6 @@
-# horarios_web
+# Reportes web
 
-A new Flutter project.
+Un reporteador web con interfaz desktop
 
 ## Getting Started
 
