@@ -75,6 +75,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
           }),
     );
     return AlertDialog(
+      scrollable: true,
       actions: [
         FilledButton.icon(
             onPressed: () async {
@@ -195,13 +196,16 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
               'Cancelar',
             ))
       ],
-      title: const Text(
-        'Agregar Chofer/Guarda',
-        textAlign: TextAlign.center,
+      title: const Padding(
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
+        child: Text(
+          'Agregar Chofer/Guarda',
+          textAlign: TextAlign.left,
+        ),
       ),
-      content: SingleChildScrollView(
-        child: Form(
-            child: Column(
+      content: SizedBox(
+        width: MediaQuery.of(context).size.height,
+        child: Column(
           children: [
             Row(
               children: [
@@ -448,7 +452,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
               )
             ]),
           ],
-        )),
+        ),
       ),
     );
   }

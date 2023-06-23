@@ -1,25 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:horarios_web/models/model_generic_object.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class Autocompletado extends StatefulWidget {
-  const Autocompletado({super.key});
+class AsyncAutocomplete extends StatefulWidget {
+  const AsyncAutocomplete(
+      {super.key,
+      required this.dataController,
+      required this.link,
+      required this.label});
 
+  final TextEditingController dataController;
+  final String link;
+  final String label;
   @override
-  State<Autocompletado> createState() => _AutocompletadoState();
+  State<AsyncAutocomplete> createState() => _AsyncAutocompleteState();
 }
 
-class _AutocompletadoState extends State<Autocompletado> {
+class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
   TextEditingController control = TextEditingController();
+  List<GenericObject> options = [];
   @override
   void initState() {
     super.initState();
+    fetchData(widget.link);
   }
 
   @override
   void dispose() {
+    control.dispose();
     super.dispose();
   }
 
-  List options = ['banana', 'pera', 'durazno'];
+  Future fetchData(String link) async {
+    final response = await http.get(Uri.parse(link));
+
+    if (response.statusCode == 200) {
+      List data = json.decode(response.body);
+      for (var element in data) {
+        options.add(GenericObject(element['ID'], element['NAME']));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Autocomplete<String>(
@@ -28,46 +51,37 @@ class _AutocompletadoState extends State<Autocompletado> {
           return const Iterable<String>.empty();
         }
         return options
-            .where((option) => option.contains(control.text.toLowerCase()))
+            .map((e) => e.nombre)
+            .where((option) =>
+                option.toLowerCase().contains(control.text.toLowerCase()))
             .cast();
       },
       onSelected: (String selectedOption) {
         control.text = selectedOption;
+        widget.dataController.text = options
+            .where((option) => option.nombre == selectedOption)
+            .first
+            .id
+            .toString();
+        print('id ${widget.dataController.text}');
         setState(() {});
       },
-    );
-  }
-}
-
-/*
-Autocomplete<String>(
-      optionsBuilder: (TextEditingValue textEditingValue) {
-        if (textEditingValue.text == '') {
-          return const Iterable<String>.empty();
-        }
-        return _options.where((String option) {
-          return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
-        });
-      },
-      onSelected: (String selectedOption) {
-        setState(() {
-          _selectedOption = selectedOption;
-          _textEditingController.text = selectedOption;
-        });
-      },
-      fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+      fieldViewBuilder: (BuildContext context, control, FocusNode focusNode,
+          VoidCallback onFieldSubmitted) {
         return TextField(
-          controller: _textEditingController,
+          controller: control,
           focusNode: focusNode,
-          decoration: InputDecoration(
-            labelText: 'Buscar',
-          ),
-          onChanged: (String value) {
-            onFieldSubmitted();
+          onChanged: (value) {
+            setState(() {});
           },
+          decoration: InputDecoration(
+            labelText: widget.label,
+            border: const OutlineInputBorder(),
+          ),
         );
       },
-      optionsViewBuilder: (BuildContext context, AutocompleteOnSelected<String> onSelected) {
+      optionsViewBuilder: (BuildContext context,
+          AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
         return Align(
           alignment: Alignment.topLeft,
           child: Material(
@@ -75,10 +89,10 @@ Autocomplete<String>(
             child: SizedBox(
               height: 200.0,
               child: ListView.builder(
-                padding: EdgeInsets.all(8.0),
-                itemCount: _options.length,
+                padding: const EdgeInsets.all(8.0),
+                itemCount: options.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final String option = _options[index];
+                  final String option = options.elementAt(index);
                   return GestureDetector(
                     onTap: () {
                       onSelected(option);
@@ -94,5 +108,5 @@ Autocomplete<String>(
         );
       },
     );
-
-*/
+  }
+}
