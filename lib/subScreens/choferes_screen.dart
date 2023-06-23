@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_campos_choferes.dart';
-import 'package:horarios_web/widgets/modal_editar_chofer.dart';
+import 'package:horarios_web/widgets/modals/modal_agregar_chofer.dart';
+import 'package:horarios_web/widgets/modals/modal_editar_chofer.dart';
 // ignore: unused_import
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../widgets/modal_agregar_chofer.dart';
 
 class ScreenChoferes extends StatefulWidget {
   const ScreenChoferes({super.key, this.userId = 0});

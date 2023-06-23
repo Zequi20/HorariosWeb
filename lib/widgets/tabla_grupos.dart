@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
-import 'package:horarios_web/widgets/modal_agregar_viaje.dart';
-import 'package:horarios_web/widgets/modal_editar_viaje.dart';
+import 'package:horarios_web/widgets/modals/modal_agregar_viaje.dart';
+import 'package:horarios_web/widgets/modals/modal_editar_viaje.dart';
 import 'package:http/http.dart' as http;
 
 class GroupTable extends StatefulWidget {

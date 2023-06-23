@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_campos_grupos.dart';
-import 'package:horarios_web/widgets/modal_editar_grupo.dart';
+import 'package:horarios_web/widgets/modals/modal_agregar_grupo.dart';
+import 'package:horarios_web/widgets/modals/modal_editar_grupo.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../widgets/modal_agregar_grupo.dart';
 
 class ScreenGrupos extends StatefulWidget {
   const ScreenGrupos({super.key, this.userId = 0});

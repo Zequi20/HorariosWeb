@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_campos_vehiculos.dart';
-import 'package:horarios_web/widgets/modal_editar_vehiculo.dart';
+import 'package:horarios_web/widgets/modals/modal_agregar_vehiculo.dart';
+import 'package:horarios_web/widgets/modals/modal_editar_vehiculo.dart';
+
 // ignore: unused_import
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../widgets/modal_agregar_vehiculo.dart';
 
 class ScreenVehiculos extends StatefulWidget {
   const ScreenVehiculos({super.key, this.userId = 0});
