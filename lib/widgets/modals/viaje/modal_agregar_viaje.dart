@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:horarios_web/models/model_conductor.dart';
-import 'package:horarios_web/models/model_vehiculos.dart';
+import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
@@ -17,11 +15,11 @@ class ModalAgregarViaje extends StatefulWidget {
 }
 
 class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
+  //Colores
+  var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
-  List<Vehiculos> listaVehiculos = [Vehiculos(-1, '(vacio)', '(vacio)')];
-  List<Conductor> listaConductores = [Conductor(-1, '(nadie)', 'c')];
-  List<Conductor> listaGuardas = [Conductor(-2, '(nadie)', 'g')];
-  var controller = ScrollController();
+  var resaltadoColor = Colors.orange;
+  //Controladores de texto
   var partidaController = TextEditingController();
   var llegadaController = TextEditingController();
   var notaController = TextEditingController();
@@ -45,124 +43,55 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FilledButton.icon(
-            onPressed: () async {
-              if (guardaController.text.isNotEmpty &&
-                  choferController.text.isNotEmpty &&
-                  cocheController.text.isNotEmpty &&
-                  llegadaController.text.isNotEmpty &&
-                  partidaController.text.isNotEmpty &&
-                  notaController.text.isNotEmpty) {
-                final response = await http.get(
-                    Uri.parse('http://190.52.165.206:3000/max_travels_id'));
-                int idMax = json.decode(response.body)[0]['MAX'];
-
-                var requestPost = http.Request('POST',
-                    Uri.parse('http://190.52.165.206:3000/add_travels'));
-
-                idMax += 1;
-                requestPost.bodyFields = {
-                  'id': idMax.toString(),
-                  'grupo': widget.grupoId.toString(),
-                  'coche': cocheController.text,
-                  'chofer': choferController.text,
-                  'guarda': guardaController.text,
-                  'nota': notaController.text,
-                  'partida': partidaController.text,
-                  'llegada': llegadaController.text,
-                };
-                http.StreamedResponse responseStream = await requestPost.send();
-
-                if (responseStream.statusCode == 200) {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    msgBox(
-                        'Operacion exitosa', 'Operacion realizada con exito');
-                  }
-                } else {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    msgBox('Error', 'Algo ha salido mal');
-                  }
-                }
-              } else {
-                if (mounted) {
-                  msgBox('Campos obligatorios', 'Faltan uno o mas campos');
-                }
-              }
-            },
-            icon: const Icon(Icons.save),
-            label: const Text(
-              'Agregar',
-            )),
-        FilledButton.icon(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.cancel),
-            label: const Text(
-              'Cancelar',
-            ))
-      ],
-      scrollable: true,
-      title: const Text('Agregar Viaje'),
-      content: SizedBox(
-        width: MediaQuery.of(context).size.height,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                const Expanded(child: Text('Hora de Salida')),
-                Expanded(
-                  flex: 2,
-                  child: CustomTimePicker(
-                      timeController: partidaController, title: 'Salida'),
-                ),
-              ],
-            ),
-            defaultDivider,
-            Row(
-              children: [
-                const Expanded(child: Text('Hora de Retorno')),
-                Expanded(
-                  flex: 2,
-                  child: CustomTimePicker(
-                      timeController: llegadaController, title: 'Retorno'),
-                ),
-              ],
-            ),
-            defaultDivider,
-            ModalRow(
-                sideTitle: 'Ingrese Nota',
-                child: CustomTextField(
-                    textController: notaController, hint: 'Nota')),
-            defaultDivider,
-            AsyncAutocomplete(
+    return CustomModalDialog(
+        onAccept: onAccept,
+        title: 'Agregar Viaje',
+        content: [
+          ModalRow(
+              sideTitle: 'Ingrese horario de Partida',
+              child: CustomTimePicker(
+                  timeController: partidaController, title: 'Hora de salida')),
+          defaultDivider,
+          ModalRow(
+              sideTitle: 'Ingrese horario de Retorno',
+              child: CustomTimePicker(
+                  timeController: llegadaController, title: 'Hora de retorno')),
+          defaultDivider,
+          ModalRow(
+            sideTitle: 'Ingrese Chofer',
+            child: AsyncAutocomplete(
               dataController: choferController,
               link: 'http://190.52.165.206:3000/just_drivers',
-              label: 'Chofer',
+              label: 'Nombre del chofer',
               filtro: 'NAME',
             ),
-            defaultDivider,
-            AsyncAutocomplete(
+          ),
+          defaultDivider,
+          ModalRow(
+            sideTitle: 'Ingrese Guarda',
+            child: AsyncAutocomplete(
               dataController: guardaController,
               link: 'http://190.52.165.206:3000/just_copilots',
-              label: 'Guarda',
+              label: 'Nombre del guarda',
               filtro: 'NAME',
             ),
-            defaultDivider,
-            AsyncAutocomplete(
+          ),
+          defaultDivider,
+          ModalRow(
+            sideTitle: 'Ingrese numero del coche',
+            child: AsyncAutocomplete(
               dataController: cocheController,
               link: 'http://190.52.165.206:3000/vehicles',
-              label: 'Coches',
+              label: 'Numero de coche',
               filtro: 'NUMBER',
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+          defaultDivider,
+          ModalRow(
+              sideTitle: 'Ingrese Nota (Opcional)',
+              child:
+                  CustomTextField(textController: notaController, hint: 'Nota'))
+        ]);
   }
 
   Future<void> msgBox(String title, String message) {
@@ -184,5 +113,59 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
             ],
           );
         });
+  }
+
+  onAccept() async {
+    if (validateFields([
+      guardaController.text,
+      choferController.text,
+      cocheController.text,
+      llegadaController.text,
+      partidaController.text
+    ])) {
+      final response = await http
+          .get(Uri.parse('http://190.52.165.206:3000/max_travels_id'));
+      int idMax = json.decode(response.body)[0]['MAX'];
+
+      var requestPost = http.Request(
+          'POST', Uri.parse('http://190.52.165.206:3000/add_travels'));
+
+      idMax += 1;
+      requestPost.bodyFields = {
+        'id': idMax.toString(),
+        'grupo': widget.grupoId.toString(),
+        'coche': cocheController.text,
+        'chofer': choferController.text,
+        'guarda': guardaController.text,
+        'nota': notaController.text,
+        'partida': partidaController.text,
+        'llegada': llegadaController.text,
+      };
+      http.StreamedResponse responseStream = await requestPost.send();
+
+      if (responseStream.statusCode == 200) {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Operacion exitosa', 'Operacion realizada con exito');
+        }
+      } else {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Error', 'Algo ha salido mal');
+        }
+      }
+    } else {
+      if (mounted) {
+        msgBox('Campos obligatorios', 'Faltan uno o mas campos');
+      }
+    }
+  }
+
+  bool validateFields(List<String> lista) {
+    for (var i in lista) {
+      if (i.isEmpty) return false;
+      break;
+    }
+    return true;
   }
 }

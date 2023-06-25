@@ -493,12 +493,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                       itemCount: travels.length,
                       itemBuilder: (context, index) {
                         return ExpansionTile(
-                          collapsedShape: const BeveledRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                          shape: const BeveledRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
+                          initiallyExpanded: true,
                           iconColor: colorBlanco,
                           collapsedIconColor: colorBlanco,
                           collapsedTextColor: colorBlanco,

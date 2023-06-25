@@ -14,7 +14,11 @@ class _ModalRowState extends State<ModalRow> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Text(widget.sideTitle)),
+        Expanded(
+            child: Text(
+          widget.sideTitle,
+          style: const TextStyle(fontSize: 20),
+        )),
         Expanded(
           flex: 2,
           child: widget.child,

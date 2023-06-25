@@ -11,6 +11,7 @@ class CustomTimePicker extends StatefulWidget {
 }
 
 class _CustomTimePickerState extends State<CustomTimePicker> {
+  Color fillColor = Colors.white70;
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -37,7 +38,10 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
           initialTime: TimeOfDay.now(),
         ).then((value) {
           if (value != null) {
-            return '${MaterialLocalizations.of(context).formatTimeOfDay(value, alwaysUse24HourFormat: true)}:00';
+            fillColor = Colors.white;
+            setState(() {});
+            return MaterialLocalizations.of(context)
+                .formatTimeOfDay(value, alwaysUse24HourFormat: true);
           } else {
             return widget.timeController.text;
           }
@@ -48,7 +52,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
               borderSide: BorderSide(color: Colors.black)),
           hintText: widget.title,
           filled: true,
-          fillColor: Colors.white),
+          fillColor: fillColor),
       readOnly: true,
       controller: widget.timeController,
     );
