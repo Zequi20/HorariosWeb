@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/subScreens/choferes_screen.dart';
 import 'package:horarios_web/subScreens/grupos_screen.dart';
-import 'package:horarios_web/widgets/tab_title.dart';
+import 'package:horarios_web/widgets/custom/tables/tab_title.dart';
 
 import '../subScreens/vehiculos_screen.dart';
 

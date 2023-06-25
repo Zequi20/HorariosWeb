@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_campos_choferes.dart';
-import 'package:horarios_web/widgets/modals/modal_agregar_chofer.dart';
-import 'package:horarios_web/widgets/modals/modal_editar_chofer.dart';
+import 'package:horarios_web/widgets/modals/chofer/modal_agregar_chofer.dart';
+import 'package:horarios_web/widgets/modals/chofer/modal_editar_chofer.dart';
 // ignore: unused_import
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;

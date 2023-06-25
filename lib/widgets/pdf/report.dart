@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
-import 'package:horarios_web/widgets/pdf_est.dart';
+import 'package:horarios_web/widgets/pdf/pdf_est.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';

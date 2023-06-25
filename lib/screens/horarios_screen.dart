@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/subScreens/horarios_historial_screen.dart';
 import 'package:horarios_web/subScreens/horarios_mantenimiento_screen.dart';
-import 'package:horarios_web/widgets/tab_title.dart';
+import 'package:horarios_web/widgets/custom/tables/tab_title.dart';
 
 class HorariosScreen extends StatefulWidget {
   const HorariosScreen({super.key, this.userId = 0});

@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_campos_vehiculos.dart';
-import 'package:horarios_web/widgets/modals/modal_agregar_vehiculo.dart';
-import 'package:horarios_web/widgets/modals/modal_editar_vehiculo.dart';
+import 'package:horarios_web/widgets/modals/coche/modal_agregar_vehiculo.dart';
+import 'package:horarios_web/widgets/modals/coche/modal_editar_vehiculo.dart';
 
 // ignore: unused_import
 import 'package:intl/intl.dart';

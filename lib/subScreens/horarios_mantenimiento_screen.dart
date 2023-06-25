@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
-import 'package:horarios_web/widgets/report.dart';
-import 'package:horarios_web/widgets/tabla_grupos.dart';
+import 'package:horarios_web/widgets/pdf/report.dart';
+import 'package:horarios_web/widgets/custom/tables/tabla_grupos.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';

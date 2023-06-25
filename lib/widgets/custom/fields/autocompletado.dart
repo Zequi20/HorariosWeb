@@ -8,10 +8,12 @@ class AsyncAutocomplete extends StatefulWidget {
       {super.key,
       required this.dataController,
       required this.link,
-      required this.label});
+      required this.label,
+      required this.filtro});
 
   final TextEditingController dataController;
   final String link;
+  final String filtro;
   final String label;
   @override
   State<AsyncAutocomplete> createState() => _AsyncAutocompleteState();
@@ -20,6 +22,7 @@ class AsyncAutocomplete extends StatefulWidget {
 class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
   TextEditingController control = TextEditingController();
   List<GenericObject> options = [];
+  Color bordeColor = Colors.white70;
   @override
   void initState() {
     super.initState();
@@ -29,6 +32,7 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
   @override
   void dispose() {
     control.dispose();
+
     super.dispose();
   }
 
@@ -38,7 +42,8 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
     if (response.statusCode == 200) {
       List data = json.decode(response.body);
       for (var element in data) {
-        options.add(GenericObject(element['ID'], element['NAME']));
+        options.add(
+            GenericObject(element['ID'], element[widget.filtro].toString()));
       }
     }
   }
@@ -63,47 +68,29 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
             .first
             .id
             .toString();
-        print('id ${widget.dataController.text}');
         setState(() {});
       },
       fieldViewBuilder: (BuildContext context, control, FocusNode focusNode,
           VoidCallback onFieldSubmitted) {
-        return TextField(
-          controller: control,
+        return TextFormField(
           focusNode: focusNode,
+          onFieldSubmitted: (String? value) {
+            onFieldSubmitted();
+          },
+          controller: control,
           onChanged: (value) {
+            if (value.isEmpty) {
+              bordeColor = Colors.white70;
+            } else {
+              bordeColor = Colors.white;
+            }
             setState(() {});
           },
           decoration: InputDecoration(
-            labelText: widget.label,
-            border: const OutlineInputBorder(),
-          ),
-        );
-      },
-      optionsViewBuilder: (BuildContext context,
-          AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
-        return Align(
-          alignment: Alignment.topLeft,
-          child: Material(
-            elevation: 4.0,
-            child: SizedBox(
-              height: 200.0,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(8.0),
-                itemCount: options.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final String option = options.elementAt(index);
-                  return GestureDetector(
-                    onTap: () {
-                      onSelected(option);
-                    },
-                    child: ListTile(
-                      title: Text(option),
-                    ),
-                  );
-                },
-              ),
-            ),
+            border: const OutlineInputBorder(borderSide: BorderSide()),
+            filled: true,
+            fillColor: bordeColor,
+            hintText: widget.label,
           ),
         );
       },

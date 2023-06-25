@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_conductor.dart';
 import 'package:horarios_web/models/model_vehiculos.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
 import 'package:http/http.dart' as http;
 
 class ModalEditarViaje extends StatefulWidget {
@@ -232,30 +233,8 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
                 const Expanded(child: Text('Hora de partida')),
                 Expanded(
                   flex: 2,
-                  child: TextField(
-                    onTap: () async {
-                      partidaController.text = await showTimePicker(
-                        helpText: 'Fijar hora de Partida',
-                        cancelText: 'Cancelar',
-                        confirmText: 'Aceptar',
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                        initialEntryMode: TimePickerEntryMode.inputOnly,
-                      ).then((value) {
-                        if (value != null) {
-                          return '${MaterialLocalizations.of(context).formatTimeOfDay(value, alwaysUse24HourFormat: true)}:00';
-                        } else {
-                          return partidaController.text;
-                        }
-                      });
-                    },
-                    decoration: const InputDecoration(
-                        hintText: 'Hora de partida',
-                        filled: true,
-                        fillColor: Colors.white),
-                    readOnly: true,
-                    controller: partidaController,
-                  ),
+                  child: CustomTimePicker(
+                      timeController: partidaController, title: 'Salida'),
                 ),
               ],
             ),
