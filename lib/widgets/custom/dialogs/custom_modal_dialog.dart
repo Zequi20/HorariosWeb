@@ -21,6 +21,7 @@ class _CustomModalDialogState extends State<CustomModalDialog> {
       contentPadding: const EdgeInsets.all(25),
       actions: [
         FilledButton.icon(
+            autofocus: true,
             onPressed: widget.onAccept,
             icon: const Icon(Icons.save),
             label: const Text(

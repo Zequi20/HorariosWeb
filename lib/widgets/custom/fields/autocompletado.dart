@@ -75,6 +75,7 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
         return TextFormField(
           focusNode: focusNode,
           onFieldSubmitted: (String? value) {
+            FocusScope.of(context).requestFocus(focusNode);
             onFieldSubmitted();
           },
           controller: control,

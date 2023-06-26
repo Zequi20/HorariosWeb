@@ -103,6 +103,7 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
             content: Text(message),
             actions: [
               TextButton(
+                autofocus: true,
                 style: const ButtonStyle(
                     foregroundColor: MaterialStatePropertyAll(Colors.white)),
                 child: const Text('Aceptar'),

@@ -15,13 +15,14 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
+  FocusNode foco = FocusNode();
   @override
   Widget build(BuildContext context) {
     return TextField(
       onSubmitted: (value) {
         tapEvent();
       },
-      focusNode: FocusNode(),
+      focusNode: foco,
       mouseCursor: MaterialStateMouseCursor.clickable,
       onTap: tapEvent,
       decoration: InputDecoration(
@@ -76,9 +77,11 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
       if (value != null) {
         fillColor = Colors.white;
         setState(() {});
+        FocusScope.of(context).requestFocus(foco);
         return MaterialLocalizations.of(context)
             .formatTimeOfDay(value, alwaysUse24HourFormat: true);
       } else {
+        FocusScope.of(context).requestFocus(foco);
         return widget.timeController.text;
       }
     });

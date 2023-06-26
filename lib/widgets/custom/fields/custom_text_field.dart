@@ -17,10 +17,14 @@ class CustomTextField extends StatefulWidget {
 Color fillColor = Colors.white70;
 
 class _CustomTextFieldState extends State<CustomTextField> {
+  FocusNode foco = FocusNode();
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      focusNode: FocusNode(),
+      focusNode: foco,
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).requestFocus(foco);
+      },
       onChanged: (value) {
         if (value.isEmpty) {
           fillColor = Colors.white70;
