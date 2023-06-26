@@ -15,12 +15,24 @@ class CustomModalDialog extends StatefulWidget {
 }
 
 class _CustomModalDialogState extends State<CustomModalDialog> {
+  var colorAccept = const MaterialStatePropertyAll(Colors.transparent);
+  var colorCancel = const MaterialStatePropertyAll(Colors.transparent);
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       contentPadding: const EdgeInsets.all(25),
       actions: [
         FilledButton.icon(
+            onFocusChange: (value) {
+              if (value) {
+                colorAccept = const MaterialStatePropertyAll(Colors.orange);
+              } else {
+                colorAccept =
+                    const MaterialStatePropertyAll(Colors.transparent);
+              }
+              setState(() {});
+            },
+            style: ButtonStyle(backgroundColor: colorAccept),
             autofocus: true,
             onPressed: widget.onAccept,
             icon: const Icon(Icons.save),
@@ -28,6 +40,15 @@ class _CustomModalDialogState extends State<CustomModalDialog> {
               'Agregar',
             )),
         FilledButton.icon(
+            onFocusChange: (value) {
+              if (value) {
+                colorCancel = const MaterialStatePropertyAll(Colors.orange);
+              } else {
+                colorCancel =
+                    const MaterialStatePropertyAll(Colors.transparent);
+              }
+              setState(() {});
+            },
             onPressed: () {
               Navigator.of(context).pop();
             },
