@@ -87,6 +87,8 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
             setState(() {});
           },
           decoration: InputDecoration(
+            focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.orange, width: 7)),
             border: const OutlineInputBorder(borderSide: BorderSide()),
             filled: true,
             fillColor: bordeColor,

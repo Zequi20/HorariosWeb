@@ -83,7 +83,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
     )
   ];
 
-  DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
+  DateFormat dateFormatter = DateFormat('dd/MM/yyy');
   var deleteController = TextEditingController();
   var searchController = TextEditingController();
 
@@ -542,17 +542,17 @@ class _ScreenChoferesState extends State<ScreenChoferes>
             DataCell(Text(jsonResponse[i]['CI'].toString().trim())),
             DataCell(
                 Text(jsonResponse[i]['DRIVING_LICENSE'].toString().trim())),
-            DataCell(
-                Text(jsonResponse[i]['BIRTH_DATE'].toString().split('T')[0])),
+            DataCell(Text(dateFormatter
+                .format(DateTime.tryParse(jsonResponse[i]['BIRTH_DATE'])!))),
             DataCell(Text(getEstadoCivil(
                 jsonResponse[i]['MARITAL_STATUS'].toString().trim()))),
             DataCell(Text(jsonResponse[i]['ADDRESS'].toString().trim())),
             DataCell(Text(jsonResponse[i]['PHONE'].toString().trim())),
             DataCell(Text(jsonResponse[i]['USUARIO'].toString().trim())),
-            DataCell(Text(jsonResponse[i]['DISCHARGE_DATE']
-                .toString()
-                .trim()
-                .split('T')[0])),
+            DataCell(
+              Text(dateFormatter.format(
+                  DateTime.tryParse(jsonResponse[i]['DISCHARGE_DATE'])!)),
+            )
           ]));
     }
     return fetched;

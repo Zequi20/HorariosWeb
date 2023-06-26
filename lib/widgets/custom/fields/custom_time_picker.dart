@@ -12,16 +12,52 @@ class CustomTimePicker extends StatefulWidget {
 
 class _CustomTimePickerState extends State<CustomTimePicker> {
   Color fillColor = Colors.white70;
+  var principalColor = const Color.fromARGB(255, 99, 1, 1);
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
+  var resaltadoColor = Colors.orange;
   @override
   Widget build(BuildContext context) {
     return TextField(
+      onSubmitted: (value) {
+        tapEvent();
+      },
+      focusNode: FocusNode(),
       mouseCursor: MaterialStateMouseCursor.clickable,
-      onTap: () async {
-        widget.timeController.text = await showTimePicker(
-          builder: (BuildContext context, Widget? child) {
-            return MediaQuery(
-              data:
-                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+      onTap: tapEvent,
+      decoration: InputDecoration(
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange, width: 7)),
+          border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black)),
+          hintText: widget.title,
+          filled: true,
+          fillColor: fillColor),
+      readOnly: true,
+      controller: widget.timeController,
+    );
+  }
+
+  void tapEvent() async {
+    widget.timeController.text = await showTimePicker(
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: Theme(
+              data: ThemeData(
+                  colorScheme: ColorScheme.fromSwatch(
+                      accentColor: resaltadoColor,
+                      primarySwatch: MaterialColor(principalColor.value, {
+                        50: principalColor,
+                        100: principalColor,
+                        200: principalColor,
+                        300: principalColor,
+                        400: principalColor,
+                        500: principalColor,
+                        600: principalColor,
+                        700: principalColor,
+                        800: principalColor,
+                        900: principalColor,
+                      }))),
               child: TimePickerDialog(
                 initialEntryMode: TimePickerEntryMode.inputOnly,
                 hourLabelText: 'Hora',
@@ -31,30 +67,20 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                 cancelText: 'Cancelar',
                 errorInvalidText: 'Formato invalido',
                 initialTime: TimeOfDay.now(),
-              ),
-            );
-          },
-          context: context,
-          initialTime: TimeOfDay.now(),
-        ).then((value) {
-          if (value != null) {
-            fillColor = Colors.white;
-            setState(() {});
-            return MaterialLocalizations.of(context)
-                .formatTimeOfDay(value, alwaysUse24HourFormat: true);
-          } else {
-            return widget.timeController.text;
-          }
-        });
+              )),
+        );
       },
-      decoration: InputDecoration(
-          border: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black)),
-          hintText: widget.title,
-          filled: true,
-          fillColor: fillColor),
-      readOnly: true,
-      controller: widget.timeController,
-    );
+      context: context,
+      initialTime: TimeOfDay.now(),
+    ).then((value) {
+      if (value != null) {
+        fillColor = Colors.white;
+        setState(() {});
+        return MaterialLocalizations.of(context)
+            .formatTimeOfDay(value, alwaysUse24HourFormat: true);
+      } else {
+        return widget.timeController.text;
+      }
+    });
   }
 }
