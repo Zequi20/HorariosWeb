@@ -30,7 +30,12 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
   var notaController = TextEditingController();
   //id de viaje
   late String idViaje;
-
+  //identificadores
+  String idCoche = '';
+  String idChofer = '';
+  String idGuarda = '';
+  //regexp
+  RegExp regex = RegExp(r'\d+');
   var defaultDivider = const Divider(
     color: Colors.transparent,
     height: 24,
@@ -48,6 +53,18 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
     partidaController.text = (aux[1].child as Text).data!;
     llegadaController.text = (aux[2].child as Text).data!;
     cocheController.text = (aux[3].child as Text).data!;
+    idCoche = regex
+        .allMatches((aux[3].child as Text).key.toString())
+        .map((match) => match.group(0)!)
+        .join('');
+    idChofer = regex
+        .allMatches((aux[4].child as Text).key.toString())
+        .map((match) => match.group(0)!)
+        .join('');
+    idGuarda = regex
+        .allMatches((aux[5].child as Text).key.toString())
+        .map((match) => match.group(0)!)
+        .join('');
     choferController.text = (aux[4].child as Text).data!;
     guardaController.text = (aux[5].child as Text).data!;
     notaController.text = (aux[6].child as Text).data!;
@@ -72,6 +89,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
           ModalRow(
             sideTitle: 'Ingrese Chofer',
             child: AsyncAutocomplete(
+              id: idChofer,
               dataController: choferController,
               link: 'http://190.52.165.206:3000/just_drivers',
               label: 'Nombre del chofer',
@@ -82,6 +100,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
           ModalRow(
             sideTitle: 'Ingrese Guarda',
             child: AsyncAutocomplete(
+              id: idGuarda,
               dataController: guardaController,
               link: 'http://190.52.165.206:3000/just_copilots',
               label: 'Nombre del guarda',
@@ -92,6 +111,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
           ModalRow(
             sideTitle: 'Ingrese numero del coche',
             child: AsyncAutocomplete(
+              id: idCoche,
               dataController: cocheController,
               link: 'http://190.52.165.206:3000/vehicles',
               label: 'Numero de coche',

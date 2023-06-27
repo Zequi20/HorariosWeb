@@ -9,12 +9,14 @@ class AsyncAutocomplete extends StatefulWidget {
       required this.dataController,
       required this.link,
       required this.label,
-      required this.filtro});
+      required this.filtro,
+      this.id = ''});
 
   final TextEditingController dataController;
   final String link;
   final String filtro;
   final String label;
+  final String id;
   @override
   State<AsyncAutocomplete> createState() => _AsyncAutocompleteState();
 }
@@ -27,6 +29,8 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
   void initState() {
     super.initState();
     fetchData(widget.link);
+    control.text = widget.dataController.text;
+    widget.dataController.text = widget.id;
   }
 
   @override
@@ -50,7 +54,7 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
   @override
   Widget build(BuildContext context) {
     return Autocomplete<String>(
-      initialValue: TextEditingValue(text: widget.dataController.text),
+      initialValue: TextEditingValue(text: control.text),
       optionsBuilder: (control) {
         if (control.text.isEmpty) {
           return const Iterable<String>.empty();
