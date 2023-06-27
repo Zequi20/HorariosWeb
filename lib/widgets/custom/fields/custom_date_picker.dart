@@ -15,7 +15,7 @@ class CustomDatePicker extends StatefulWidget {
 class _CustomDatePickerState extends State<CustomDatePicker> {
   GlobalKey textKey = GlobalKey();
   DateTime dateValue = DateTime.now();
-
+  var fillColor = Colors.white70;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -27,9 +27,11 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       decoration: InputDecoration(
           focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.orange, width: 7)),
-          hintText: widget.title,
           border: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black))),
+              borderSide: BorderSide(color: Colors.black)),
+          hintText: widget.title,
+          filled: true,
+          fillColor: fillColor),
       key: textKey,
       controller: widget.fechaControlador,
       readOnly: true,
@@ -46,6 +48,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       lastDate: DateTime.now().add(const Duration(days: 14000)),
     );
     if (pickedDate != null) {
+      fillColor = Colors.white;
       widget.fechaControlador.text =
           DateFormat('dd/MM/yyyy').format(pickedDate);
     }

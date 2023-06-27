@@ -30,6 +30,9 @@ class Pantalla extends StatelessWidget {
     var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
     return MaterialApp(
       theme: ThemeData(
+          scrollbarTheme: const ScrollbarThemeData(
+              thumbVisibility: MaterialStatePropertyAll(true),
+              thumbColor: MaterialStatePropertyAll(Colors.white70)),
           textSelectionTheme:
               TextSelectionThemeData(cursorColor: principalColor),
           dataTableTheme: DataTableThemeData(

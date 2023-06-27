@@ -36,10 +36,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
   String idGuarda = '';
   //regexp
   RegExp regex = RegExp(r'\d+');
-  var defaultDivider = const Divider(
-    color: Colors.transparent,
-    height: 24,
-  );
+
   var defaultDecoration = const InputDecoration(
     filled: true,
     fillColor: Colors.white,
@@ -80,12 +77,10 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
               sideTitle: 'Ingrese horario de Partida',
               child: CustomTimePicker(
                   timeController: partidaController, title: 'Hora de salida')),
-          defaultDivider,
           ModalRow(
               sideTitle: 'Ingrese horario de Retorno',
               child: CustomTimePicker(
                   timeController: llegadaController, title: 'Hora de retorno')),
-          defaultDivider,
           ModalRow(
             sideTitle: 'Ingrese Chofer',
             child: AsyncAutocomplete(
@@ -96,7 +91,6 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
               filtro: 'NAME',
             ),
           ),
-          defaultDivider,
           ModalRow(
             sideTitle: 'Ingrese Guarda',
             child: AsyncAutocomplete(
@@ -107,7 +101,6 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
               filtro: 'NAME',
             ),
           ),
-          defaultDivider,
           ModalRow(
             sideTitle: 'Ingrese numero del coche',
             child: AsyncAutocomplete(
@@ -118,7 +111,6 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
               filtro: 'NUMBER',
             ),
           ),
-          defaultDivider,
           ModalRow(
               sideTitle: 'Ingrese Nota (Opcional)',
               child: CustomTextField(

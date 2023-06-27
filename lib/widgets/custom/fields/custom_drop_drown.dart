@@ -31,7 +31,6 @@ class _CustomDropDrownState<T> extends State<CustomDropDrown> {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField(
-        isExpanded: true,
         value: widget.dataController.text,
         decoration: InputDecoration(
             focusedBorder: const OutlineInputBorder(

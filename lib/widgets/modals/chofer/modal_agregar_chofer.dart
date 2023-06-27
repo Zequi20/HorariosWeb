@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_date_picker.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_drop_drown.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
+import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class ModalAgregarChofer extends StatefulWidget {
   const ModalAgregarChofer({super.key, this.userId = 0});
@@ -12,8 +16,8 @@ class ModalAgregarChofer extends StatefulWidget {
 }
 
 class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
-  String tipoValue = 'Chofer';
-  String estadoValue = 'Soltero';
+  var estadoController = TextEditingController(text: 'S');
+  var tipoController = TextEditingController(text: 'C');
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
   var fechaNacController = TextEditingController();
@@ -30,430 +34,159 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
   );
   @override
   Widget build(BuildContext context) {
-    var dropEstadoCivil = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: DropdownButtonFormField(
-          isExpanded: true,
-          decoration: defaultDecoration,
-          value: estadoValue,
-          items: const [
-            DropdownMenuItem(
-              value: 'Soltero',
-              child: Text('Soltero'),
-            ),
-            DropdownMenuItem(
-              value: 'Casado',
-              child: Text('Casado'),
-            )
-          ],
-          onChanged: (value) {
-            setState(() {
-              estadoValue = value!;
-            });
-          }),
-    );
-    var dropTipo = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: DropdownButtonFormField(
-          isExpanded: true,
-          decoration: defaultDecoration,
-          value: tipoValue,
-          items: const [
-            DropdownMenuItem(
-              value: 'Chofer',
-              child: Text('Chofer'),
-            ),
-            DropdownMenuItem(
-              value: 'Guarda',
-              child: Text('Guarda'),
-            )
-          ],
-          onChanged: (value) {
-            setState(() {
-              tipoValue = value!;
-            });
-          }),
-    );
-    return AlertDialog(
-      scrollable: true,
-      actions: [
-        FilledButton.icon(
-            onPressed: () async {
-              if (nombreController.text.isNotEmpty &&
-                  documentoController.text.isNotEmpty &&
-                  registroController.text.isNotEmpty &&
-                  direccionController.text.isNotEmpty &&
-                  telefonoController.text.isNotEmpty &&
-                  codigoController.text.isNotEmpty &&
-                  fechaAltaController.text.isNotEmpty &&
-                  fechaNacController.text.isNotEmpty) {
-                final response = await http.get(
-                    Uri.parse('http://190.52.165.206:3000/max_drivers_id'));
-                int idMax = json.decode(response.body)[0]['MAX'];
+    return CustomModalDialog(
+        onAccept: onAccept,
+        title: 'Agregar Chofer o Guarda',
+        content: [
+          ModalRow(
+              sideTitle: 'Codigo',
+              child: CustomTextField(
+                  lenght: 10,
+                  textController: codigoController,
+                  hint: 'Ingresar codigo')),
+          ModalRow(
+              sideTitle: 'Nombre',
+              child: CustomTextField(
+                lenght: 50,
+                textController: nombreController,
+                hint: 'Ingresar nombre',
+              )),
+          ModalRow(
+              sideTitle: 'Telefono',
+              child: CustomTextField(
+                  lenght: 12,
+                  textController: telefonoController,
+                  hint: 'Ingrese numero de telefono')),
+          ModalRow(
+              sideTitle: 'Documento',
+              child: CustomTextField(
+                  lenght: 12,
+                  textController: documentoController,
+                  hint: 'Ingrese numero de documento')),
+          ModalRow(
+              sideTitle: 'Registro',
+              child: CustomTextField(
+                  lenght: 12,
+                  textController: registroController,
+                  hint: 'Ingrese numero de registro')),
+          ModalRow(
+              sideTitle: 'Direccion',
+              child: CustomTextField(
+                  lenght: 50,
+                  textController: direccionController,
+                  hint: 'Ingrese direccion')),
+          ModalRow(
+              sideTitle: 'Nacimiento',
+              child: CustomDatePicker(
+                  fechaControlador: fechaNacController,
+                  title: 'Fecha nacimiento')),
+          ModalRow(
+              sideTitle: 'Alta',
+              child: CustomDatePicker(
+                  fechaControlador: fechaAltaController, title: 'Fecha alta')),
+          ModalRow(
+              sideTitle: 'Tipo',
+              child: CustomDropDrown(
+                  dataController: tipoController,
+                  label: 'Guarda o Chofer?',
+                  options: const ['Chofer', 'Guarda'])),
+          ModalRow(
+              sideTitle: 'Estado',
+              child: CustomDropDrown(
+                  dataController: estadoController,
+                  label: 'Soltero o Casado?',
+                  options: const ['Soltero', 'Casado']))
+        ]);
+  }
 
-                var requestPost = http.Request('POST',
-                    Uri.parse('http://190.52.165.206:3000/add_drivers'));
+  void onAccept() async {
+    if (validateFields([
+      nombreController.text,
+      documentoController.text,
+      codigoController.text,
+      fechaAltaController.text,
+      fechaNacController.text
+    ])) {
+      DateFormat formatoBD = DateFormat('yyyy-MM-dd');
+      final response = await http
+          .get(Uri.parse('http://190.52.165.206:3000/max_drivers_id'));
+      int idMax = json.decode(response.body)[0]['MAX'];
 
-                idMax += 1;
-                requestPost.bodyFields = {
-                  'idkk': idMax.toString(),
-                  'codigo': codigoController.text,
-                  'nombre': nombreController.text,
-                  'documento': documentoController.text,
-                  'registro': registroController.text,
-                  'direccion': direccionController.text,
-                  'telefono': telefonoController.text,
-                  'fecha_nacimiento': fechaNacController.text,
-                  'fecha_alta': fechaAltaController.text,
-                  'tipo': tipoValue[0],
-                  'estado': estadoValue[0],
-                  'id_usuario': widget.userId.toString()
-                };
-                http.StreamedResponse responseStream = await requestPost.send();
+      var requestPost = http.Request(
+          'POST', Uri.parse('http://190.52.165.206:3000/add_drivers'));
 
-                if (responseStream.statusCode == 200) {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Operacion exitosa'),
-                            content:
-                                const Text('Operacion realizada con exito :)'),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  }
-                } else {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Operacion fallida'),
-                            content: const Text('Algo ha salido mal :('),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  }
-                }
-              } else {
-                if (mounted) {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Campos vacios'),
-                          content: const Text('Faltan campos por completar :)'),
-                          actions: [
-                            TextButton(
-                              style: const ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStatePropertyAll(Colors.white)),
-                              child: const Text('Aceptar'),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
-                          ],
-                        );
-                      });
-                }
-              }
-            },
-            icon: const Icon(Icons.save),
-            label: const Text(
-              'Agregar',
-            )),
-        FilledButton.icon(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.cancel),
-            label: const Text(
-              'Cancelar',
-            ))
-      ],
-      title: const Padding(
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
-        child: Text(
-          'Agregar Chofer/Guarda',
-          textAlign: TextAlign.left,
-        ),
-      ),
-      content: SizedBox(
-        width: MediaQuery.of(context).size.height,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                const Expanded(child: Text('Codigo')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 10,
-                    controller: codigoController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese el codigo',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('Nombre')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    maxLength: 50,
-                    controller: nombreController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese un nombre',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('Telefono')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 12,
-                    controller: telefonoController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese nro de telefono',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(
-                  child: Text('Documento'),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 12,
-                    controller: documentoController,
-                    decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Ingrese nro de documento'),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(
-                  child: Text('Registro'),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    maxLength: 12,
-                    controller: registroController,
-                    decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Ingrese nro de registro'),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('Direccion')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    maxLength: 50,
-                    controller: direccionController,
-                    decoration: const InputDecoration(
-                      hintText: 'Ingrese direccion',
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Fecha de nacimiento'),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    onTap: () async {
-                      fechaNacController.text = await showDatePicker(
-                        cancelText: 'Cancelar',
-                        confirmText: 'Aceptar',
-                        initialEntryMode: DatePickerEntryMode.calendarOnly,
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000, 1, 1),
-                        lastDate: DateTime.now(),
-                        builder: (context, child) {
-                          return Theme(
-                              data: ThemeData(
-                                  colorScheme: ColorScheme.light(
-                                      primary: principalColor,
-                                      secondary: Colors.white)),
-                              child: DatePickerDialog(
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000, 1, 1),
-                                lastDate: DateTime.now(),
-                              ));
-                        },
-                      ).then((value) {
-                        if (value != null) {
-                          return DateFormat('yyyy-MM-dd').format(value);
-                        } else {
-                          return fechaNacController.text;
-                        }
-                      });
-                    },
-                    controller: fechaNacController,
-                    decoration: const InputDecoration(
-                      hintText: 'Seleccionar fecha',
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    readOnly: true,
-                  ),
-                ),
-              ],
-            ),
-            const Divider(
-              height: 16,
-              color: Colors.transparent,
-            ),
-            Row(
-              children: [
-                const Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Fecha de alta'),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    controller: fechaAltaController,
-                    onTap: () async {
-                      fechaAltaController.text = await showDatePicker(
-                        cancelText: 'Cancelar',
-                        confirmText: 'Aceptar',
-                        initialEntryMode: DatePickerEntryMode.calendarOnly,
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000, 1, 1),
-                        lastDate: DateTime.now(),
-                        builder: (context, child) {
-                          return Theme(
-                              data: ThemeData(
-                                  colorScheme: ColorScheme.light(
-                                      primary: principalColor,
-                                      secondary: Colors.white)),
-                              child: DatePickerDialog(
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000, 1, 1),
-                                lastDate: DateTime.now(),
-                              ));
-                        },
-                      ).then((value) {
-                        if (value != null) {
-                          return DateFormat('yyyy-MM-dd').format(value);
-                        } else {
-                          return fechaAltaController.text;
-                        }
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'Seleccionar fecha',
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    readOnly: true,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: const [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Tipo'),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Estado'),
-                  ),
-                )
-              ],
-            ),
-            Row(children: [
-              Expanded(
-                child: dropTipo,
+      idMax += 1;
+      List<int> nac = fechaNacController.text
+          .split('/')
+          .map((e) => int.tryParse(e))
+          .toList()
+          .cast();
+      List<int> alta = fechaAltaController.text
+          .split('/')
+          .map((e) => int.tryParse(e))
+          .toList()
+          .cast();
+      requestPost.bodyFields = {
+        'idkk': idMax.toString(),
+        'codigo': codigoController.text,
+        'nombre': nombreController.text,
+        'documento': documentoController.text,
+        'registro': registroController.text,
+        'direccion': direccionController.text,
+        'telefono': telefonoController.text,
+        'fecha_nacimiento': formatoBD.format(DateTime(nac[2], nac[1], nac[0])),
+        'fecha_alta': formatoBD.format(DateTime(alta[2], alta[1], alta[0])),
+        'tipo': tipoController.text,
+        'estado': estadoController.text,
+        'id_usuario': widget.userId.toString()
+      };
+      http.StreamedResponse responseStream = await requestPost.send();
+
+      if (responseStream.statusCode == 200) {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Operacion exitosa', 'Operacion realizada con exito');
+        }
+      } else {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Error', 'Algo ha salido mal');
+        }
+      }
+    } else {
+      if (mounted) {
+        msgBox('Campos obligatorios', 'Faltan uno o mas campos');
+      }
+    }
+  }
+
+  Future<void> msgBox(String title, String message) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                autofocus: true,
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
               ),
-              Expanded(
-                child: dropEstadoCivil,
-              )
-            ]),
-          ],
-        ),
-      ),
-    );
+            ],
+          );
+        });
+  }
+
+  bool validateFields(List<String> lista) {
+    for (var i in lista) {
+      if (i.isEmpty) return false;
+      break;
+    }
+    return true;
   }
 }

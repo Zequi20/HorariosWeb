@@ -247,7 +247,6 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                     position: PopupMenuPosition.under,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: resaltadoColor)),
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
                     splashRadius: 18,
                     icon: Icon(
                       Icons.construction,
@@ -274,7 +273,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                             color: gradPrincipalColor,
                           ),
                           label: Text(
-                            'Agregar',
+                            'Agregar (a)',
                             style: TextStyle(color: principalColor),
                           ),
                         ),
@@ -350,7 +349,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                           icon: Icon(Icons.person_remove,
                               color: gradPrincipalColor),
                           label: Text(
-                            'Remover',
+                            'Remover (r)',
                             style: TextStyle(color: principalColor),
                           ),
                         ),
@@ -415,7 +414,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                             color: gradPrincipalColor,
                           ),
                           label: Text(
-                            'Editar',
+                            'Editar (e)',
                             style: TextStyle(color: principalColor),
                           ),
                         )

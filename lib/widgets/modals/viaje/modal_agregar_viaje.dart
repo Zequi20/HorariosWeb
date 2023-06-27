@@ -27,10 +27,6 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
   var choferController = TextEditingController();
   var guardaController = TextEditingController();
 
-  var defaultDivider = const Divider(
-    color: Colors.transparent,
-    height: 24,
-  );
   var defaultDecoration = const InputDecoration(
     filled: true,
     fillColor: Colors.white,
@@ -51,12 +47,10 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
               sideTitle: 'Ingrese horario de Partida',
               child: CustomTimePicker(
                   timeController: partidaController, title: 'Hora de salida')),
-          defaultDivider,
           ModalRow(
               sideTitle: 'Ingrese horario de Retorno',
               child: CustomTimePicker(
                   timeController: llegadaController, title: 'Hora de retorno')),
-          defaultDivider,
           ModalRow(
             sideTitle: 'Ingrese Chofer',
             child: AsyncAutocomplete(
@@ -66,7 +60,6 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
               filtro: 'NAME',
             ),
           ),
-          defaultDivider,
           ModalRow(
             sideTitle: 'Ingrese Guarda',
             child: AsyncAutocomplete(
@@ -76,7 +69,6 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
               filtro: 'NAME',
             ),
           ),
-          defaultDivider,
           ModalRow(
             sideTitle: 'Ingrese numero del coche',
             child: AsyncAutocomplete(
@@ -86,7 +78,6 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
               filtro: 'NUMBER',
             ),
           ),
-          defaultDivider,
           ModalRow(
               sideTitle: 'Ingrese Nota (Opcional)',
               child: CustomTextField(
