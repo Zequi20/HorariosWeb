@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_drop_down.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
 import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
@@ -89,8 +90,8 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
           defaultDivider,
           ModalRow(
               sideTitle: 'Ingrese Nota (Opcional)',
-              child:
-                  CustomTextField(textController: notaController, hint: 'Nota'))
+              child: CustomTextField(
+                  textController: notaController, hint: 'Nota')),
         ]);
   }
 
