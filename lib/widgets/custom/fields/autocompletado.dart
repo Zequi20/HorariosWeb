@@ -32,7 +32,6 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
   @override
   void dispose() {
     control.dispose();
-
     super.dispose();
   }
 
@@ -51,6 +50,7 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
   @override
   Widget build(BuildContext context) {
     return Autocomplete<String>(
+      initialValue: TextEditingValue(text: widget.dataController.text),
       optionsBuilder: (control) {
         if (control.text.isEmpty) {
           return const Iterable<String>.empty();

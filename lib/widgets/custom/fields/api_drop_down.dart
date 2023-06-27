@@ -3,8 +3,8 @@ import 'package:horarios_web/models/model_generic_object.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class CustomDropDrown extends StatefulWidget {
-  const CustomDropDrown(
+class ApiDropDrown extends StatefulWidget {
+  const ApiDropDrown(
       {super.key,
       required this.dataController,
       required this.link,
@@ -16,13 +16,13 @@ class CustomDropDrown extends StatefulWidget {
   final String filtro;
   final String label;
   @override
-  State<CustomDropDrown> createState() => _CustomDropDrownState();
+  State<ApiDropDrown> createState() => _ApiDropDrownState();
 }
 
-class _CustomDropDrownState<T> extends State<CustomDropDrown> {
+class _ApiDropDrownState<T> extends State<ApiDropDrown> {
   TextEditingController control = TextEditingController();
   List<GenericObject> options = [];
-  Color bordeColor = Colors.white70;
+  Color fondoColor = Colors.white70;
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _CustomDropDrownState<T> extends State<CustomDropDrown> {
                 borderSide: BorderSide(color: Colors.orange, width: 7)),
             hintText: widget.label,
             filled: true,
-            fillColor: Colors.white),
+            fillColor: fondoColor),
         items: options
             .map((e) => DropdownMenuItem(
                   value: e.id.toString(),
