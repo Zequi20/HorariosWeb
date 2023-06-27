@@ -14,10 +14,9 @@ class CustomTextField extends StatefulWidget {
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
-Color fillColor = Colors.white70;
-
 class _CustomTextFieldState extends State<CustomTextField> {
   FocusNode foco = FocusNode();
+  Color fillColor = Colors.white70;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
