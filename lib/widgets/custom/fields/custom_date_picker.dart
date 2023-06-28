@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:vph_web_date_picker/vph_web_date_picker.dart';
-import 'package:intl/intl.dart';
-
 class CustomDatePicker extends StatefulWidget {
   const CustomDatePicker(
       {super.key, required this.fechaControlador, required this.title});
@@ -13,9 +10,11 @@ class CustomDatePicker extends StatefulWidget {
 }
 
 class _CustomDatePickerState extends State<CustomDatePicker> {
+  var principalColor = const Color.fromARGB(255, 99, 1, 1);
   GlobalKey textKey = GlobalKey();
   DateTime dateValue = DateTime.now();
   var fillColor = Colors.white70;
+  var _selectedDate = DateTime.now();
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -40,17 +39,42 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   }
 
   void tapEvent() async {
-    final pickedDate = await showWebDatePicker(
-      width: 300,
-      context: textKey.currentContext!,
-      initialDate: dateValue,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 14000)),
+    final DateTime? pickedDate = await showDatePicker(
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+      initialDate: _selectedDate,
+      context: context,
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData(
+              colorScheme: ColorScheme(
+                  brightness: Brightness.light,
+                  primary: principalColor,
+                  onPrimary: Colors.white,
+                  secondary: Colors.brown,
+                  onSecondary: Colors.brown,
+                  error: Colors.orange,
+                  onError: Colors.orange,
+                  background: Colors.white,
+                  onBackground: Colors.white,
+                  surface: Colors.black,
+                  onSurface: Colors.black)),
+          child: DatePickerDialog(
+            initialEntryMode: DatePickerEntryMode.input,
+            initialDate: _selectedDate,
+            lastDate: DateTime(2100),
+            firstDate: DateTime(1900),
+          ),
+        );
+      },
     );
-    if (pickedDate != null) {
-      fillColor = Colors.white;
-      widget.fechaControlador.text =
-          DateFormat('dd/MM/yyyy').format(pickedDate);
+
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+        widget.fechaControlador.text =
+            "${_selectedDate.day.toString().padLeft(2, '0')}/${_selectedDate.month.toString().padLeft(2, '0')}/${_selectedDate.year.toString()}";
+      });
     }
   }
 }
