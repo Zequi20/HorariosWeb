@@ -24,7 +24,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   final horizontalController = ScrollController();
 
   DateTime curDate = DateTime.now();
-
+  FocusNode foco = FocusNode();
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
@@ -32,7 +32,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   List<DataRow> rows = [];
   int searchIndex = 0;
   bool titleVisible = true;
-  bool active = false;
+
   List<int> selectedRows = [];
   List<DropdownMenuItem<int>> itemList = const [
     DropdownMenuItem(
@@ -166,6 +166,12 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   }
 
   @override
+  void initState() {
+    super.initState();
+    foco.requestFocus();
+  }
+
+  @override
   void dispose() {
     super.dispose();
   }
@@ -230,20 +236,17 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                   CallbackShortcuts(
                     bindings: <ShortcutActivator, VoidCallback>{
                       const SingleActivator(LogicalKeyboardKey.keyA): () {
-                        if (active) onAdd();
+                        onAdd();
                       },
                       const SingleActivator(LogicalKeyboardKey.keyE): () {
-                        if (active) onEdit();
+                        onEdit();
                       },
                       const SingleActivator(LogicalKeyboardKey.keyR): () {
-                        if (active) onDelete();
+                        onDelete();
                       },
                     },
                     child: Focus(
-                      onFocusChange: (value) {
-                        active = value;
-                      },
-                      autofocus: true,
+                      focusNode: foco,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: PopupMenuButton(
