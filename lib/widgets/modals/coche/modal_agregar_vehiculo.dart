@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
+import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalAgregarVehiculo extends StatefulWidget {
@@ -11,11 +13,11 @@ class ModalAgregarVehiculo extends StatefulWidget {
 }
 
 class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
-  String tipoValue = 'Chofer';
-  String estadoValue = 'Soltero';
+  //Colores
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
-
+  //controladores de texto
+  var estadoController = TextEditingController();
   var nroController = TextEditingController();
   var tipoController = TextEditingController();
   var descripcionController = TextEditingController();
@@ -25,226 +27,108 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FilledButton.icon(
-            onPressed: () async {
-              if (nroController.text.isNotEmpty &&
-                  tipoController.text.isNotEmpty &&
-                  descripcionController.text.isNotEmpty &&
-                  matriculaController.text.isNotEmpty &&
-                  asientosController.text.isNotEmpty) {
-                final response = await http.get(
-                    Uri.parse('http://190.52.165.206:3000/max_vehicles_id'));
-                int idMax = json.decode(response.body)[0]['MAX'];
+    return CustomModalDialog(
+        onAccept: onAccept,
+        title: 'Agregar Coche',
+        content: [
+          ModalRow(
+              sideTitle: 'Numero',
+              child: CustomTextField(
+                  numeric: true,
+                  textController: nroController,
+                  hint: 'Numero de coche')),
+          ModalRow(
+              sideTitle: 'Matricula',
+              child: CustomTextField(
+                  textController: matriculaController,
+                  hint: 'Simbolos de matricula')),
+          ModalRow(
+              sideTitle: 'Tipo',
+              child: CustomTextField(
+                  textController: tipoController, hint: 'Tipo de coche')),
+          ModalRow(
+              sideTitle: 'Asientos',
+              child: CustomTextField(
+                  numeric: true,
+                  textController: asientosController,
+                  hint: 'Cantidad de asientos')),
+          ModalRow(
+              sideTitle: 'Descripcion (opcional)',
+              child: CustomTextField(
+                  textController: descripcionController,
+                  hint: 'Descripcion de coche')),
+        ]);
+  }
 
-                var requestPost = http.Request('POST',
-                    Uri.parse('http://190.52.165.206:3000/add_vehicles'));
+  void onAccept() async {
+    if (validateFields([
+      nroController.text,
+      tipoController.text,
+    ])) {
+      final response = await http
+          .get(Uri.parse('http://190.52.165.206:3000/max_vehicles_id'));
+      int idMax = json.decode(response.body)[0]['MAX'];
 
-                idMax += 1;
-                requestPost.bodyFields = {
-                  'id': idMax.toString(),
-                  'number': nroController.text,
-                  'type': tipoController.text,
-                  'description': descripcionController.text,
-                  'license_plate': matriculaController.text,
-                  'seats': asientosController.text,
-                  'id_user': widget.userId.toString()
-                };
-                http.StreamedResponse responseStream = await requestPost.send();
+      var requestPost = http.Request(
+          'POST', Uri.parse('http://190.52.165.206:3000/add_vehicles'));
 
-                if (responseStream.statusCode == 200) {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Operacion exitosa'),
-                            content:
-                                const Text('Operacion realizada con exito :)'),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  }
-                } else {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Operacion fallida'),
-                            content: const Text('Algo ha salido mal :('),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  }
-                }
-              } else {
-                if (mounted) {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Campos vacios'),
-                          content: const Text('Faltan campos por completar :)'),
-                          actions: [
-                            TextButton(
-                              style: const ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStatePropertyAll(Colors.white)),
-                              child: const Text('Aceptar'),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
-                          ],
-                        );
-                      });
-                }
-              }
-            },
-            icon: const Icon(Icons.save),
-            label: const Text(
-              'Agregar',
-            )),
-        FilledButton.icon(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.cancel),
-            label: const Text(
-              'Cancelar',
-            ))
-      ],
-      title: const Text(
-        'Agregar Vehiculo',
-        textAlign: TextAlign.center,
-      ),
-      content: SingleChildScrollView(
-        child: Form(
-            child: Column(
-          children: [
-            Row(
-              children: [
-                const Expanded(child: Text('Nro')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 10,
-                    controller: nroController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese el numero',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('Tipo')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 50,
-                    controller: tipoController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese el tipo',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('Descripcion')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    maxLength: 12,
-                    controller: descripcionController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese descripcion',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(
-                  child: Text('Matricula'),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    maxLength: 12,
-                    controller: matriculaController,
-                    decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Ingrese la matricula'),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(
-                  child: Text('Asientos'),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 12,
-                    controller: asientosController,
-                    decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Ingrese la cantidad de asientos'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        )),
-      ),
-    );
+      idMax += 1;
+      requestPost.bodyFields = {
+        'id': idMax.toString(),
+        'number': nroController.text,
+        'type': tipoController.text,
+        'description': descripcionController.text,
+        'license_plate': matriculaController.text,
+        'seats': asientosController.text,
+        'id_user': widget.userId.toString()
+      };
+      http.StreamedResponse responseStream = await requestPost.send();
+
+      if (responseStream.statusCode == 200) {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Operacion exitosa', 'Operacion realizada con exito');
+        }
+      } else {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Error', 'Algo ha salido mal');
+        }
+      }
+    } else {
+      if (mounted) {
+        msgBox('Campos obligatorios', 'Faltan uno o mas campos');
+      }
+    }
+  }
+
+  Future<void> msgBox(String title, String message) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                autofocus: true,
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  bool validateFields(List<String> lista) {
+    for (var i in lista) {
+      if (i.isEmpty) return false;
+      break;
+    }
+    return true;
   }
 }

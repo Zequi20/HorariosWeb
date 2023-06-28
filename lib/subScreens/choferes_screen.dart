@@ -32,6 +32,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
   List<DataRow> rows = [];
   int searchIndex = 0;
   bool titleVisible = true;
+  bool active = false;
   List<int> selectedRows = [];
   List<DropdownMenuItem<int>> itemList = const [
     DropdownMenuItem(
@@ -229,16 +230,19 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                   CallbackShortcuts(
                     bindings: <ShortcutActivator, VoidCallback>{
                       const SingleActivator(LogicalKeyboardKey.keyA): () {
-                        onAdd();
+                        if (active) onAdd();
                       },
                       const SingleActivator(LogicalKeyboardKey.keyE): () {
-                        onEdit();
+                        if (active) onEdit();
                       },
                       const SingleActivator(LogicalKeyboardKey.keyR): () {
-                        onDelete();
+                        if (active) onDelete();
                       },
                     },
                     child: Focus(
+                      onFocusChange: (value) {
+                        active = value;
+                      },
                       autofocus: true,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -431,7 +435,7 @@ class _ScreenChoferesState extends State<ScreenChoferes>
 
 //{"ID","TYPE","NAME","CI","DRIVING_LICENSE","BIRTH_DATE","MARITAL_STATUS","ADDRESS","PHONE","USUARIO","DISCHARGE_DATE""}
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 
   void onDelete() {
     if (selectedRows.isNotEmpty) {

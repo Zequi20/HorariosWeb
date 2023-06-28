@@ -201,187 +201,192 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
                       ),
                     ),
                   ),
-                  PopupMenuButton(
-                      position: PopupMenuPosition.under,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: resaltadoColor)),
-                      padding: const EdgeInsets.symmetric(horizontal: 18),
-                      splashRadius: 18,
-                      icon: Icon(
-                        Icons.construction,
-                        fill: 1,
-                        color: resaltadoColor,
-                      ),
-                      iconSize: 32,
-                      tooltip: 'Acciones',
-                      itemBuilder: (BuildContext context) {
-                        return [
-                          TextButton.icon(
-                            label: Text(
-                              'Agregar',
-                              style: TextStyle(color: principalColor),
-                            ),
-                            onPressed: () async {
-                              await showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return ModalAgregarVehiculo(
-                                      userId: widget.userId,
-                                    );
-                                  });
-                              setState(() {
-                                fetchRows();
-                              });
-                            },
-                            icon: Icon(
-                              Icons.add,
-                              color: gradPrincipalColor,
-                              size: 30,
-                            ),
-                          ),
-                          TextButton.icon(
-                            onPressed: () async {
-                              if (selectedRows.isNotEmpty &&
-                                  selectedRows.length < 2) {
-                                CamposVehiculos campos =
-                                    CamposVehiculos.fromRow(
-                                        rows, selectedRows.first);
+                  Focus(
+                    autofocus: true,
+                    focusNode: FocusNode(),
+                    child: PopupMenuButton(
+                        position: PopupMenuPosition.under,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: resaltadoColor)),
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        splashRadius: 18,
+                        icon: Icon(
+                          Icons.construction,
+                          fill: 1,
+                          color: resaltadoColor,
+                        ),
+                        iconSize: 32,
+                        tooltip: 'Acciones',
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            TextButton.icon(
+                              label: Text(
+                                'Agregar',
+                                style: TextStyle(color: principalColor),
+                              ),
+                              onPressed: () async {
                                 await showDialog(
                                     context: context,
                                     builder: (context) {
-                                      return ModalEditarVehiculo(
-                                        asientosController:
-                                            campos.asientosController,
-                                        descripcionController:
-                                            campos.descripcionController,
-                                        matriculaController:
-                                            campos.matriculaController,
-                                        nroController: campos.nroController,
-                                        rowId: campos.rowId,
-                                        tipoController: campos.tipoController,
+                                      return ModalAgregarVehiculo(
+                                        userId: widget.userId,
                                       );
                                     });
                                 setState(() {
-                                  selectedRows.clear();
+                                  fetchRows();
                                 });
-                              } else {
-                                showDialog(
+                              },
+                              icon: Icon(
+                                Icons.add,
+                                color: gradPrincipalColor,
+                                size: 30,
+                              ),
+                            ),
+                            TextButton.icon(
+                              onPressed: () async {
+                                if (selectedRows.isNotEmpty &&
+                                    selectedRows.length < 2) {
+                                  CamposVehiculos campos =
+                                      CamposVehiculos.fromRow(
+                                          rows, selectedRows.first);
+                                  await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ModalEditarVehiculo(
+                                          asientosController:
+                                              campos.asientosController,
+                                          descripcionController:
+                                              campos.descripcionController,
+                                          matriculaController:
+                                              campos.matriculaController,
+                                          nroController: campos.nroController,
+                                          rowId: campos.rowId,
+                                          tipoController: campos.tipoController,
+                                        );
+                                      });
+                                  setState(() {
+                                    selectedRows.clear();
+                                  });
+                                } else {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                            title: const Text(
+                                                'Seleccion unica requerida'),
+                                            content: Wrap(
+                                              children: [
+                                                Text(selectedRows.isEmpty
+                                                    ? 'Usted no ha seleeccionado ningun elemento'
+                                                    : 'Seleccione un unico elemento')
+                                              ],
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                style: const ButtonStyle(
+                                                    foregroundColor:
+                                                        MaterialStatePropertyAll(
+                                                            Colors.white)),
+                                                child: const Text('Aceptar'),
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(true);
+                                                },
+                                              ),
+                                            ]);
+                                      });
+                                }
+                              },
+                              icon: Icon(
+                                Icons.edit,
+                                color: gradPrincipalColor,
+                              ),
+                              label: Text(
+                                'Editar',
+                                style: TextStyle(color: principalColor),
+                              ),
+                            ),
+                            TextButton.icon(
+                              onPressed: () {
+                                if (selectedRows.isNotEmpty) {
+                                  showDialog(
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                          title: const Text(
-                                              'Seleccion unica requerida'),
-                                          content: Wrap(
-                                            children: [
-                                              Text(selectedRows.isEmpty
-                                                  ? 'Usted no ha seleeccionado ningun elemento'
-                                                  : 'Seleccione un unico elemento')
-                                            ],
+                                        title: const Text('Eliminar registro'),
+                                        content: Wrap(
+                                          children: [
+                                            Text(
+                                                'Seguro que desea eliminar ${selectedRows.length} ${selectedRows.length > 1 ? 'registros' : 'registro'}?')
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            style: const ButtonStyle(
+                                                foregroundColor:
+                                                    MaterialStatePropertyAll(
+                                                        Colors.white)),
+                                            child: const Text('Si, continuar'),
+                                            onPressed: () {
+                                              deleteReg();
+                                            },
                                           ),
-                                          actions: [
-                                            TextButton(
-                                              style: const ButtonStyle(
-                                                  foregroundColor:
-                                                      MaterialStatePropertyAll(
-                                                          Colors.white)),
-                                              child: const Text('Aceptar'),
-                                              onPressed: () {
-                                                Navigator.of(context).pop(true);
-                                              },
-                                            ),
-                                          ]);
-                                    });
-                              }
-                            },
-                            icon: Icon(
-                              Icons.edit,
-                              color: gradPrincipalColor,
-                            ),
-                            label: Text(
-                              'Editar',
-                              style: TextStyle(color: principalColor),
-                            ),
-                          ),
-                          TextButton.icon(
-                            onPressed: () {
-                              if (selectedRows.isNotEmpty) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text('Eliminar registro'),
-                                      content: Wrap(
-                                        children: [
-                                          Text(
-                                              'Seguro que desea eliminar ${selectedRows.length} ${selectedRows.length > 1 ? 'registros' : 'registro'}?')
+                                          TextButton(
+                                            style: const ButtonStyle(
+                                                foregroundColor:
+                                                    MaterialStatePropertyAll(
+                                                        Colors.white)),
+                                            child: const Text('Cancelar'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(true);
+                                            },
+                                          )
                                         ],
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          style: const ButtonStyle(
-                                              foregroundColor:
-                                                  MaterialStatePropertyAll(
-                                                      Colors.white)),
-                                          child: const Text('Si, continuar'),
-                                          onPressed: () {
-                                            deleteReg();
-                                          },
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                            'Seleccionar registro(s)'),
+                                        content: Wrap(
+                                          children: const [
+                                            Text(
+                                                'Para borrar un registro debe seleccionarlo de la lista')
+                                          ],
                                         ),
-                                        TextButton(
-                                          style: const ButtonStyle(
-                                              foregroundColor:
-                                                  MaterialStatePropertyAll(
-                                                      Colors.white)),
-                                          child: const Text('Cancelar'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(true);
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  },
-                                );
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title:
-                                          const Text('Seleccionar registro(s)'),
-                                      content: Wrap(
-                                        children: const [
-                                          Text(
-                                              'Para borrar un registro debe seleccionarlo de la lista')
+                                        actions: [
+                                          TextButton(
+                                            style: const ButtonStyle(
+                                                foregroundColor:
+                                                    MaterialStatePropertyAll(
+                                                        Colors.white)),
+                                            child: const Text('Aceptar'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(true);
+                                            },
+                                          ),
                                         ],
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          style: const ButtonStyle(
-                                              foregroundColor:
-                                                  MaterialStatePropertyAll(
-                                                      Colors.white)),
-                                          child: const Text('Aceptar'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(true);
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                            icon: Icon(
-                              Icons.delete,
-                              color: gradPrincipalColor,
-                            ),
-                            label: Text(
-                              'Remover',
-                              style: TextStyle(color: principalColor),
-                            ),
-                          )
-                        ].map((e) => PopupMenuItem(child: e)).toList();
-                      })
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                color: gradPrincipalColor,
+                              ),
+                              label: Text(
+                                'Remover',
+                                style: TextStyle(color: principalColor),
+                              ),
+                            )
+                          ].map((e) => PopupMenuItem(child: e)).toList();
+                        }),
+                  )
                 ],
               ),
             ),

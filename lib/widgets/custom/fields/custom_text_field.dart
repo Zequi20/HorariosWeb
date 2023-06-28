@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField(
       {super.key,
       required this.textController,
       required this.hint,
-      this.lenght = 50});
+      this.lenght = 50,
+      this.numeric = false});
   final TextEditingController textController;
   final String hint;
   final int lenght;
-
+  final bool numeric;
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
@@ -20,6 +22,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      inputFormatters: widget.numeric
+          ? [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+            ]
+          : [],
       focusNode: foco,
       onFieldSubmitted: (value) {
         FocusScope.of(context).requestFocus(foco);
