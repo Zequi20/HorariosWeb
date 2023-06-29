@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:horarios_web/models/model_empresa.dart';
+import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
+import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
+import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalAgregarGrupo extends StatefulWidget {
@@ -12,259 +14,94 @@ class ModalAgregarGrupo extends StatefulWidget {
 }
 
 class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
-  int empresaValue = 0;
-  late List<Empresa> listaEmpresas;
-
+  //colores
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
-
+  //controladores de textos
   var nombreController = TextEditingController();
   var descripcionController = TextEditingController();
+  var empresaController = TextEditingController();
   var kmController = TextEditingController();
-
-  Future<List<Empresa>> obtenerEmpresas() async {
-    final response =
-        await http.get(Uri.parse('http://190.52.165.206:3000/companies'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      listaEmpresas = data
-          .map((registro) => Empresa(registro['ID'], registro['NAME']))
-          .toList();
-      return listaEmpresas;
-    } else {
-      throw Exception('Error al obtener registros');
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FilledButton.icon(
-            onPressed: () async {
-              if (nombreController.text.isNotEmpty &&
-                  descripcionController.text.isNotEmpty &&
-                  kmController.text.isNotEmpty) {
-                final response = await http
-                    .get(Uri.parse('http://190.52.165.206:3000/max_groups_id'));
-                int idMax = json.decode(response.body)[0]['MAX'];
+    return CustomModalDialog(
+        onAccept: onAccept,
+        title: 'Agregar Grupo',
+        content: [
+          ModalRow(
+              sideTitle: 'Nombre',
+              child: CustomTextField(
+                  textController: nombreController, hint: 'Nombre de grupo')),
+          ModalRow(
+              sideTitle: 'Descripcion',
+              child: CustomTextField(
+                  textController: descripcionController,
+                  hint: 'Descripcion de grupo')),
+          ModalRow(
+              sideTitle: 'Nombre',
+              child: AsyncAutocomplete(
+                  dataController: empresaController,
+                  link: 'http://190.52.165.206:3000/companies',
+                  label: 'Empresa',
+                  filtro: 'NAME')),
+        ]);
+  }
 
-                var requestPost = http.Request(
-                    'POST', Uri.parse('http://190.52.165.206:3000/add_groups'));
+  void onAccept() async {
+    if (nombreController.text.isNotEmpty) {
+      final response =
+          await http.get(Uri.parse('http://190.52.165.206:3000/max_groups_id'));
+      int idMax = json.decode(response.body)[0]['MAX'];
+      var requestPost = http.Request(
+          'POST', Uri.parse('http://190.52.165.206:3000/add_groups'));
+      idMax += 1;
+      requestPost.bodyFields = {
+        'id': idMax.toString(),
+        'name': nombreController.text,
+        'company': empresaController.text,
+        'description': descripcionController.text,
+        'km': '0',
+        'id_user': widget.userId.toString()
+      };
+      http.StreamedResponse responseStream = await requestPost.send();
+      if (responseStream.statusCode == 200) {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Operacion exitosa', 'Operacion realizada con exito');
+        }
+      } else {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Error', 'Algo ha salido mal');
+        }
+      }
+    } else {
+      if (mounted) {
+        msgBox('Campos obligatorios', 'Faltan uno o mas campos');
+      }
+    }
+  }
 
-                idMax += 1;
-                requestPost.bodyFields = {
-                  'id': idMax.toString(),
-                  'name': nombreController.text,
-                  'company': empresaValue.toString(),
-                  'description': descripcionController.text,
-                  'km': kmController.text.trim().replaceAll('.', ''),
-                  'id_user': widget.userId.toString()
-                };
-                http.StreamedResponse responseStream = await requestPost.send();
-
-                if (responseStream.statusCode == 200) {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Operacion exitosa'),
-                            content:
-                                const Text('Operacion realizada con exito :)'),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  }
-                } else {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Operacion fallida'),
-                            content: const Text('Algo ha salido mal :('),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  }
-                }
-              } else {
-                if (mounted) {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Campos vacios'),
-                          content: const Text('Faltan campos por completar :)'),
-                          actions: [
-                            TextButton(
-                              style: const ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStatePropertyAll(Colors.white)),
-                              child: const Text('Aceptar'),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
-                          ],
-                        );
-                      });
-                }
-              }
-            },
-            icon: const Icon(Icons.save),
-            label: const Text(
-              'Agregar',
-            )),
-        FilledButton.icon(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.cancel),
-            label: const Text(
-              'Cancelar',
-            ))
-      ],
-      title: const Text(
-        'Agregar Grupo',
-        textAlign: TextAlign.center,
-      ),
-      content: SingleChildScrollView(
-        child: Form(
-            child: Column(
-          children: [
-            Row(
-              children: [
-                const Expanded(child: Text('Nombre')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    maxLength: 50,
-                    controller: nombreController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese el nombre',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('Empresa')),
-                Expanded(
-                  flex: 2,
-                  child: FutureBuilder(
-                    future: obtenerEmpresas(),
-                    builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                      if (snapshot.hasData) {
-                        return Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: DropdownButtonFormField(
-                            isExpanded: true,
-                            decoration: const InputDecoration(
-                                filled: true, fillColor: Colors.white),
-                            value: empresaValue,
-                            items: List.generate(
-                                listaEmpresas.length,
-                                (index) => DropdownMenuItem(
-                                      value: listaEmpresas[index].id,
-                                      child: Text(
-                                        listaEmpresas[index].nombre,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )),
-                            onChanged: (int? value) {
-                              setState(() {
-                                empresaValue = value!;
-                              });
-                            },
-                          ),
-                        );
-                      } else {
-                        return const CircularProgressIndicator(
-                          color: Colors.white,
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const Divider(
-              height: 8,
-              color: Colors.transparent,
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('Descripcion')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    maxLength: 50,
-                    controller: descripcionController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese descripcion',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(
-                  child: Text('Km'),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 12,
-                    controller: kmController,
-                    decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Ingrese el Km'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        )),
-      ),
-    );
+  Future<void> msgBox(String title, String message) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                autofocus: true,
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        });
   }
 }
