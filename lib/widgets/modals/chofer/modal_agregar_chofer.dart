@@ -54,6 +54,7 @@ class _ModalAgregarChoferState extends State<ModalAgregarChofer> {
           ModalRow(
               sideTitle: 'Telefono',
               child: CustomTextField(
+                  numeric: true,
                   lenght: 12,
                   textController: telefonoController,
                   hint: 'Ingrese numero de telefono')),

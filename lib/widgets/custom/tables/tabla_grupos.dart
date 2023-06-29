@@ -21,7 +21,13 @@ class GroupTable extends StatefulWidget {
 class _GroupTableState extends State<GroupTable> {
   ScrollController horizontalScroll = ScrollController();
   ScrollController verticalScroll = ScrollController();
+  //colores
+  var verticalController = ScrollController();
+  var principalColor = const Color.fromARGB(255, 99, 1, 1);
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
+  var resaltadoColor = Colors.orange;
   var colorBlanco = Colors.white;
+
   List<int> selectedIndex = [];
   @override
   Widget build(BuildContext context) {
@@ -54,186 +60,181 @@ class _GroupTableState extends State<GroupTable> {
                     key: Key(e['DRIVER2_ID'].toString()),
                   )),
                   DataCell(Text(e['NOTE'])),
-                  DataCell(Text(e['KM'].toString())),
                 ]))
         .toList();
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Scrollbar(
-            trackVisibility: true,
-            controller: horizontalScroll,
-            scrollbarOrientation: ScrollbarOrientation.bottom,
-            thumbVisibility: true,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: horizontalScroll,
-              child: DataTable(
-                  decoration: BoxDecoration(color: colorBlanco),
-                  onSelectAll: (value) {
-                    if (value!) {
-                      selectedIndex.addAll(travelsRows
-                          .map((e) => travelsRows.indexOf(e))
-                          .toList());
-                    } else {
-                      selectedIndex.clear();
-                    }
-                    setState(() {});
-                  },
-                  columns: const [
-                    DataColumn(label: Text('ID')),
-                    DataColumn(label: Text('PARTIDA')),
-                    DataColumn(label: Text('LLEGADA')),
-                    DataColumn(label: Text('COCHE')),
-                    DataColumn(label: Text('CONDUCTOR')),
-                    DataColumn(label: Text('GUARDA')),
-                    DataColumn(label: Text('NOTA')),
-                    DataColumn(label: Text('KM')),
-                  ],
-                  rows: widget.travels[widget.index].travelsData.isNotEmpty
-                      ? rows
-                      : []),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                  onPressed: () async {
-                    await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return ModalAgregarViaje(
-                            grupoId: widget.travels[widget.index].id,
-                          );
-                        });
-                    widget.updateParent();
-                  },
-                  icon: Icon(
-                    Icons.add,
-                    color: colorBlanco,
-                  )),
-              IconButton(
-                  onPressed: () async {
-                    if (selectedIndex.isNotEmpty && selectedIndex.length < 2) {
+    return Table(
+      children: [
+        TableRow(children: [
+          DataTable(
+              decoration: BoxDecoration(color: colorBlanco),
+              onSelectAll: (value) {
+                if (value!) {
+                  selectedIndex.addAll(
+                      travelsRows.map((e) => travelsRows.indexOf(e)).toList());
+                } else {
+                  selectedIndex.clear();
+                }
+                setState(() {});
+              },
+              columns: const [
+                DataColumn(label: Text('ID')),
+                DataColumn(label: Text('PARTIDA')),
+                DataColumn(label: Text('LLEGADA')),
+                DataColumn(label: Text('COCHE')),
+                DataColumn(label: Text('CONDUCTOR')),
+                DataColumn(label: Text('GUARDA')),
+                DataColumn(label: Text('NOTA')),
+              ],
+              rows: widget.travels[widget.index].travelsData.isNotEmpty
+                  ? rows
+                  : []),
+        ]),
+        TableRow(children: [
+          Container(
+            height: 40,
+            color: gradPrincipalColor,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                    onPressed: () async {
                       await showDialog(
                           context: context,
                           builder: (context) {
-                            return ModalEditarViaje(
+                            return ModalAgregarViaje(
                               grupoId: widget.travels[widget.index].id,
-                              seleccion: rows[selectedIndex.first],
                             );
                           });
-                    } else {
-                      showDialog(
+                      widget.updateParent();
+                    },
+                    icon: Icon(
+                      Icons.add,
+                      color: colorBlanco,
+                    )),
+                IconButton(
+                    onPressed: () async {
+                      if (selectedIndex.isNotEmpty &&
+                          selectedIndex.length < 2) {
+                        await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ModalEditarViaje(
+                                grupoId: widget.travels[widget.index].id,
+                                seleccion: rows[selectedIndex.first],
+                              );
+                            });
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                  title:
+                                      const Text('Seleccion unica requerida'),
+                                  content: Wrap(
+                                    children: [
+                                      Text(selectedIndex.isEmpty
+                                          ? 'Usted no ha seleccionado ningun elemento'
+                                          : 'Seleccione un unico elemento')
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      style: const ButtonStyle(
+                                          foregroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.white)),
+                                      child: const Text('Aceptar'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    ),
+                                  ]);
+                            });
+                      }
+
+                      selectedIndex.clear();
+
+                      widget.updateParent();
+                    },
+                    icon: Icon(
+                      Icons.edit,
+                      color: colorBlanco,
+                    )),
+                IconButton(
+                    onPressed: () async {
+                      if (selectedIndex.isNotEmpty) {
+                        await showDialog(
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                                title: const Text('Seleccion unica requerida'),
-                                content: Wrap(
-                                  children: [
-                                    Text(selectedIndex.isEmpty
-                                        ? 'Usted no ha seleccionado ningun elemento'
-                                        : 'Seleccione un unico elemento')
-                                  ],
+                              title: const Text('Eliminar registro'),
+                              content: Wrap(
+                                children: [
+                                  Text(
+                                      'Seguro que desea eliminar ${selectedIndex.length} ${selectedIndex.length > 1 ? 'registros' : 'registro'}?')
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  style: const ButtonStyle(
+                                      foregroundColor: MaterialStatePropertyAll(
+                                          Colors.white)),
+                                  child: const Text('Si, continuar'),
+                                  onPressed: () {
+                                    deleteReg(rows);
+                                  },
                                 ),
-                                actions: [
-                                  TextButton(
-                                    style: const ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                Colors.white)),
-                                    child: const Text('Aceptar'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                  ),
-                                ]);
-                          });
-                    }
-
-                    selectedIndex.clear();
-
-                    widget.updateParent();
-                  },
-                  icon: Icon(
-                    Icons.edit,
-                    color: colorBlanco,
-                  )),
-              IconButton(
-                  onPressed: () async {
-                    if (selectedIndex.isNotEmpty) {
-                      await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Eliminar registro'),
-                            content: Wrap(
-                              children: [
-                                Text(
-                                    'Seguro que desea eliminar ${selectedIndex.length} ${selectedIndex.length > 1 ? 'registros' : 'registro'}?')
+                                TextButton(
+                                  style: const ButtonStyle(
+                                      foregroundColor: MaterialStatePropertyAll(
+                                          Colors.white)),
+                                  child: const Text('Cancelar'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                )
                               ],
-                            ),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Si, continuar'),
-                                onPressed: () {
-                                  deleteReg(rows);
-                                },
+                            );
+                          },
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Seleccionar registro(s)'),
+                              content: Wrap(
+                                children: const [
+                                  Text(
+                                      'Para borrar un registro debe seleccionarlo de la lista')
+                                ],
                               ),
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Cancelar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              )
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Seleccionar registro(s)'),
-                            content: Wrap(
-                              children: const [
-                                Text(
-                                    'Para borrar un registro debe seleccionarlo de la lista')
+                              actions: [
+                                TextButton(
+                                  style: const ButtonStyle(
+                                      foregroundColor: MaterialStatePropertyAll(
+                                          Colors.white)),
+                                  child: const Text('Aceptar'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                ),
                               ],
-                            ),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                    widget.updateParent();
-                  },
-                  icon: Icon(
-                    Icons.delete,
-                    color: colorBlanco,
-                  ))
-            ],
-          )
-        ],
-      ),
+                            );
+                          },
+                        );
+                      }
+                      widget.updateParent();
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      color: colorBlanco,
+                    ))
+              ],
+            ),
+          ),
+        ])
+      ],
     );
   }
 

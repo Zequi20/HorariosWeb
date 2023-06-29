@@ -308,80 +308,71 @@ class _ScreenChoferesState extends State<ScreenChoferes>
               ),
             ),
           ),
-          Expanded(
-            child: Scrollbar(
-              controller: horizontalController,
-              scrollbarOrientation: ScrollbarOrientation.bottom,
-              thumbVisibility: true,
-              trackVisibility: true,
-              thickness: 14,
-              child: SingleChildScrollView(
-                controller: horizontalController,
-                scrollDirection: Axis.horizontal,
-                child: FutureBuilder(
-                    future: fetchRows(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (searchController.text.trim().isEmpty) {
-                          rows = snapshot.data!;
-                        } else {
-                          rows = snapshot.data!.where((row) {
-                            String rowText =
-                                (row.cells[searchIndex].child as Text)
-                                    .data!
-                                    .toLowerCase();
-                            String searchTerm =
-                                searchController.text.toLowerCase();
-                            return rowText.contains(searchTerm);
-                          }).toList();
-                        }
-                        return SingleChildScrollView(
-                          controller: verticalController,
-                          scrollDirection: Axis.vertical,
-                          child: Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: principalColor),
-                            child: DataTable(
-                              onSelectAll: (value) {
-                                setState(() {
-                                  if (value! == true) {
-                                    selectedRows.addAll(rows
-                                        .map((e) => rows.indexOf(e))
-                                        .toList());
-                                  } else {
-                                    selectedRows.clear();
-                                  }
-                                });
-                              },
-                              columns: const [
-                                DataColumn(label: Text('ID')),
-                                DataColumn(label: Text('Codigo')),
-                                DataColumn(label: Text('Tipo')),
-                                DataColumn(label: Text('Nombre')),
-                                DataColumn(label: Text('Documento')),
-                                DataColumn(label: Text('Registro')),
-                                DataColumn(label: Text('Nacimiento')),
-                                DataColumn(label: Text('Estado Civil')),
-                                DataColumn(label: Text('Direccion')),
-                                DataColumn(label: Text('Telefono')),
-                                DataColumn(label: Text('Usuario')),
-                                DataColumn(label: Text('Alta'))
-                              ],
-                              rows: rows,
-                            ),
+          FutureBuilder(
+              future: fetchRows(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (searchController.text.trim().isEmpty) {
+                    rows = snapshot.data!;
+                  } else {
+                    rows = snapshot.data!.where((row) {
+                      String rowText = (row.cells[searchIndex].child as Text)
+                          .data!
+                          .toLowerCase();
+                      String searchTerm = searchController.text.toLowerCase();
+                      return rowText.contains(searchTerm);
+                    }).toList();
+                  }
+                  return SingleChildScrollView(
+                    controller: verticalController,
+                    scrollDirection: Axis.vertical,
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: principalColor),
+                      child: Table(children: [
+                        TableRow(children: [
+                          DataTable(
+                            onSelectAll: (value) {
+                              setState(() {
+                                if (value! == true) {
+                                  selectedRows.addAll(rows
+                                      .map((e) => rows.indexOf(e))
+                                      .toList());
+                                } else {
+                                  selectedRows.clear();
+                                }
+                              });
+                            },
+                            columns: const [
+                              DataColumn(label: Text('ID')),
+                              DataColumn(label: Text('Codigo')),
+                              DataColumn(label: Text('Tipo')),
+                              DataColumn(label: Text('Nombre')),
+                              DataColumn(label: Text('Documento')),
+                              DataColumn(label: Text('Registro')),
+                              DataColumn(label: Text('Nacimiento')),
+                              DataColumn(label: Text('Estado Civil')),
+                              DataColumn(label: Text('Direccion')),
+                              DataColumn(label: Text('Telefono')),
+                              DataColumn(label: Text('Usuario')),
+                              DataColumn(label: Text('Alta'))
+                            ],
+                            rows: rows,
                           ),
-                        );
-                      } else {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.red,
-                          ),
-                        );
-                      }
-                    }),
-              ),
-            ),
-          ),
+                        ]),
+                      ]),
+                    ),
+                  );
+                } else {
+                  return const Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.red,
+                      ),
+                    ),
+                  );
+                }
+              }),
         ],
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
+import 'package:horarios_web/widgets/custom/lists/custom_list_view.dart';
 import 'package:horarios_web/widgets/pdf/report.dart';
-import 'package:horarios_web/widgets/custom/tables/tabla_grupos.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -485,35 +485,8 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                 travels = snapshot.data;
                 return Padding(
                   padding: const EdgeInsets.all(2.0),
-                  child: ListView.separated(
-                      separatorBuilder: (context, index) => Divider(
-                            height: 3,
-                            color: colorBlanco,
-                          ),
-                      itemCount: travels.length,
-                      itemBuilder: (context, index) {
-                        return ExpansionTile(
-                          initiallyExpanded: true,
-                          iconColor: colorBlanco,
-                          collapsedIconColor: colorBlanco,
-                          collapsedTextColor: colorBlanco,
-                          collapsedBackgroundColor: principalColor,
-                          textColor: colorBlanco,
-                          backgroundColor: gradPrincipalColor,
-                          title: Text(
-                            travels[index].name,
-                            textAlign: TextAlign.center,
-                          ),
-                          leading: Text('grupo ${travels[index].id}'),
-                          children: [
-                            GroupTable(
-                              travels: travels,
-                              index: index,
-                              updateParent: updateParent,
-                            ),
-                          ],
-                        );
-                      }),
+                  child:
+                      CustomListView(list: travels, updateParent: updateParent),
                 );
               } else {
                 return const Center(

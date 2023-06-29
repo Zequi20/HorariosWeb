@@ -221,67 +221,64 @@ class _ScreenGruposState extends State<ScreenGrupos>
               ),
             ),
           ),
-          Expanded(
-            child: Scrollbar(
-              controller: horizontalController,
-              scrollbarOrientation: ScrollbarOrientation.bottom,
-              thumbVisibility: true,
-              trackVisibility: true,
-              thickness: 14,
-              child: SingleChildScrollView(
-                controller: horizontalController,
-                scrollDirection: Axis.horizontal,
-                child: FutureBuilder(
-                  future: fetchRows(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (searchController.text.trim().isEmpty) {
-                        rows = snapshot.data!;
-                      } else {
-                        rows = snapshot.data!.where((row) {
-                          String rowText = row.cells
-                              .map((cell) => (cell.child as Text).data)
-                              .join()
-                              .toLowerCase();
-                          String searchTerm =
-                              searchController.text.toLowerCase();
-                          return rowText.contains(searchTerm);
-                        }).toList();
-                      }
-                      return SingleChildScrollView(
-                        controller: verticalController,
-                        scrollDirection: Axis.vertical,
-                        child: DataTable(
-                            onSelectAll: (value) {
-                              setState(() {
-                                if (value!) {
-                                  selectedRows
-                                      .addAll(rows.map((e) => rows.indexOf(e)));
-                                } else {
-                                  selectedRows.clear();
-                                }
-                              });
-                            },
-                            columns: const [
-                              DataColumn(label: Text('ID')),
-                              DataColumn(label: Text('Nombre')),
-                              DataColumn(label: Text('Compania')),
-                              DataColumn(label: Text('Descripcion')),
-                              DataColumn(label: Text('Usuario')),
-                              DataColumn(label: Text('Km')),
-                            ],
-                            rows: rows),
-                      );
-                    } else {
-                      return const Center(
-                          child: CircularProgressIndicator(
-                        color: Colors.red,
-                      ));
-                    }
-                  },
-                ),
-              ),
-            ),
+          FutureBuilder(
+            future: fetchRows(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (searchController.text.trim().isEmpty) {
+                  rows = snapshot.data!;
+                } else {
+                  rows = snapshot.data!.where((row) {
+                    String rowText = row.cells
+                        .map((cell) => (cell.child as Text).data)
+                        .join()
+                        .toLowerCase();
+                    String searchTerm = searchController.text.toLowerCase();
+                    return rowText.contains(searchTerm);
+                  }).toList();
+                }
+                return SingleChildScrollView(
+                  controller: verticalController,
+                  scrollDirection: Axis.vertical,
+                  child: Table(
+                    children: [
+                      TableRow(
+                        children: [
+                          DataTable(
+                              onSelectAll: (value) {
+                                setState(() {
+                                  if (value!) {
+                                    selectedRows.addAll(
+                                        rows.map((e) => rows.indexOf(e)));
+                                  } else {
+                                    selectedRows.clear();
+                                  }
+                                });
+                              },
+                              columns: const [
+                                DataColumn(label: Text('ID')),
+                                DataColumn(label: Text('Nombre')),
+                                DataColumn(label: Text('Compania')),
+                                DataColumn(label: Text('Descripcion')),
+                                DataColumn(label: Text('Usuario')),
+                                DataColumn(label: Text('Km')),
+                              ],
+                              rows: rows),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.red,
+                    ),
+                  ),
+                );
+              }
+            },
           ),
         ],
       ),
