@@ -354,7 +354,7 @@ class _ScreenGruposState extends State<ScreenGrupos>
             return ModalEditarGrupo(
               id: campos.rowId,
               nombreController: campos.nombre,
-              empresaController: int.parse(campos.empresa),
+              empresa: campos.empresa,
               descripcionController: campos.descripcion,
               kmController: campos.km,
             );

@@ -1,7 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:horarios_web/models/model_empresa.dart';
+import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
+import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
+import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalEditarGrupo extends StatefulWidget {
@@ -10,14 +11,14 @@ class ModalEditarGrupo extends StatefulWidget {
       this.userId = 0,
       required this.id,
       required this.nombreController,
-      required this.empresaController,
+      required this.empresa,
       required this.descripcionController,
       required this.kmController});
 
   final int? userId;
   final int id;
   final String nombreController;
-  final int empresaController;
+  final List<String> empresa;
   final String descripcionController;
   final String kmController;
   @override
@@ -25,257 +26,155 @@ class ModalEditarGrupo extends StatefulWidget {
 }
 
 class _ModalEditarGrupoState extends State<ModalEditarGrupo> {
-  int empresaValue = 0;
-  late List<Empresa> listaEmpresas;
-
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
 
   var nombreController = TextEditingController();
   var descripcionController = TextEditingController();
   var kmController = TextEditingController();
+  var empresaController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     nombreController.text = widget.nombreController;
-    empresaValue = widget.empresaController;
     descripcionController.text = widget.descripcionController;
     kmController.text = widget.kmController;
-  }
-
-  Future<List<Empresa>> obtenerEmpresas() async {
-    final response =
-        await http.get(Uri.parse('http://190.52.165.206:3000/companies'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      listaEmpresas = data
-          .map((registro) => Empresa(registro['ID'], registro['NAME']))
-          .toList();
-      return listaEmpresas;
-    } else {
-      throw Exception('Error al obtener registros');
-    }
+    empresaController.text = widget.empresa[1];
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FilledButton.icon(
-            onPressed: () async {
-              if (nombreController.text.isNotEmpty &&
-                  descripcionController.text.isNotEmpty &&
-                  kmController.text.isNotEmpty) {
-                var requestPost = http.Request('POST',
-                    Uri.parse('http://190.52.165.206:3000/edit_groups'));
+    return CustomModalDialog(
+        onAccept: onAccept,
+        title: 'Agregar Grupo',
+        content: [
+          ModalRow(
+              sideTitle: 'Nombre',
+              child: CustomTextField(
+                  textController: nombreController, hint: 'Nombre de grupo')),
+          ModalRow(
+              sideTitle: 'Descripcion',
+              child: CustomTextField(
+                  textController: descripcionController,
+                  hint: 'Descripcion de grupo')),
+          ModalRow(
+              sideTitle: 'Nombre',
+              child: AsyncAutocomplete(
+                  dataController: empresaController,
+                  id: widget.empresa[0],
+                  link: 'http://190.52.165.206:3000/companies',
+                  label: 'Empresa',
+                  filtro: 'NAME')),
+        ]);
+  }
 
-                requestPost.bodyFields = {
-                  'id': widget.id.toString(),
-                  'name': nombreController.text,
-                  'company': empresaValue.toString(),
-                  'description': descripcionController.text,
-                  'km': kmController.text.trim().replaceAll('.', ''),
-                };
-                http.StreamedResponse responseStream = await requestPost.send();
+  Future<void> msgBox(String title, String message) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                autofocus: true,
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        });
+  }
 
-                if (responseStream.statusCode == 200) {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Operacion exitosa'),
-                            content:
-                                const Text('Operacion realizada con exito :)'),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  }
-                } else {
-                  if (mounted) {
-                    Navigator.of(context).pop(true);
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Operacion fallida'),
-                            content: const Text('Algo ha salido mal :('),
-                            actions: [
-                              TextButton(
-                                style: const ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStatePropertyAll(Colors.white)),
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  }
-                }
-              } else {
-                if (mounted) {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Campos vacios'),
-                          content: const Text('Faltan campos por completar :)'),
-                          actions: [
-                            TextButton(
-                              style: const ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStatePropertyAll(Colors.white)),
-                              child: const Text('Aceptar'),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
-                          ],
-                        );
-                      });
-                }
-              }
-            },
-            icon: const Icon(Icons.save),
-            label: const Text(
-              'Agregar',
-            )),
-        FilledButton.icon(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.cancel),
-            label: const Text(
-              'Cancelar',
-            ))
-      ],
-      title: const Text(
-        'Editar Grupo',
-        textAlign: TextAlign.center,
-      ),
-      content: SingleChildScrollView(
-        child: Form(
-            child: Column(
-          children: [
-            Row(
-              children: [
-                const Expanded(child: Text('Nombre')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    maxLength: 50,
-                    controller: nombreController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese el nombre',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('Empresa')),
-                Expanded(
-                  flex: 2,
-                  child: FutureBuilder(
-                    future: obtenerEmpresas(),
-                    builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                      if (snapshot.hasData) {
-                        return Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: DropdownButtonFormField(
-                            isExpanded: true,
-                            decoration: const InputDecoration(
-                                filled: true, fillColor: Colors.white),
-                            value: empresaValue,
-                            items: List.generate(
-                                listaEmpresas.length,
-                                (index) => DropdownMenuItem(
-                                      value: listaEmpresas[index].id,
-                                      child: Text(
-                                        listaEmpresas[index].nombre,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )),
-                            onChanged: (int? value) {
-                              setState(() {
-                                empresaValue = value!;
-                              });
-                            },
-                          ),
-                        );
-                      } else {
-                        return const Text(
-                          'Cargando...',
-                          style: TextStyle(color: Colors.white),
-                        );
-                      }
+  void onAccept() async {
+    if (nombreController.text.isNotEmpty) {
+      var requestPost = http.Request(
+          'POST', Uri.parse('http://190.52.165.206:3000/edit_groups'));
+
+      requestPost.bodyFields = {
+        'id': widget.id.toString(),
+        'name': nombreController.text,
+        'company': empresaController.text,
+        'description': descripcionController.text,
+        'km': '0',
+      };
+      http.StreamedResponse responseStream = await requestPost.send();
+
+      if (responseStream.statusCode == 200) {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Operacion exitosa'),
+                  content: const Text('Operacion realizada con exito :)'),
+                  actions: [
+                    TextButton(
+                      autofocus: true,
+                      style: const ButtonStyle(
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.white)),
+                      child: const Text('Aceptar'),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ],
+                );
+              });
+        }
+      } else {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Operacion fallida'),
+                  content: const Text('Algo ha salido mal :('),
+                  actions: [
+                    TextButton(
+                      style: const ButtonStyle(
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.white)),
+                      child: const Text('Aceptar'),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ],
+                );
+              });
+        }
+      }
+    } else {
+      if (mounted) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Campos vacios'),
+                content: const Text('Faltan campos por completar :)'),
+                actions: [
+                  TextButton(
+                    style: const ButtonStyle(
+                        foregroundColor:
+                            MaterialStatePropertyAll(Colors.white)),
+                    child: const Text('Aceptar'),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
                     },
                   ),
-                ),
-              ],
-            ),
-            const Divider(
-              height: 8,
-              color: Colors.transparent,
-            ),
-            Row(
-              children: [
-                const Expanded(child: Text('Descripcion')),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    maxLength: 50,
-                    controller: descripcionController,
-                    decoration: const InputDecoration(
-                        hintText: 'Ingrese descripcion',
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                const Expanded(
-                  child: Text('Km'),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ],
-                    maxLength: 12,
-                    controller: kmController,
-                    decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Ingrese el Km'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        )),
-      ),
-    );
+                ],
+              );
+            });
+      }
+    }
   }
 }
