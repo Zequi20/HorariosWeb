@@ -208,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ])),
         ),
         title: const Text(
-          'REPORTES EMPRESA GUAIREÑA',
+          'ReporteExpress',
         ),
         elevation: 0,
       ),

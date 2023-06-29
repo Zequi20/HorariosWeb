@@ -293,34 +293,36 @@ class _ScreenVehiculosState extends State<ScreenVehiculos>
                     return rowText.contains(searchTerm);
                   }).toList();
                 }
-                return SingleChildScrollView(
-                  controller: verticalController,
-                  scrollDirection: Axis.vertical,
-                  child: Table(children: [
-                    TableRow(children: [
-                      DataTable(
-                          onSelectAll: (value) {
-                            setState(() {
-                              if (value!) {
-                                selectedRows
-                                    .addAll(rows.map((e) => rows.indexOf(e)));
-                              } else {
-                                selectedRows.clear();
-                              }
-                            });
-                          },
-                          columns: const [
-                            DataColumn(label: Text('ID')),
-                            DataColumn(label: Text('Nro')),
-                            DataColumn(label: Text('Tipo')),
-                            DataColumn(label: Text('Descripcion')),
-                            DataColumn(label: Text('Matricula')),
-                            DataColumn(label: Text('Asientos')),
-                            DataColumn(label: Text('Usuario')),
-                          ],
-                          rows: rows),
+                return Expanded(
+                  child: SingleChildScrollView(
+                    controller: verticalController,
+                    scrollDirection: Axis.vertical,
+                    child: Table(children: [
+                      TableRow(children: [
+                        DataTable(
+                            onSelectAll: (value) {
+                              setState(() {
+                                if (value!) {
+                                  selectedRows
+                                      .addAll(rows.map((e) => rows.indexOf(e)));
+                                } else {
+                                  selectedRows.clear();
+                                }
+                              });
+                            },
+                            columns: const [
+                              DataColumn(label: Text('ID')),
+                              DataColumn(label: Text('Nro')),
+                              DataColumn(label: Text('Tipo')),
+                              DataColumn(label: Text('Descripcion')),
+                              DataColumn(label: Text('Matricula')),
+                              DataColumn(label: Text('Asientos')),
+                              DataColumn(label: Text('Usuario')),
+                            ],
+                            rows: rows),
+                      ]),
                     ]),
-                  ]),
+                  ),
                 );
               } else {
                 return const Expanded(

@@ -29,7 +29,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
         collapsedTextColor: colorBlanco,
         collapsedBackgroundColor: gradPrincipalColor,
         textColor: colorBlanco,
-        backgroundColor: gradPrincipalColor,
+        backgroundColor: principalColor,
         title: Text(
           widget.element.name,
           textAlign: TextAlign.center,

@@ -237,36 +237,38 @@ class _ScreenGruposState extends State<ScreenGrupos>
                     return rowText.contains(searchTerm);
                   }).toList();
                 }
-                return SingleChildScrollView(
-                  controller: verticalController,
-                  scrollDirection: Axis.vertical,
-                  child: Table(
-                    children: [
-                      TableRow(
-                        children: [
-                          DataTable(
-                              onSelectAll: (value) {
-                                setState(() {
-                                  if (value!) {
-                                    selectedRows.addAll(
-                                        rows.map((e) => rows.indexOf(e)));
-                                  } else {
-                                    selectedRows.clear();
-                                  }
-                                });
-                              },
-                              columns: const [
-                                DataColumn(label: Text('ID')),
-                                DataColumn(label: Text('Nombre')),
-                                DataColumn(label: Text('Compania')),
-                                DataColumn(label: Text('Descripcion')),
-                                DataColumn(label: Text('Usuario')),
-                                DataColumn(label: Text('Km')),
-                              ],
-                              rows: rows),
-                        ],
-                      ),
-                    ],
+                return Expanded(
+                  child: SingleChildScrollView(
+                    controller: verticalController,
+                    scrollDirection: Axis.vertical,
+                    child: Table(
+                      children: [
+                        TableRow(
+                          children: [
+                            DataTable(
+                                onSelectAll: (value) {
+                                  setState(() {
+                                    if (value!) {
+                                      selectedRows.addAll(
+                                          rows.map((e) => rows.indexOf(e)));
+                                    } else {
+                                      selectedRows.clear();
+                                    }
+                                  });
+                                },
+                                columns: const [
+                                  DataColumn(label: Text('ID')),
+                                  DataColumn(label: Text('Nombre')),
+                                  DataColumn(label: Text('Compania')),
+                                  DataColumn(label: Text('Descripcion')),
+                                  DataColumn(label: Text('Usuario')),
+                                  DataColumn(label: Text('Km')),
+                                ],
+                                rows: rows),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               } else {

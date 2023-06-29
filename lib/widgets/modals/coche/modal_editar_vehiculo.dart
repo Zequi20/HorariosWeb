@@ -86,10 +86,8 @@ class _ModalEditarVehiculoState extends State<ModalEditarVehiculo> {
   }
 
   void onAccept() async {
-    if (validateFields([
-      nroController.text,
-      tipoController.text,
-    ])) {
+    if (validateFields(
+        [nroController.text, tipoController.text, asientosController.text])) {
       var requestPost = http.Request(
           'POST', Uri.parse('http://190.52.165.206:3000/edit_vehicles'));
 

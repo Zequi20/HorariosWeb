@@ -94,58 +94,62 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: FutureBuilder(
-            future: fetchTravelsByGroup(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return TextButton.icon(
-                    style: ButtonStyle(
-                        side: MaterialStatePropertyAll(BorderSide(
-                          color: colorBlanco,
-                        )),
-                        backgroundColor:
-                            MaterialStatePropertyAll(gradPrincipalColor)),
-                    onPressed: () async {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return ModalGeneradorReporte(
-                                userId: widget.userId!);
-                          });
-                    },
-                    icon: const Icon(
-                      Icons.note_add,
-                      color: Colors.white,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FutureBuilder(
+          future: fetchTravelsByGroup(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return TextButton.icon(
+                  style: ButtonStyle(
+                      side: MaterialStatePropertyAll(BorderSide(
+                        color: colorBlanco,
+                      )),
+                      backgroundColor:
+                          MaterialStatePropertyAll(gradPrincipalColor)),
+                  onPressed: () async {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return ModalGeneradorReporte(userId: widget.userId!);
+                        });
+                  },
+                  icon: const Icon(
+                    Icons.note_add,
+                    color: Colors.white,
+                  ),
+                  label: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Generador de reporte',
+                      style: TextStyle(color: Colors.white),
                     ),
-                    label: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Generador de reporte',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ));
-              } else {
-                return const Text('Cargando...');
-              }
-            }),
-        body: FutureBuilder(
-            future: fetchTravelsByGroup(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                travels = snapshot.data;
-                return Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child:
-                      CustomListView(list: travels, updateParent: updateParent),
-                );
-              } else {
-                return const Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.red,
-                ));
-              }
-            }));
+                  ));
+            } else {
+              return const Text('Cargando...');
+            }
+          }),
+      body: FutureBuilder(
+          future: fetchTravelsByGroup(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              travels = snapshot.data;
+              return Padding(
+                padding: const EdgeInsets.all(2.0),
+                child:
+                    CustomListView(list: travels, updateParent: updateParent),
+              );
+            } else {
+              return const Center(
+                  child: CircularProgressIndicator(
+                color: Colors.red,
+              ));
+            }
+          }),
+      bottomNavigationBar: BottomAppBar(
+        height: 40,
+        color: gradPrincipalColor,
+      ),
+    );
   }
 
   void updateParent() {

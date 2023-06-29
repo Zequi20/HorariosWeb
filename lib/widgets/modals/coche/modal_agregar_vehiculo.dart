@@ -61,10 +61,8 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
   }
 
   void onAccept() async {
-    if (validateFields([
-      nroController.text,
-      tipoController.text,
-    ])) {
+    if (validateFields(
+        [nroController.text, tipoController.text, asientosController.text])) {
       final response = await http
           .get(Uri.parse('http://190.52.165.206:3000/max_vehicles_id'));
       int idMax = json.decode(response.body)[0]['MAX'];

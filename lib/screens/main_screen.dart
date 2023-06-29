@@ -94,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
             icon: const Icon(Icons.menu)),
         toolbarHeight: 38,
         title: const Text(
-          'Reporte horarios',
+          'ReporteExpress',
         ),
         elevation: 0,
       ),

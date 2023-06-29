@@ -100,15 +100,21 @@ class _ScreenHomeState extends State<ScreenHome>
                       padding: const EdgeInsets.all(12),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: 1.8,
-                        crossAxisCount: 2,
+                        childAspectRatio: 1,
+                        crossAxisCount: 3,
                       ),
                       itemCount: datos.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(18.0),
                           child: Container(
                             decoration: BoxDecoration(
+                                boxShadow: const [
+                                  BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 5,
+                                      offset: Offset(2, 1))
+                                ],
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(5)),
                                 color: gradPrincipalColor),

@@ -323,44 +323,45 @@ class _ScreenChoferesState extends State<ScreenChoferes>
                       return rowText.contains(searchTerm);
                     }).toList();
                   }
-                  return SingleChildScrollView(
-                    controller: verticalController,
-                    scrollDirection: Axis.vertical,
-                    child: Theme(
-                      data: Theme.of(context)
-                          .copyWith(dividerColor: principalColor),
-                      child: Table(children: [
-                        TableRow(children: [
-                          DataTable(
-                            onSelectAll: (value) {
-                              setState(() {
-                                if (value! == true) {
-                                  selectedRows.addAll(rows
-                                      .map((e) => rows.indexOf(e))
-                                      .toList());
-                                } else {
-                                  selectedRows.clear();
-                                }
-                              });
-                            },
-                            columns: const [
-                              DataColumn(label: Text('ID')),
-                              DataColumn(label: Text('Codigo')),
-                              DataColumn(label: Text('Tipo')),
-                              DataColumn(label: Text('Nombre')),
-                              DataColumn(label: Text('Documento')),
-                              DataColumn(label: Text('Registro')),
-                              DataColumn(label: Text('Nacimiento')),
-                              DataColumn(label: Text('Estado Civil')),
-                              DataColumn(label: Text('Direccion')),
-                              DataColumn(label: Text('Telefono')),
-                              DataColumn(label: Text('Usuario')),
-                              DataColumn(label: Text('Alta'))
-                            ],
-                            rows: rows,
-                          ),
+                  return Theme(
+                    data: Theme.of(context)
+                        .copyWith(dividerColor: principalColor),
+                    child: Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Table(children: [
+                          TableRow(children: [
+                            DataTable(
+                              onSelectAll: (value) {
+                                setState(() {
+                                  if (value! == true) {
+                                    selectedRows.addAll(rows
+                                        .map((e) => rows.indexOf(e))
+                                        .toList());
+                                  } else {
+                                    selectedRows.clear();
+                                  }
+                                });
+                              },
+                              columns: const [
+                                DataColumn(label: Text('ID')),
+                                DataColumn(label: Text('Codigo')),
+                                DataColumn(label: Text('Tipo')),
+                                DataColumn(label: Text('Nombre')),
+                                DataColumn(label: Text('Documento')),
+                                DataColumn(label: Text('Registro')),
+                                DataColumn(label: Text('Nacimiento')),
+                                DataColumn(label: Text('Estado Civil')),
+                                DataColumn(label: Text('Direccion')),
+                                DataColumn(label: Text('Telefono')),
+                                DataColumn(label: Text('Usuario')),
+                                DataColumn(label: Text('Alta'))
+                              ],
+                              rows: rows,
+                            ),
+                          ]),
                         ]),
-                      ]),
+                      ),
                     ),
                   );
                 } else {
