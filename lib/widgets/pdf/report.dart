@@ -8,21 +8,33 @@ import 'package:printing/printing.dart';
 
 class Report {
   Report(this.lista, this.reportId, this.fecha, this.empresaId, this.userId,
-      this.empresas);
+      this.empresas,
+      {this.ancho = 21,
+      this.alto = 33,
+      this.margenes = const [2, 2, 2, 2],
+      this.texto = 6});
   final int reportId;
   final String fecha;
   final int empresaId;
   final int userId;
   final List<Empresa> empresas;
   List<Group> lista;
+  final int ancho;
+  final int alto;
+  final List<double> margenes;
+  final int texto;
   void generate(BuildContext context, List<String> coments) {
     _printPdf(context, coments);
   }
 
   Future<void> _printPdf(BuildContext context, List<String> coments) async {
-    final formato = const PdfPageFormat(
-            21 * PdfPageFormat.cm, 33 * PdfPageFormat.cm)
-        .copyWith(marginTop: 2, marginBottom: 2, marginLeft: 2, marginRight: 2);
+    final formato =
+        PdfPageFormat(ancho * PdfPageFormat.cm, alto * PdfPageFormat.cm)
+            .copyWith(
+                marginTop: margenes[0],
+                marginBottom: margenes[1],
+                marginLeft: margenes[2],
+                marginRight: margenes[3]);
 
     await _generatePdf(formato, coments);
   }
@@ -45,7 +57,9 @@ class Report {
                             .nombre
                             .toUpperCase(),
                         textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold)))
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: texto.toDouble())))
               ]),
               pw.TableRow(
                   decoration: const pw.BoxDecoration(color: PdfColors.orange),
@@ -55,8 +69,9 @@ class Report {
                         child: pw.Text(
                             'HORARIO DE VIAJES DE LA FECHA $fecha \t NRO $reportId ',
                             textAlign: pw.TextAlign.center,
-                            style:
-                                pw.TextStyle(fontWeight: pw.FontWeight.bold)))
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: texto.toDouble())))
                   ])
             ]);
       },
@@ -64,21 +79,27 @@ class Report {
         border: pw.TableBorder.all(color: PdfColors.black),
         children: [
           pw.TableRow(children: [
-            pw.Column(children: [
-              pw.Container(
-                  padding: const pw.EdgeInsets.all(5),
-                  child: pw.Text(coments[0])),
-              pw.Divider(color: PdfColors.black, height: 1),
-              pw.Container(
-                  padding: const pw.EdgeInsets.all(5),
-                  child: pw.Text(coments[1]))
-            ])
+            pw.Column(
+                mainAxisAlignment: pw.MainAxisAlignment.start,
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Container(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(coments[0],
+                          style: pw.TextStyle(fontSize: texto.toDouble()))),
+                  pw.Divider(color: PdfColors.black, height: 1),
+                  pw.Container(
+                    padding: const pw.EdgeInsets.all(5),
+                    child: pw.Text(coments[1],
+                        style: pw.TextStyle(fontSize: texto.toDouble())),
+                  )
+                ])
           ])
         ],
       ),
       pageFormat: format,
       build: (context) {
-        return [Titled(lista)];
+        return [Titled(lista, texto)];
       },
     );
 

@@ -3,8 +3,9 @@ import 'package:pdf/widgets.dart';
 import 'package:pdf/pdf.dart';
 
 class Estructura extends StatelessWidget {
-  Estructura(this.list);
+  Estructura(this.list, this.textoSize);
   final List list;
+  final int textoSize;
   @override
   Widget build(Context context) {
     var blackColor = const PdfColor(0, 0, 0);
@@ -24,37 +25,33 @@ class Estructura extends StatelessWidget {
       children: list
           .map((e) => TableRow(children: [
                 TableCell(Text(
-                  e['DEPARTURE_TIME']
-                      .toString()
-                      .split('.')[0]
-                      .replaceRange(5, 5, '.')
-                      .split('.')[0],
-                  textAlign: TextAlign.center,
-                )),
+                    e['DEPARTURE_TIME']
+                        .toString()
+                        .split('.')[0]
+                        .replaceRange(5, 5, '.')
+                        .split('.')[0],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: textoSize.toDouble()))),
+                TableCell(Text(e['VEHICLE'].toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: textoSize.toDouble()))),
+                TableCell(Text(e['DRIVER1'],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: textoSize.toDouble()))),
+                TableCell(Text(e['DRIVER2'],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: textoSize.toDouble()))),
                 TableCell(Text(
-                  e['VEHICLE'].toString(),
-                  textAlign: TextAlign.center,
-                )),
-                TableCell(Text(
-                  e['DRIVER1'],
-                  textAlign: TextAlign.center,
-                )),
-                TableCell(Text(
-                  e['DRIVER2'],
-                  textAlign: TextAlign.center,
-                )),
-                TableCell(Text(
-                  e['ARRIVAL_TIME']
-                      .toString()
-                      .split('.')[0]
-                      .replaceRange(5, 5, '.')
-                      .split('.')[0],
-                  textAlign: TextAlign.center,
-                )),
-                TableCell(Text(
-                  e['NOTE'],
-                  textAlign: TextAlign.center,
-                ))
+                    e['ARRIVAL_TIME']
+                        .toString()
+                        .split('.')[0]
+                        .replaceRange(5, 5, '.')
+                        .split('.')[0],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: textoSize.toDouble()))),
+                TableCell(Text(e['NOTE'],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: textoSize.toDouble())))
               ]))
           .toList(),
     );
@@ -74,13 +71,14 @@ class TableCell extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-          Padding(padding: const EdgeInsets.all(5), child: child)
+          Padding(padding: const EdgeInsets.all(2), child: child)
         ]));
   }
 }
 
 class Titled extends StatelessWidget {
-  Titled(this.list);
+  Titled(this.list, this.textoSize);
+  final int textoSize;
   final List<Group> list;
   var blackColor = const PdfColor(0, 0, 0);
   @override
@@ -96,14 +94,14 @@ class Titled extends StatelessWidget {
                         decoration: BoxDecoration(
                             border: Border.all(color: blackColor)),
                         child: Padding(
-                            padding: const EdgeInsets.all(0),
+                            padding: const EdgeInsets.all(2),
                             child: Text(e.name.toUpperCase(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 12))))
+                                    fontSize: textoSize.toDouble()))))
                   ]),
-                  TableRow(children: [Estructura(e.travelsData)])
+                  TableRow(children: [Estructura(e.travelsData, textoSize)])
                 ]))
         .toList();
     contenido.add(Table(children: [
@@ -127,12 +125,19 @@ class Titled extends StatelessWidget {
               TableRow(
                   decoration: const BoxDecoration(color: PdfColors.orange100),
                   children: [
-                    TableCell(Text('Salida')),
-                    TableCell(Text('Coche')),
-                    TableCell(Text('Conductor')),
-                    TableCell(Text('Guarda')),
-                    TableCell(FittedBox(child: Text('Retorno'))),
-                    TableCell(Text('Nota'))
+                    TableCell(Text('Salida',
+                        style: TextStyle(fontSize: textoSize.toDouble()))),
+                    TableCell(Text('Coche',
+                        style: TextStyle(fontSize: textoSize.toDouble()))),
+                    TableCell(Text('Conductor',
+                        style: TextStyle(fontSize: textoSize.toDouble()))),
+                    TableCell(Text('Guarda',
+                        style: TextStyle(fontSize: textoSize.toDouble()))),
+                    TableCell(FittedBox(
+                        child: Text('Retorno',
+                            style: TextStyle(fontSize: textoSize.toDouble())))),
+                    TableCell(Text('Nota',
+                        style: TextStyle(fontSize: textoSize.toDouble())))
                   ]),
             ]));
 

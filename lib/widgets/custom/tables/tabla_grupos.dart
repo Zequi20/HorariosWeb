@@ -66,7 +66,8 @@ class _GroupTableState extends State<GroupTable> {
       children: [
         TableRow(children: [
           DataTable(
-              decoration: BoxDecoration(color: colorBlanco),
+              decoration: BoxDecoration(
+                  color: colorBlanco, border: Border.all(color: colorBlanco)),
               onSelectAll: (value) {
                 if (value!) {
                   selectedIndex.addAll(

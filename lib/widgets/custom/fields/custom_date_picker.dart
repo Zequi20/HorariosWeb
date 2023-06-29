@@ -15,13 +15,15 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   DateTime dateValue = DateTime.now();
   var fillColor = Colors.white70;
   var _selectedDate = DateTime.now();
+  var foco = FocusNode();
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       onFieldSubmitted: (value) {
+        foco.requestFocus();
         tapEvent();
       },
-      focusNode: FocusNode(),
+      focusNode: foco,
       mouseCursor: MaterialStateMouseCursor.clickable,
       decoration: InputDecoration(
           focusedBorder: const OutlineInputBorder(
