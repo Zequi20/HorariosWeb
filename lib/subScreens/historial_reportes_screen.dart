@@ -20,39 +20,34 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: Scrollbar(
-        thumbVisibility: true,
-        scrollbarOrientation: ScrollbarOrientation.bottom,
-        controller: horizontalController,
-        child: SingleChildScrollView(
-          controller: horizontalController,
-          scrollDirection: Axis.horizontal,
-          child: FutureBuilder(
-            future: getRows(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                rows = snapshot.data;
-                return SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  controller: verticalController,
-                  child: DataTable(columns: const [
+      body: FutureBuilder(
+        future: getRows(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            rows = snapshot.data;
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              controller: verticalController,
+              child: Table(children: [
+                TableRow(children: [
+                  DataTable(columns: const [
                     DataColumn(label: Text('ID')),
                     DataColumn(label: Text('Fecha')),
                     DataColumn(label: Text('Hora')),
                     DataColumn(label: Text('Usuario')),
                     DataColumn(label: Text('Empresa')),
                   ], rows: rows),
-                );
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.red,
-                  ),
-                );
-              }
-            },
-          ),
-        ),
+                ]),
+              ]),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.red,
+              ),
+            );
+          }
+        },
       ),
     );
   }

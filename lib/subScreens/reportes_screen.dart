@@ -25,7 +25,9 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   @override
   void initState() {
     dateController.addListener(() {
-      setState(() {});
+      setState(() {
+        show = true;
+      });
     });
     super.initState();
   }
@@ -99,6 +101,17 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     return travels;
   }
 
+  bool checkEmptyTravel(List<Group> lista) {
+    bool vacio = true;
+    for (var element in lista) {
+      if (element.travelsData.isNotEmpty) {
+        vacio = false;
+      }
+    }
+    return vacio;
+  }
+
+  bool show = true;
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -108,14 +121,36 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               travels = snapshot.data!;
-              return Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: CustomListView(
-                  list: travels,
-                  updateParent: updateParent,
-                  fecha: dateFormaterString(dateController.text),
-                ),
-              );
+              if (checkEmptyTravel(travels) && show) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('No hay reportes en esta fecha'),
+                      const Divider(
+                        height: 30,
+                        color: Colors.transparent,
+                      ),
+                      FilledButton.icon(
+                          onPressed: () {
+                            show = false;
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.new_label),
+                          label: const Text('Crear'))
+                    ],
+                  ),
+                );
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: CustomListView(
+                    list: travels,
+                    updateParent: updateParent,
+                    fecha: dateFormaterString(dateController.text),
+                  ),
+                );
+              }
             } else {
               return const Center(
                   child: CircularProgressIndicator(
