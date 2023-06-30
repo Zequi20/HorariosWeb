@@ -5,9 +5,13 @@ import 'package:horarios_web/widgets/custom/tables/tabla_grupos.dart';
 
 class CustomListView extends StatefulWidget {
   const CustomListView(
-      {super.key, required this.list, required this.updateParent});
+      {super.key,
+      required this.list,
+      required this.updateParent,
+      required this.fecha});
   final List<Group> list;
   final VoidCallback updateParent;
+  final String fecha;
 
   @override
   State<CustomListView> createState() => _CustomListViewState();
@@ -33,7 +37,8 @@ class _CustomListViewState extends State<CustomListView> {
               tabla: GroupTable(
                   travels: widget.list,
                   index: index,
-                  updateParent: widget.updateParent));
+                  updateParent: widget.updateParent,
+                  fecha: widget.fecha));
         });
   }
 }

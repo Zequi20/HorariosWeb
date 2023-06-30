@@ -10,9 +10,11 @@ class GroupTable extends StatefulWidget {
     required this.travels,
     required this.index,
     required this.updateParent,
+    required this.fecha,
   }) : super(key: key);
   final List<Group> travels;
   final int index;
+  final String fecha;
   final VoidCallback updateParent;
   @override
   State<GroupTable> createState() => _GroupTableState();
@@ -104,6 +106,7 @@ class _GroupTableState extends State<GroupTable> {
                           builder: (context) {
                             return ModalAgregarViaje(
                               grupoId: widget.travels[widget.index].id,
+                              fecha: widget.fecha,
                             );
                           });
                       widget.updateParent();

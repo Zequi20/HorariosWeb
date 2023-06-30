@@ -22,6 +22,7 @@ class _CustomModalDialogState extends State<CustomModalDialog> {
     return FocusScope(
       autofocus: true,
       child: AlertDialog(
+        buttonPadding: const EdgeInsets.all(8),
         contentPadding: const EdgeInsets.all(25),
         actions: [
           FilledButton.icon(
@@ -36,7 +37,7 @@ class _CustomModalDialogState extends State<CustomModalDialog> {
               },
               style: ButtonStyle(backgroundColor: colorAccept),
               onPressed: widget.onAccept,
-              icon: const Icon(Icons.save),
+              icon: const Icon(Icons.check_circle),
               label: const Text(
                 'Agregar',
               )),

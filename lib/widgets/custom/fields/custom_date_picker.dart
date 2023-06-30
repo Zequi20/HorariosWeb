@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 
 class CustomDatePicker extends StatefulWidget {
   const CustomDatePicker(
-      {super.key, required this.fechaControlador, required this.title});
+      {super.key,
+      required this.fechaControlador,
+      required this.title,
+      this.collapsed = false});
   final TextEditingController fechaControlador;
   final String title;
+  final bool collapsed;
   @override
   State<CustomDatePicker> createState() => _CustomDatePickerState();
 }
@@ -26,6 +30,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       focusNode: foco,
       mouseCursor: MaterialStateMouseCursor.clickable,
       decoration: InputDecoration(
+          isCollapsed: widget.collapsed,
           focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.orange, width: 7)),
           border: const OutlineInputBorder(

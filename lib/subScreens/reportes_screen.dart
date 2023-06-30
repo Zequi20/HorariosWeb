@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
+import 'package:horarios_web/widgets/custom/buttons/generate_report_button.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_date_picker.dart';
 import 'package:horarios_web/widgets/custom/lists/custom_list_view.dart';
-import 'package:horarios_web/widgets/modals/generador/modal_generar_reporte.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -22,6 +23,8 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   //campos de texto
   var izquierdaController = TextEditingController();
   var derechaController = TextEditingController();
+  var dateController = TextEditingController(
+      text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
   var timeController = TextEditingController(
       text: '${DateFormat.Hm().format(DateTime.now())}:00');
   //colores
@@ -42,11 +45,6 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     filled: true,
     fillColor: Colors.white,
   );
-  @override
-  void initState() {
-    super.initState();
-    fetchTravelsByGroup();
-  }
 
   Future<List<Empresa>> obtenerEmpresas() async {
     List<Empresa> listaEmpresas = [];
@@ -73,20 +71,23 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
 
   Future fetchTravelsByGroup() async {
     List<Group> travels = [];
-    final response = await http
-        .get(Uri.parse('http://190.52.165.206:3000/travels_by_group'));
 
+    var url = Uri.parse(
+        'http://190.52.165.206:3000/travels_by_group?fecha=2023-06-30');
+    var headers = {'Content-Type': 'application/json'};
+
+    http.Response response = await http.get(url, headers: headers);
     if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-
+      List jsonData = json.decode(response.body);
       for (var element in jsonData) {
         List travelList = element['TRAVELS'];
         travels
             .add(Group(element['ID'], element['NAME'].toString(), travelList));
       }
     } else {
-      throw Exception('Fallo al obtener viajes por grupos');
+      msgBox('Error de red', 'Vuelva a intentarlo en unos momentos');
     }
+
     return travels;
   }
 
@@ -94,40 +95,6 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FutureBuilder(
-          future: fetchTravelsByGroup(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return TextButton.icon(
-                  style: ButtonStyle(
-                      side: MaterialStatePropertyAll(BorderSide(
-                        color: colorBlanco,
-                      )),
-                      backgroundColor:
-                          MaterialStatePropertyAll(gradPrincipalColor)),
-                  onPressed: () async {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return ModalGeneradorReporte(userId: widget.userId!);
-                        });
-                  },
-                  icon: const Icon(
-                    Icons.note_add,
-                    color: Colors.white,
-                  ),
-                  label: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Generador de reporte',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ));
-            } else {
-              return const Text('Cargando...');
-            }
-          }),
       body: FutureBuilder(
           future: fetchTravelsByGroup(),
           builder: (context, snapshot) {
@@ -135,8 +102,11 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
               travels = snapshot.data;
               return Padding(
                 padding: const EdgeInsets.all(2.0),
-                child:
-                    CustomListView(list: travels, updateParent: updateParent),
+                child: CustomListView(
+                  list: travels,
+                  updateParent: updateParent,
+                  fecha: dateFormaterString(dateController.text),
+                ),
               );
             } else {
               return const Center(
@@ -146,16 +116,79 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
             }
           }),
       bottomNavigationBar: BottomAppBar(
-        height: 40,
-        color: gradPrincipalColor,
-      ),
+          elevation: 8,
+          padding: const EdgeInsets.all(4),
+          height: 70,
+          color: gradPrincipalColor,
+          child: Row(
+            children: [
+              Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text(
+                      'Filtrar por fecha:',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(color: colorBlanco),
+                    ),
+                  )),
+              Expanded(
+                  flex: 1,
+                  child: CustomDatePicker(
+                      fechaControlador: dateController,
+                      title: 'Fecha de reporte')),
+              Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                child: GenerateReportButton(
+                    userId: widget.userId!,
+                    futureCallback: fetchTravelsByGroup()),
+              ))
+            ],
+          )),
     );
+  }
+
+  Future<void> msgBox(String title, String message) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                autofocus: true,
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   void updateParent() {
     setState(() {
       childUpdate = true;
     });
+  }
+
+  List<int> dateFormater(String inputDate) {
+    List<String> numbers = inputDate.split('/');
+    return [
+      int.parse(numbers[0]),
+      int.parse(numbers[1]),
+      int.parse(numbers[2])
+    ];
+  }
+
+  String dateFormaterString(String inputDate) {
+    List<String> numbers = inputDate.split('/');
+    return '${numbers[2]}-${numbers[1]}-${numbers[0]}';
   }
 
   @override

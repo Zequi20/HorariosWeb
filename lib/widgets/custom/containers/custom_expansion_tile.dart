@@ -34,7 +34,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
           widget.element.name,
           textAlign: TextAlign.center,
         ),
-        leading: Text('grupo ${widget.element.id}'),
+        leading: Text('GRUPO ${widget.element.id}'),
         children: [
           widget.tabla,
         ],

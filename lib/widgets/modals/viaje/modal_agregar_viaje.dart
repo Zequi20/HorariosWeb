@@ -8,8 +8,10 @@ import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalAgregarViaje extends StatefulWidget {
-  const ModalAgregarViaje({super.key, required this.grupoId});
+  const ModalAgregarViaje(
+      {super.key, required this.grupoId, required this.fecha});
   final int grupoId;
+  final String fecha;
   @override
   State<ModalAgregarViaje> createState() => _ModalAgregarViajeState();
 }
@@ -132,6 +134,7 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
         'nota': notaController.text,
         'partida': partidaController.text,
         'llegada': llegadaController.text,
+        'fecha': widget.fecha
       };
       http.StreamedResponse responseStream = await requestPost.send();
 
