@@ -20,11 +20,19 @@ class HorariosMantenimiento extends StatefulWidget {
 
 class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     with AutomaticKeepAliveClientMixin {
+  var dateController = TextEditingController(
+      text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
+  @override
+  void initState() {
+    dateController.addListener(() {
+      setState(() {});
+    });
+    super.initState();
+  }
+
   //campos de texto
   var izquierdaController = TextEditingController();
   var derechaController = TextEditingController();
-  var dateController = TextEditingController(
-      text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
   var timeController = TextEditingController(
       text: '${DateFormat.Hm().format(DateTime.now())}:00');
   //colores
@@ -73,7 +81,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     List<Group> travels = [];
 
     var url = Uri.parse(
-        'http://190.52.165.206:3000/travels_by_group?fecha=2023-06-30');
+        'http://190.52.165.206:3000/travels_by_group?fecha=${dateFormaterString(dateController.text)}');
     var headers = {'Content-Type': 'application/json'};
 
     http.Response response = await http.get(url, headers: headers);

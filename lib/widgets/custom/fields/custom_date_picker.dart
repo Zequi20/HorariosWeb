@@ -67,7 +67,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                   surface: Colors.black,
                   onSurface: Colors.black)),
           child: DatePickerDialog(
-            initialEntryMode: DatePickerEntryMode.input,
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
             initialDate: _selectedDate,
             lastDate: DateTime(2100),
             firstDate: DateTime(1900),
