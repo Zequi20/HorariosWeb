@@ -26,6 +26,7 @@ class _CustomListViewState extends State<CustomListView> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+        physics: const BouncingScrollPhysics(),
         separatorBuilder: (context, index) => Divider(
               height: 3,
               color: colorBlanco,

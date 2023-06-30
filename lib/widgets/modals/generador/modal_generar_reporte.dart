@@ -11,14 +11,15 @@ import 'package:horarios_web/widgets/pdf/report.dart';
 import 'package:http/http.dart' as http;
 
 class ModalGeneradorReporte extends StatefulWidget {
-  const ModalGeneradorReporte({super.key, required this.userId});
+  const ModalGeneradorReporte(
+      {super.key, required this.userId, required this.travels});
   final int userId;
+  final List<Group> travels;
   @override
   State<ModalGeneradorReporte> createState() => _ModalGeneradorReporteState();
 }
 
 class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
-  List<Group> travels = [];
   List<Empresa> listEmpresas = [];
   int reportId = 0;
   //controladores
@@ -109,7 +110,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
   }
 
   void onAccept() async {
-    var reporte = Report(travels, reportId, fechaController.text,
+    var reporte = Report(widget.travels, reportId, fechaController.text,
         int.tryParse(empresaController.text)!, widget.userId, listEmpresas,
         ancho: int.tryParse(ancho.text)!,
         alto: int.tryParse(alto.text)!,
@@ -133,7 +134,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
       final jsonData = json.decode(response.body);
       for (var element in jsonData) {
         List travelList = element['TRAVELS'];
-        travels
+        widget.travels
             .add(Group(element['ID'], element['NAME'].toString(), travelList));
       }
     } else {

@@ -77,11 +77,11 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     return idMax + 1;
   }
 
-  Future fetchTravelsByGroup() async {
+  Future<List<Group>> fetchTravelsByGroup(String fecha) async {
     List<Group> travels = [];
 
     var url = Uri.parse(
-        'http://190.52.165.206:3000/travels_by_group?fecha=${dateFormaterString(dateController.text)}');
+        'http://190.52.165.206:3000/travels_by_group?fecha=${dateFormaterString(fecha)}');
     var headers = {'Content-Type': 'application/json'};
 
     http.Response response = await http.get(url, headers: headers);
@@ -104,10 +104,10 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     super.build(context);
     return Scaffold(
       body: FutureBuilder(
-          future: fetchTravelsByGroup(),
+          future: fetchTravelsByGroup(dateController.text),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              travels = snapshot.data;
+              travels = snapshot.data!;
               return Padding(
                 padding: const EdgeInsets.all(2.0),
                 child: CustomListView(
@@ -146,12 +146,10 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                       fechaControlador: dateController,
                       title: 'Fecha de reporte')),
               Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 22.0),
-                child: GenerateReportButton(
-                    userId: widget.userId!,
-                    futureCallback: fetchTravelsByGroup()),
-              ))
+                  child: GenerateReportButton(
+                      padding: 22,
+                      userId: widget.userId!,
+                      futureCallback: fetchTravelsByGroup(dateController.text)))
             ],
           )),
     );

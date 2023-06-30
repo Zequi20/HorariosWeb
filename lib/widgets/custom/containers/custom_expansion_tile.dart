@@ -21,8 +21,16 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(border: Border.all(color: principalColor)),
+      margin: const EdgeInsets.all(12),
+      decoration:
+          BoxDecoration(border: Border.all(color: principalColor), boxShadow: [
+        BoxShadow(
+            color: Colors.black.withOpacity(0.8),
+            blurRadius: 5,
+            offset: const Offset(-2, -2))
+      ]),
       child: ExpansionTile(
+        tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
         initiallyExpanded: true,
         iconColor: colorBlanco,
         collapsedIconColor: colorBlanco,
