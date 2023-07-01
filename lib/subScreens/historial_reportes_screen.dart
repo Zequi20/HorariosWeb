@@ -70,11 +70,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
       retorno.add(DataRow(cells: [
         DataCell(Text(jsonResponse[i]['ID'].toString())),
         DataCell(Text(jsonResponse[i]['DATE_OF'].toString().split('T')[0])),
-        DataCell(Text(jsonResponse[i]['TIME_OF']
-            .toString()
-            .split('T')[1]
-            .replaceAll('Z', '')
-            .split('.')[0])),
+        DataCell(Text(jsonResponse[i]['TIME_OF'].toString().split('.')[0])),
         DataCell(Text(jsonResponse[i]['NAME'])),
         DataCell(Text(jsonResponse[i]['COMPANIE'])),
       ]));
@@ -84,5 +80,5 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }

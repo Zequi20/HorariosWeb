@@ -182,6 +182,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                       title: 'Fecha de reporte')),
               Expanded(
                   child: GenerateReportButton(
+                      fecha: dateFormaterString(dateController.text),
                       padding: 22,
                       userId: widget.userId!,
                       futureCallback: fetchTravelsByGroup(dateController.text)))

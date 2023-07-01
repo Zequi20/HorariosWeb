@@ -7,11 +7,12 @@ class GenerateReportButton extends StatefulWidget {
       {super.key,
       required this.userId,
       required this.futureCallback,
-      required this.padding});
+      required this.padding,
+      required this.fecha});
   final int userId;
   final Future<List<Group>> futureCallback;
   final double padding;
-
+  final String fecha;
   @override
   State<GenerateReportButton> createState() => _GenerateReportButtonState();
 }
@@ -41,6 +42,7 @@ class _GenerateReportButtonState extends State<GenerateReportButton> {
                         context: context,
                         builder: (context) {
                           return ModalGeneradorReporte(
+                            fecha: widget.fecha,
                             userId: widget.userId,
                             travels: travels,
                           );

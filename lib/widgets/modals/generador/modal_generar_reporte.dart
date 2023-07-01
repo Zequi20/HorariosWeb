@@ -4,17 +4,21 @@ import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
-import 'package:horarios_web/widgets/custom/fields/custom_date_picker.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
 import 'package:horarios_web/widgets/pdf/report.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class ModalGeneradorReporte extends StatefulWidget {
   const ModalGeneradorReporte(
-      {super.key, required this.userId, required this.travels});
+      {super.key,
+      required this.userId,
+      required this.travels,
+      required this.fecha});
   final int userId;
   final List<Group> travels;
+  final String fecha;
   @override
   State<ModalGeneradorReporte> createState() => _ModalGeneradorReporteState();
 }
@@ -46,10 +50,6 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
         onAccept: onAccept,
         title: 'Generar reporte',
         content: [
-          ModalRow(
-              sideTitle: 'Fecha',
-              child: CustomDatePicker(
-                  fechaControlador: fechaController, title: 'Fecha reporte')),
           ModalRow(
               sideTitle: 'Empresa',
               child: AsyncAutocomplete(
@@ -123,7 +123,69 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
         ]);
     reporte
         .generate(context, [izquierdaController.text, derechaController.text]);
-    Navigator.of(context).pop(true);
+
+    //API---------------------------------------------------
+    List reportes = await fetchReports();
+    if (reportes.isEmpty) {
+      int idVal = await fetchMaxReportId() + 1;
+      await postReport(idVal);
+    } else {
+      await updateReport();
+    }
+    if (mounted) {
+      Navigator.of(context).pop(true);
+    }
+  }
+
+  Future<void> updateReport() async {
+    var request = http.Request(
+        'POST', Uri.parse('http://190.52.165.206:3000/reports_update'));
+    request.bodyFields = {
+      'date': widget.fecha,
+      'time': horaString(DateTime.now()),
+      'user': widget.userId.toString(),
+      'empre': empresaController.text
+    };
+
+    await request.send();
+  }
+
+  Future<List> fetchReports() async {
+    var request = http.Request('GET',
+        Uri.parse('http://190.52.165.206:3000/reports?fecha=${widget.fecha}'));
+    //send request
+    http.StreamedResponse response = await request.send();
+    //convert
+    var data = await http.Response.fromStream(response);
+    //convert received data to list
+    List jsonResponse = json.decode(data.body);
+    return jsonResponse;
+  }
+
+  Future<void> postReport(int id) async {
+    var request = http.Request(
+        'POST', Uri.parse('http://190.52.165.206:3000/reports_add'));
+    request.bodyFields = {
+      'id': id.toString(),
+      'date': widget.fecha,
+      'time': horaString(DateTime.now()),
+      'user': widget.userId.toString(),
+      'empre': empresaController.text
+    };
+
+    await request.send();
+  }
+
+  Future<int> fetchMaxReportId() async {
+    var request = http.Request(
+        'GET', Uri.parse('http://190.52.165.206:3000/max_reports_id'));
+    request.bodyFields = {};
+
+    http.StreamedResponse response = await request.send();
+    var data = await http.Response.fromStream(response);
+    List jsonResponse = json.decode(data.body);
+    int valor = jsonResponse.first["MAX"];
+    return valor;
   }
 
   Future fetchTravelsByGroup() async {
@@ -162,5 +224,33 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
         await http.get(Uri.parse('http://190.52.165.206:3000/max_reports_id'));
     int idMax = json.decode(response.body)[0]['MAX'];
     return idMax + 1;
+  }
+
+  String horaString(DateTime data) {
+    DateFormat formatter = DateFormat.Hm();
+    String formattedTime = formatter.format(data);
+    return formattedTime;
+  }
+
+  Future<void> msgBox(String title, String message) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                autofocus: true,
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        });
   }
 }

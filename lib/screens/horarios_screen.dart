@@ -29,7 +29,7 @@ class _HorariosScreenState extends State<HorariosScreen> {
                 ),
                 Tab(
                   child: TabTitle(
-                      iconoTitulo: Icon(Icons.history), titulo: 'Historial'),
+                      iconoTitulo: Icon(Icons.history), titulo: 'Actividad'),
                 ),
               ]),
             ),
