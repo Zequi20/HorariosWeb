@@ -4,6 +4,7 @@ import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_number_picker.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
 import 'package:horarios_web/widgets/pdf/report.dart';
@@ -50,6 +51,36 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
         onAccept: onAccept,
         title: 'Generar reporte',
         content: [
+          Row(
+            children: [
+              CustomNumberPicker(
+                textController: TextEditingController(),
+                hint: 'valor',
+                max: 50,
+              ),
+              const Divider(
+                indent: 8,
+              ),
+              CustomNumberPicker(
+                  max: 50,
+                  textController: TextEditingController(),
+                  hint: 'valor'),
+              const Divider(
+                indent: 8,
+              ),
+              CustomNumberPicker(
+                  max: 50,
+                  textController: TextEditingController(),
+                  hint: 'valor'),
+              const Divider(
+                indent: 8,
+              ),
+              CustomNumberPicker(
+                  max: 50,
+                  textController: TextEditingController(),
+                  hint: 'valor')
+            ],
+          ),
           ModalRow(
               sideTitle: 'Empresa',
               child: AsyncAutocomplete(
