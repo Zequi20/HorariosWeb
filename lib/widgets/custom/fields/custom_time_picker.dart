@@ -26,6 +26,8 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
       mouseCursor: MaterialStateMouseCursor.clickable,
       onTap: tapEvent,
       decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.access_time),
+          prefixIconColor: gradPrincipalColor,
           focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.orange, width: 7)),
           border: const OutlineInputBorder(

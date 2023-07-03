@@ -9,12 +9,14 @@ class ApiDropDrown extends StatefulWidget {
       required this.dataController,
       required this.link,
       required this.label,
-      required this.filtro});
+      required this.filtro,
+      required this.icon});
 
   final TextEditingController dataController;
   final String link;
   final String filtro;
   final String label;
+  final IconData icon;
   @override
   State<ApiDropDrown> createState() => _ApiDropDrownState();
 }
@@ -23,6 +25,8 @@ class _ApiDropDrownState<T> extends State<ApiDropDrown> {
   TextEditingController control = TextEditingController();
   List<GenericObject> options = [];
   Color fondoColor = Colors.white70;
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
+  FocusNode foco = FocusNode();
 
   @override
   void initState() {
@@ -55,6 +59,8 @@ class _ApiDropDrownState<T> extends State<ApiDropDrown> {
         isExpanded: true,
         value: widget.dataController.text,
         decoration: InputDecoration(
+            prefixIcon: Icon(widget.icon),
+            prefixIconColor: gradPrincipalColor,
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.orange, width: 7)),
             hintText: widget.label,

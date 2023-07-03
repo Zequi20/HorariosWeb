@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
-import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
+import 'package:horarios_web/widgets/custom/containers/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalAgregarGrupo extends StatefulWidget {
@@ -36,15 +36,18 @@ class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
           ModalRow(
               sideTitle: 'Descripcion',
               child: CustomTextField(
+                  icon: Icons.note_outlined,
                   textController: descripcionController,
                   hint: 'Descripcion de grupo')),
           ModalRow(
               sideTitle: 'Nombre',
               child: AsyncAutocomplete(
-                  dataController: empresaController,
-                  link: 'http://190.52.165.206:3000/companies',
-                  label: 'Empresa',
-                  filtro: 'NAME')),
+                dataController: empresaController,
+                link: 'http://190.52.165.206:3000/companies',
+                label: 'Empresa',
+                filtro: 'NAME',
+                icon: Icons.work,
+              )),
         ]);
   }
 

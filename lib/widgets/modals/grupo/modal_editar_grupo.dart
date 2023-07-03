@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
-import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
+import 'package:horarios_web/widgets/custom/containers/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalEditarGrupo extends StatefulWidget {
@@ -56,16 +56,19 @@ class _ModalEditarGrupoState extends State<ModalEditarGrupo> {
           ModalRow(
               sideTitle: 'Descripcion',
               child: CustomTextField(
+                  icon: Icons.note_outlined,
                   textController: descripcionController,
                   hint: 'Descripcion de grupo')),
           ModalRow(
               sideTitle: 'Nombre',
               child: AsyncAutocomplete(
-                  dataController: empresaController,
-                  id: widget.empresa[0],
-                  link: 'http://190.52.165.206:3000/companies',
-                  label: 'Empresa',
-                  filtro: 'NAME')),
+                dataController: empresaController,
+                id: widget.empresa[0],
+                link: 'http://190.52.165.206:3000/companies',
+                label: 'Empresa',
+                filtro: 'NAME',
+                icon: Icons.work,
+              )),
         ]);
   }
 

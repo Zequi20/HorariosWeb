@@ -9,19 +9,23 @@ class CustomNumberPicker extends StatefulWidget {
       this.lenght = 50,
       this.numeric = false,
       this.initialValue = 1,
-      required this.max});
+      required this.max,
+      this.icon = Icons.numbers});
   final TextEditingController textController;
   final String hint;
   final int lenght;
   final int initialValue;
   final bool numeric;
   final int max;
+  final IconData icon;
 
   @override
   State<CustomNumberPicker> createState() => _CustomNumberPickerState();
 }
 
 class _CustomNumberPickerState extends State<CustomNumberPicker> {
+  var principalColor = const Color.fromARGB(255, 99, 1, 1);
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   FocusNode foco = FocusNode();
   Color fillColor = Colors.white;
   late int pickerValue;
@@ -39,7 +43,7 @@ class _CustomNumberPickerState extends State<CustomNumberPicker> {
       child: Row(
         children: [
           SizedBox(
-            width: 80,
+            width: 85,
             child: TextFormField(
               textAlign: TextAlign.center,
               onChanged: (value) {
@@ -63,6 +67,8 @@ class _CustomNumberPickerState extends State<CustomNumberPicker> {
               },
               controller: widget.textController,
               decoration: InputDecoration(
+                  prefixIconColor: gradPrincipalColor,
+                  prefixIcon: Icon(widget.icon),
                   focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.orange, width: 7)),
                   hintText: widget.hint,
@@ -80,26 +86,36 @@ class _CustomNumberPickerState extends State<CustomNumberPicker> {
                   borderRadius: BorderRadius.all(Radius.circular(5))),
               child: Column(
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        if (pickerValue < widget.max) {
-                          setState(() {
-                            pickerValue++;
-                            widget.textController.text = pickerValue.toString();
-                          });
-                        }
-                      },
-                      icon: const Icon(Icons.arrow_drop_up)),
-                  IconButton(
-                      onPressed: () {
-                        if (pickerValue > 0) {
-                          setState(() {
-                            pickerValue--;
-                            widget.textController.text = pickerValue.toString();
-                          });
-                        }
-                      },
-                      icon: const Icon(Icons.arrow_drop_down))
+                  ExcludeFocus(
+                    excluding: true,
+                    child: IconButton(
+                        focusColor: Colors.orange,
+                        onPressed: () {
+                          if (pickerValue < widget.max) {
+                            setState(() {
+                              pickerValue++;
+                              widget.textController.text =
+                                  pickerValue.toString();
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.arrow_drop_up)),
+                  ),
+                  ExcludeFocus(
+                    excluding: true,
+                    child: IconButton(
+                        focusColor: Colors.orange,
+                        onPressed: () {
+                          if (pickerValue > 0) {
+                            setState(() {
+                              pickerValue--;
+                              widget.textController.text =
+                                  pickerValue.toString();
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.arrow_drop_down)),
+                  )
                 ],
               ),
             ),

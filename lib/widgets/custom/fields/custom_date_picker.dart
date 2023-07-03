@@ -15,6 +15,7 @@ class CustomDatePicker extends StatefulWidget {
 
 class _CustomDatePickerState extends State<CustomDatePicker> {
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   GlobalKey textKey = GlobalKey();
   DateTime dateValue = DateTime.now();
   var fillColor = Colors.white70;
@@ -30,6 +31,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       focusNode: foco,
       mouseCursor: MaterialStateMouseCursor.clickable,
       decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.calendar_month),
+          prefixIconColor: gradPrincipalColor,
           isCollapsed: widget.collapsed,
           focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.orange, width: 7)),

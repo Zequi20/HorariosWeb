@@ -3,7 +3,7 @@ import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_date_picker.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_drop_drown.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
-import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
+import 'package:horarios_web/widgets/custom/containers/modal_row.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
@@ -76,6 +76,8 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
           ModalRow(
               sideTitle: 'Codigo',
               child: CustomTextField(
+                  icon: Icons.numbers,
+                  numeric: true,
                   lenght: 10,
                   textController: codigoController,
                   hint: 'Ingresar codigo')),
@@ -89,6 +91,7 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
           ModalRow(
               sideTitle: 'Telefono',
               child: CustomTextField(
+                  icon: Icons.phone,
                   numeric: true,
                   lenght: 12,
                   textController: telefonoController,
@@ -96,6 +99,7 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
           ModalRow(
               sideTitle: 'Documento',
               child: CustomTextField(
+                  icon: Icons.card_membership,
                   lenght: 12,
                   textController: documentoController,
                   hint: 'Ingrese numero de documento')),
@@ -108,6 +112,7 @@ class _ModalEditarChoferState extends State<ModalEditarChofer> {
           ModalRow(
               sideTitle: 'Direccion',
               child: CustomTextField(
+                  icon: Icons.location_on,
                   lenght: 50,
                   textController: direccionController,
                   hint: 'Ingrese direccion')),

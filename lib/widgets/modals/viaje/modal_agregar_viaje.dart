@@ -4,7 +4,7 @@ import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
-import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
+import 'package:horarios_web/widgets/custom/containers/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalAgregarViaje extends StatefulWidget {
@@ -56,6 +56,7 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
           ModalRow(
             sideTitle: 'Ingrese Chofer',
             child: AsyncAutocomplete(
+              icon: Icons.person,
               dataController: choferController,
               link: 'http://190.52.165.206:3000/just_drivers',
               label: 'Nombre del chofer',
@@ -65,6 +66,7 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
           ModalRow(
             sideTitle: 'Ingrese Guarda',
             child: AsyncAutocomplete(
+              icon: Icons.person,
               dataController: guardaController,
               link: 'http://190.52.165.206:3000/just_copilots',
               label: 'Nombre del guarda',
@@ -74,6 +76,7 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
           ModalRow(
             sideTitle: 'Ingrese numero del coche',
             child: AsyncAutocomplete(
+              icon: Icons.bus_alert,
               dataController: cocheController,
               link: 'http://190.52.165.206:3000/vehicles',
               label: 'Numero de coche',
@@ -83,7 +86,9 @@ class _ModalAgregarViajeState extends State<ModalAgregarViaje> {
           ModalRow(
               sideTitle: 'Ingrese Nota (Opcional)',
               child: CustomTextField(
-                  textController: notaController, hint: 'Nota')),
+                  icon: Icons.note_outlined,
+                  textController: notaController,
+                  hint: 'Nota')),
         ]);
   }
 

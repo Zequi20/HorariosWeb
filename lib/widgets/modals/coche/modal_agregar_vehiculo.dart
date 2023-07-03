@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
-import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
+import 'package:horarios_web/widgets/custom/containers/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalAgregarVehiculo extends StatefulWidget {
@@ -34,12 +34,14 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
           ModalRow(
               sideTitle: 'Numero',
               child: CustomTextField(
+                  icon: Icons.numbers,
                   numeric: true,
                   textController: nroController,
                   hint: 'Numero de coche')),
           ModalRow(
               sideTitle: 'Matricula',
               child: CustomTextField(
+                  icon: Icons.rectangle_outlined,
                   textController: matriculaController,
                   hint: 'Simbolos de matricula')),
           ModalRow(
@@ -55,6 +57,7 @@ class _ModalAgregarVehiculoState extends State<ModalAgregarVehiculo> {
           ModalRow(
               sideTitle: 'Descripcion (opcional)',
               child: CustomTextField(
+                  icon: Icons.note_outlined,
                   textController: descripcionController,
                   hint: 'Descripcion de coche')),
         ]);

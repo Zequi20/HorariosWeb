@@ -77,76 +77,77 @@ class _ScreenHomeState extends State<ScreenHome>
     super.build(context);
 
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              'Bienvenido ${widget.userName}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 28,
-                color: gradPrincipalColor,
-              ),
-            ),
-          ),
-          Expanded(
-            child: FutureBuilder(
-                future: fetchStats(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List<Stat> datos = snapshot.data!;
-                    return GridView.builder(
-                      padding: const EdgeInsets.all(12),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: 1,
-                        crossAxisCount: 3,
-                      ),
-                      itemCount: datos.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                boxShadow: const [
-                                  BoxShadow(
-                                      color: Colors.black,
-                                      blurRadius: 5,
-                                      offset: Offset(2, 1))
-                                ],
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(5)),
-                                color: gradPrincipalColor),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                datos[index].icono,
-                                const Divider(
-                                  color: Colors.transparent,
-                                  height: 4,
-                                ),
-                                Text(
-                                  datos[index].dato,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 24,
-                                      color: Colors.white),
-                                )
+      body: FutureBuilder(
+          future: fetchStats(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<Stat> datos = snapshot.data!;
+              return Column(children: [
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    'Bienvenido ${widget.userName}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                      color: gradPrincipalColor,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(12),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      childAspectRatio: 1,
+                      crossAxisCount: 3,
+                    ),
+                    itemCount: datos.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Colors.black,
+                                    blurRadius: 5,
+                                    offset: Offset(2, 1))
                               ],
-                            ),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(5)),
+                              color: gradPrincipalColor),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              datos[index].icono,
+                              const Divider(
+                                color: Colors.transparent,
+                                height: 4,
+                              ),
+                              Text(
+                                datos[index].dato,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24,
+                                    color: Colors.white),
+                              )
+                            ],
                           ),
-                        );
-                      },
-                    );
-                  } else {
-                    return const Text('Cargando...');
-                  }
-                }),
-          ),
-        ],
-      ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ]);
+            } else {
+              return const Center(
+                  child: CircularProgressIndicator(
+                color: Colors.red,
+              ));
+            }
+          }),
     );
   }
 

@@ -10,19 +10,22 @@ class AsyncAutocomplete extends StatefulWidget {
       required this.link,
       required this.label,
       required this.filtro,
-      this.id = ''});
+      this.id = '',
+      required this.icon});
 
   final TextEditingController dataController;
   final String link;
   final String filtro;
   final String label;
   final String id;
+  final IconData icon;
   @override
   State<AsyncAutocomplete> createState() => _AsyncAutocompleteState();
 }
 
 class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
   TextEditingController control = TextEditingController();
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   List<GenericObject> options = [];
   Color bordeColor = Colors.white70;
   @override
@@ -92,6 +95,8 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
             setState(() {});
           },
           decoration: InputDecoration(
+            prefixIcon: Icon(widget.icon),
+            prefixIconColor: gradPrincipalColor,
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.orange, width: 7)),
             border: const OutlineInputBorder(borderSide: BorderSide()),

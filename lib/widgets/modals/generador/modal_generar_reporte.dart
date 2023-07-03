@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
+import 'package:horarios_web/widgets/custom/containers/form_subsection.dart';
 import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_number_picker.dart';
+import 'package:horarios_web/widgets/custom/containers/modal_row.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
-import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
 import 'package:horarios_web/widgets/pdf/report.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -51,120 +52,137 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
         onAccept: onAccept,
         title: 'Generar reporte',
         content: [
-          Row(
-            children: [
-              CustomNumberPicker(
-                textController: TextEditingController(),
-                hint: 'valor',
-                max: 50,
-              ),
-              const Divider(
-                indent: 8,
-              ),
-              CustomNumberPicker(
-                  max: 50,
-                  textController: TextEditingController(),
-                  hint: 'valor'),
-              const Divider(
-                indent: 8,
-              ),
-              CustomNumberPicker(
-                  max: 50,
-                  textController: TextEditingController(),
-                  hint: 'valor'),
-              const Divider(
-                indent: 8,
-              ),
-              CustomNumberPicker(
-                  max: 50,
-                  textController: TextEditingController(),
-                  hint: 'valor')
-            ],
-          ),
+          ModalRow(
+              sideTitle: 'Margenes',
+              child: FormSubsection(
+                childList: [
+                  TitledWidget(
+                      'Superior',
+                      CustomNumberPicker(
+                          icon: Icons.border_top,
+                          initialValue: 2,
+                          textController: mTop,
+                          hint: 'margen superior',
+                          max: 50)),
+                  TitledWidget(
+                      'Inferior',
+                      CustomNumberPicker(
+                          icon: Icons.border_bottom,
+                          initialValue: 2,
+                          textController: mBottom,
+                          hint: 'margen inferior',
+                          max: 50)),
+                  TitledWidget(
+                      'Izquierdo',
+                      CustomNumberPicker(
+                          icon: Icons.border_left,
+                          initialValue: 2,
+                          textController: mLeft,
+                          hint: 'margen izquierdo',
+                          max: 50)),
+                  TitledWidget(
+                      'Derecho',
+                      CustomNumberPicker(
+                          icon: Icons.border_right,
+                          initialValue: 2,
+                          textController: mRight,
+                          hint: 'margen derecho',
+                          max: 50)),
+                ],
+              )),
+          ModalRow(
+              sideTitle: 'Dimensiones',
+              child: FormSubsection(
+                childList: [
+                  TitledWidget(
+                      'Ancho',
+                      CustomNumberPicker(
+                          icon: Icons.width_normal,
+                          initialValue: 21,
+                          textController: ancho,
+                          hint: 'ancho de pagina',
+                          max: 50)),
+                  TitledWidget(
+                      'Alto',
+                      CustomNumberPicker(
+                          icon: Icons.height,
+                          initialValue: 33,
+                          textController: alto,
+                          hint: 'alto de pagina',
+                          max: 50)),
+                  TitledWidget(
+                      'Tamaño de texto',
+                      CustomNumberPicker(
+                          icon: Icons.format_size,
+                          initialValue: 5,
+                          textController: tamanio,
+                          hint: 'tamaño de texo',
+                          max: 50)),
+                ],
+              )),
           ModalRow(
               sideTitle: 'Empresa',
               child: AsyncAutocomplete(
-                  dataController: empresaController,
-                  link: 'http://190.52.165.206:3000/companies',
-                  label: 'Empresa',
-                  filtro: 'NAME')),
+                dataController: empresaController,
+                link: 'http://190.52.165.206:3000/companies',
+                label: 'Empresa',
+                filtro: 'NAME',
+                icon: Icons.work,
+              )),
           ModalRow(
-              sideTitle: 'Ancho',
-              child: CustomTextField(
-                  lenght: 2,
-                  numeric: true,
-                  textController: ancho,
-                  hint: 'Ancho de la hoja')),
+              sideTitle: 'Comentario superior',
+              child: SizedBox(
+                height: 200,
+                child: CustomTextField(
+                    icon: Icons.note_outlined,
+                    expand: true,
+                    lenght: 1800,
+                    textController: izquierdaController,
+                    hint: 'Comentario superior'),
+              )),
           ModalRow(
-              sideTitle: 'Alto',
-              child: CustomTextField(
-                  lenght: 2,
-                  numeric: true,
-                  textController: alto,
-                  hint: 'Alto de la hoja')),
-          ModalRow(
-              sideTitle: 'Tamaño de letra',
-              child: CustomTextField(
-                  lenght: 2,
-                  numeric: true,
-                  textController: tamanio,
-                  hint: 'Tamaño del texto')),
-          ModalRow(
-              sideTitle: 'Margen superior',
-              child: CustomTextField(
-                  lenght: 2,
-                  numeric: true,
-                  textController: mTop,
-                  hint: 'Margen arriba')),
-          ModalRow(
-              sideTitle: 'Margen inferior',
-              child: CustomTextField(
-                  lenght: 2,
-                  numeric: true,
-                  textController: mBottom,
-                  hint: 'Margen abajo')),
-          ModalRow(
-              sideTitle: 'Margen izquierdo',
-              child: CustomTextField(
-                  lenght: 2,
-                  numeric: true,
-                  textController: mLeft,
-                  hint: 'Margen izquierda')),
-          ModalRow(
-              sideTitle: 'Margen derecho',
-              child: CustomTextField(
-                  lenght: 2,
-                  numeric: true,
-                  textController: mRight,
-                  hint: 'Margen derecha')),
+              sideTitle: 'Comentario inferior',
+              child: SizedBox(
+                height: 200,
+                child: CustomTextField(
+                    icon: Icons.note_outlined,
+                    expand: true,
+                    lenght: 1800,
+                    textController: derechaController,
+                    hint: 'Comentario inferior'),
+              )),
         ]);
   }
 
   void onAccept() async {
-    var reporte = Report(widget.travels, reportId, fechaController.text,
-        int.tryParse(empresaController.text)!, widget.userId, listEmpresas,
-        ancho: int.tryParse(ancho.text)!,
-        alto: int.tryParse(alto.text)!,
-        texto: int.tryParse(tamanio.text)!,
-        margenes: [
-          double.tryParse(mTop.text)!,
-          double.tryParse(mBottom.text)!,
-          double.tryParse(mLeft.text)!,
-          double.tryParse(mRight.text)!
-        ]);
-    reporte
-        .generate(context, [izquierdaController.text, derechaController.text]);
+    if (empresaController.text.isNotEmpty) {
+      var reporte = Report(widget.travels, reportId, fechaController.text,
+          int.tryParse(empresaController.text)!, widget.userId, listEmpresas,
+          ancho: int.tryParse(ancho.text)!,
+          alto: int.tryParse(alto.text)!,
+          texto: int.tryParse(tamanio.text)!,
+          margenes: [
+            double.tryParse(mTop.text)!,
+            double.tryParse(mBottom.text)!,
+            double.tryParse(mLeft.text)!,
+            double.tryParse(mRight.text)!
+          ]);
+      reporte.generate(
+          context, [izquierdaController.text, derechaController.text]);
 
-    //API---------------------------------------------------
-    List reportes = await fetchReports();
-    if (reportes.isEmpty) {
-      int idVal = await fetchMaxReportId() + 1;
-      await postReport(idVal);
+      //API---------------------------------------------------
+      List reportes = await fetchReports();
+      if (reportes.isEmpty) {
+        int idVal = await fetchMaxReportId() + 1;
+        await postReport(idVal);
+      } else {
+        await updateReport();
+      }
+      if (mounted) {
+        Navigator.of(context).pop(true);
+      }
     } else {
-      await updateReport();
-    }
-    if (mounted) {
-      Navigator.of(context).pop(true);
+      msgBox('Empresa no especificada', 'Especifique la empresa');
     }
   }
 
@@ -182,8 +200,10 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
   }
 
   Future<List> fetchReports() async {
-    var request = http.Request('GET',
-        Uri.parse('http://190.52.165.206:3000/reports?fecha=${widget.fecha}'));
+    var request = http.Request(
+        'GET',
+        Uri.parse(
+            'http://190.52.165.206:3000/reports_by_date?fecha=${widget.fecha}'));
     //send request
     http.StreamedResponse response = await request.send();
     //convert
@@ -210,7 +230,6 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
   Future<int> fetchMaxReportId() async {
     var request = http.Request(
         'GET', Uri.parse('http://190.52.165.206:3000/max_reports_id'));
-    request.bodyFields = {};
 
     http.StreamedResponse response = await request.send();
     var data = await http.Response.fromStream(response);

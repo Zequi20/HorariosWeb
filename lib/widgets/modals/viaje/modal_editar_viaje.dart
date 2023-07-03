@@ -3,7 +3,7 @@ import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
-import 'package:horarios_web/widgets/custom/fields/modal_row.dart';
+import 'package:horarios_web/widgets/custom/containers/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalEditarViaje extends StatefulWidget {
@@ -84,6 +84,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
           ModalRow(
             sideTitle: 'Ingrese Chofer',
             child: AsyncAutocomplete(
+              icon: Icons.person,
               id: idChofer,
               dataController: choferController,
               link: 'http://190.52.165.206:3000/just_drivers',
@@ -94,6 +95,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
           ModalRow(
             sideTitle: 'Ingrese Guarda',
             child: AsyncAutocomplete(
+              icon: Icons.person,
               id: idGuarda,
               dataController: guardaController,
               link: 'http://190.52.165.206:3000/just_copilots',
@@ -104,6 +106,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
           ModalRow(
             sideTitle: 'Ingrese numero del coche',
             child: AsyncAutocomplete(
+              icon: Icons.bus_alert,
               id: idCoche,
               dataController: cocheController,
               link: 'http://190.52.165.206:3000/vehicles',
@@ -114,7 +117,9 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
           ModalRow(
               sideTitle: 'Ingrese Nota (Opcional)',
               child: CustomTextField(
-                  textController: notaController, hint: 'Nota')),
+                  icon: Icons.note_outlined,
+                  textController: notaController,
+                  hint: 'Nota')),
         ]);
   }
 
