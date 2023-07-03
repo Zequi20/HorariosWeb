@@ -20,39 +20,47 @@ class Estructura extends StatelessWidget {
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.full,
       border: TableBorder(
-          horizontalInside: BorderSide(color: blackColor),
-          verticalInside: BorderSide(color: blackColor)),
+          //horizontalInside: BorderSide(color: blackColor, width: 0.5),
+          verticalInside: list.isNotEmpty
+              ? BorderSide(color: blackColor, width: 0.5)
+              : BorderSide.none),
       children: list
-          .map((e) => TableRow(children: [
-                TableCell(Text(
-                    e['DEPARTURE_TIME']
-                        .toString()
-                        .split('.')[0]
-                        .replaceRange(5, 5, '.')
-                        .split('.')[0],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: textoSize.toDouble()))),
-                TableCell(Text(e['VEHICLE'].toString(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: textoSize.toDouble()))),
-                TableCell(Text(e['DRIVER1'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: textoSize.toDouble()))),
-                TableCell(Text(e['DRIVER2'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: textoSize.toDouble()))),
-                TableCell(Text(
-                    e['ARRIVAL_TIME']
-                        .toString()
-                        .split('.')[0]
-                        .replaceRange(5, 5, '.')
-                        .split('.')[0],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: textoSize.toDouble()))),
-                TableCell(Text(e['NOTE'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: textoSize.toDouble())))
-              ]))
+          .map((e) => TableRow(
+                  decoration: BoxDecoration(
+                      border: Border(
+                          top: list.indexOf(e) != 0
+                              ? BorderSide(color: blackColor, width: 0.5)
+                              : BorderSide.none)),
+                  children: [
+                    TableCell(Text(
+                        e['DEPARTURE_TIME']
+                            .toString()
+                            .split('.')[0]
+                            .replaceRange(5, 5, '.')
+                            .split('.')[0],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: textoSize.toDouble()))),
+                    TableCell(Text(e['VEHICLE'].toString(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: textoSize.toDouble()))),
+                    TableCell(Text(e['DRIVER1'],
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: textoSize.toDouble()))),
+                    TableCell(Text(e['DRIVER2'],
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: textoSize.toDouble()))),
+                    TableCell(Text(
+                        e['ARRIVAL_TIME']
+                            .toString()
+                            .split('.')[0]
+                            .replaceRange(5, 5, '.')
+                            .split('.')[0],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: textoSize.toDouble()))),
+                    TableCell(Text(e['NOTE'],
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: textoSize.toDouble())))
+                  ]))
           .toList(),
     );
   }
@@ -86,13 +94,17 @@ class Titled extends StatelessWidget {
     List<Widget> contenido = list
         .map((e) => Table(
                 defaultColumnWidth: const FractionColumnWidth(1),
-                border: TableBorder.symmetric(
-                    outside: BorderSide(color: blackColor)),
+                border: TableBorder(
+                    horizontalInside: BorderSide(color: blackColor, width: 0.5),
+                    bottom: BorderSide(color: blackColor, width: 0.5),
+                    right: BorderSide(color: blackColor, width: 0.5),
+                    left: BorderSide(color: blackColor, width: 0.5)),
+                //outside: BorderSide(color: blackColor, width: 0.5)),
                 children: [
                   TableRow(children: [
                     Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: blackColor)),
+                        /*  decoration: BoxDecoration(
+                            border: Border.all(color: blackColor, width: 0.5)), */
                         child: Padding(
                             padding: const EdgeInsets.all(2),
                             child: Text(e.name.toUpperCase(),
@@ -111,6 +123,7 @@ class Titled extends StatelessWidget {
     contenido.insert(
         0,
         Table(
+            border: TableBorder.all(color: blackColor, width: 0.5),
             defaultVerticalAlignment: TableCellVerticalAlignment.full,
             columnWidths: {
               0: const FractionColumnWidth(0.30),
@@ -120,7 +133,7 @@ class Titled extends StatelessWidget {
               4: const FractionColumnWidth(0.30),
               5: const FractionColumnWidth(1)
             },
-            border: TableBorder.all(color: blackColor),
+            // border: TableBorder.all(color: blackColor, width: 0.5),
             children: [
               TableRow(
                   decoration: const BoxDecoration(color: PdfColors.orange100),
@@ -141,9 +154,6 @@ class Titled extends StatelessWidget {
                   ]),
             ]));
 
-    return Container(
-        decoration:
-            const BoxDecoration(boxShadow: [BoxShadow(offset: PdfPoint(2, 2))]),
-        child: Column(children: contenido));
+    return Column(children: contenido);
   }
 }

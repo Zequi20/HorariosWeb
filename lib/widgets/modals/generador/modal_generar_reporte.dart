@@ -156,8 +156,13 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
 
   void onAccept() async {
     if (empresaController.text.isNotEmpty) {
-      var reporte = Report(widget.travels, reportId, fechaController.text,
-          int.tryParse(empresaController.text)!, widget.userId, listEmpresas,
+      var reporte = Report(
+          widget.travels,
+          reportId,
+          dateFormaterString(widget.fecha),
+          int.tryParse(empresaController.text)!,
+          widget.userId,
+          listEmpresas,
           ancho: int.tryParse(ancho.text)!,
           alto: int.tryParse(alto.text)!,
           texto: int.tryParse(tamanio.text)!,
@@ -167,22 +172,24 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
             double.tryParse(mLeft.text)!,
             double.tryParse(mRight.text)!
           ]);
-      reporte.generate(
+      bool impreso = await reporte.generate(
           context, [izquierdaController.text, derechaController.text]);
-
       //API---------------------------------------------------
-      List reportes = await fetchReports();
-      if (reportes.isEmpty) {
-        int idVal = await fetchMaxReportId() + 1;
-        await postReport(idVal);
+      if (impreso) {
+        //verificar si se ha impreso
+        List reportes = await fetchReports();
+        if (reportes.isEmpty) {
+          int idVal = await fetchMaxReportId() + 1;
+          await postReport(idVal);
+        } else {
+          await updateReport();
+        }
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
       } else {
-        await updateReport();
+        msgBox('Empresa no especificada', 'Especifique la empresa');
       }
-      if (mounted) {
-        Navigator.of(context).pop(true);
-      }
-    } else {
-      msgBox('Empresa no especificada', 'Especifique la empresa');
     }
   }
 
@@ -302,5 +309,10 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
             ],
           );
         });
+  }
+
+  String dateFormaterString(String inputDate) {
+    List<String> numbers = inputDate.split('-');
+    return '${numbers[2]}/${numbers[1]}/${numbers[0]}';
   }
 }

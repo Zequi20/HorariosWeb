@@ -1,10 +1,11 @@
+import 'dart:typed_data';
+import 'package:universal_html/html.dart' as html;
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/pdf/pdf_est.dart';
-import 'package:pdf/pdf.dart';
+import 'package:pdf/pdf.dart' as xd;
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 class Report {
   Report(this.lista, this.reportId, this.fecha, this.empresaId, this.userId,
@@ -23,51 +24,64 @@ class Report {
   final int alto;
   final List<double> margenes;
   final int texto;
-  void generate(BuildContext context, List<String> coments) {
-    _printPdf(context, coments);
+  Future<bool> generate(BuildContext context, List<String> coments) async {
+    return await _printPdf(context, coments);
   }
 
-  Future<void> _printPdf(BuildContext context, List<String> coments) async {
-    final formato =
-        PdfPageFormat(ancho * PdfPageFormat.cm, alto * PdfPageFormat.cm)
-            .copyWith(
-                marginTop: margenes[0],
-                marginBottom: margenes[1],
-                marginLeft: margenes[2],
-                marginRight: margenes[3]);
+  Future<bool> _printPdf(BuildContext context, List<String> coments) async {
+    final formato = xd.PdfPageFormat(
+            ancho * xd.PdfPageFormat.cm, alto * xd.PdfPageFormat.cm)
+        .copyWith(
+            marginTop: margenes[0],
+            marginBottom: margenes[1],
+            marginLeft: margenes[2],
+            marginRight: margenes[3]);
 
-    await _generatePdf(formato, coments);
+    return await _generatePdf(formato, coments);
   }
 
-  Future _generatePdf(PdfPageFormat format, List<String> coments) async {
+  Future<bool> _generatePdf(
+      xd.PdfPageFormat format, List<String> coments) async {
     final pdf = pw.Document();
 
     final page = pw.MultiPage(
       header: (context) {
         return pw.Table(
-            border: pw.TableBorder.all(color: PdfColors.black),
+            border: pw.TableBorder.all(color: xd.PdfColors.black, width: 0.5),
             children: [
               pw.TableRow(children: [
                 pw.Padding(
                     padding: const pw.EdgeInsets.all(2),
-                    child: pw.Text(
-                        empresas
-                            .where((element) => element.id == empresaId)
-                            .first
-                            .nombre
-                            .toUpperCase(),
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: texto.toDouble())))
+                    child: pw.Table(children: [
+                      pw.TableRow(children: [
+                        pw.Expanded(
+                            child: pw.Text('ID $reportId',
+                                textAlign: pw.TextAlign.left,
+                                style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    fontSize: texto.toDouble()))),
+                        pw.Expanded(
+                            child: pw.Text(
+                                empresas
+                                    .where((element) => element.id == empresaId)
+                                    .first
+                                    .nombre
+                                    .toUpperCase(),
+                                textAlign: pw.TextAlign.center,
+                                style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    fontSize: texto.toDouble()))),
+                        pw.Expanded(child: pw.Text(' ')),
+                      ])
+                    ]))
               ]),
               pw.TableRow(
-                  decoration: const pw.BoxDecoration(color: PdfColors.orange),
+                  decoration:
+                      const pw.BoxDecoration(color: xd.PdfColors.orange),
                   children: [
                     pw.Padding(
-                        padding: const pw.EdgeInsets.all(4),
-                        child: pw.Text(
-                            'HORARIO DE VIAJES DE LA FECHA $fecha \t NRO $reportId ',
+                        padding: const pw.EdgeInsets.all(2),
+                        child: pw.Text('HORARIO DE VIAJES DE LA FECHA $fecha',
                             textAlign: pw.TextAlign.center,
                             style: pw.TextStyle(
                                 fontWeight: pw.FontWeight.bold,
@@ -76,7 +90,7 @@ class Report {
             ]);
       },
       footer: (context) => pw.Table(
-        border: pw.TableBorder.all(color: PdfColors.black),
+        border: pw.TableBorder.all(color: xd.PdfColors.black, width: 0.5),
         children: [
           pw.TableRow(children: [
             pw.Column(
@@ -87,7 +101,7 @@ class Report {
                       padding: const pw.EdgeInsets.all(5),
                       child: pw.Text(coments[0],
                           style: pw.TextStyle(fontSize: texto.toDouble()))),
-                  pw.Divider(color: PdfColors.black, height: 1),
+                  pw.Divider(color: xd.PdfColors.black, height: 1),
                   pw.Container(
                     padding: const pw.EdgeInsets.all(5),
                     child: pw.Text(coments[1],
@@ -104,7 +118,15 @@ class Report {
     );
 
     pdf.addPage(page);
-    await Printing.layoutPdf(
-        name: 'Reporte.pdf', onLayout: (format) => pdf.save());
+    Uint8List documento = await pdf.save();
+    final blob = html.Blob([documento], 'application/pdf');
+
+    // Crea un objeto URL para el Blob
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    // Crea un objeto de ventana emergente
+    html.window.open(url, '_blank');
+
+    return true;
   }
 }
