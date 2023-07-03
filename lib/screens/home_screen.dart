@@ -118,16 +118,16 @@ class _ScreenHomeState extends State<ScreenHome>
                                   const BorderRadius.all(Radius.circular(5)),
                               color: gradPrincipalColor),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              Expanded(child: datos[index].icono),
+                              Expanded(flex: 2, child: datos[index].icono),
                               const Divider(
                                 color: Colors.transparent,
                                 height: 4,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 70.0),
+                              Expanded(
                                 child: Text(
                                   datos[index].dato,
                                   style: const TextStyle(

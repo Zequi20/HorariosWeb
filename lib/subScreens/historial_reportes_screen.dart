@@ -69,7 +69,8 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
     for (var i = 0; i < jsonResponse.length; i++) {
       retorno.add(DataRow(cells: [
         DataCell(Text(jsonResponse[i]['ID'].toString())),
-        DataCell(Text(jsonResponse[i]['DATE_OF'].toString().split('T')[0])),
+        DataCell(Text(dateFormaterString(
+            jsonResponse[i]['DATE_OF'].toString().split('T')[0]))),
         DataCell(Text(jsonResponse[i]['TIME_OF'].toString().split('.')[0])),
         DataCell(Text(jsonResponse[i]['NAME'])),
         DataCell(Text(jsonResponse[i]['COMPANIE'])),
@@ -77,6 +78,11 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
     }
 
     return retorno;
+  }
+
+  String dateFormaterString(String inputDate) {
+    List<String> numbers = inputDate.split('-');
+    return '${numbers[2]}/${numbers[1]}/${numbers[0]}';
   }
 
   @override

@@ -17,7 +17,7 @@ class CustomDropDrown extends StatefulWidget {
 
 class _CustomDropDrownState<T> extends State<CustomDropDrown> {
   Color fondoColor = Colors.white;
-
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   @override
   void initState() {
     super.initState();
@@ -33,6 +33,8 @@ class _CustomDropDrownState<T> extends State<CustomDropDrown> {
     return DropdownButtonFormField(
         value: widget.dataController.text,
         decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.list),
+            prefixIconColor: gradPrincipalColor,
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.orange, width: 7)),
             hintText: widget.label,
