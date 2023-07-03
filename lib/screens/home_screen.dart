@@ -16,47 +16,47 @@ class _ScreenHomeState extends State<ScreenHome>
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
-
+  double iconSize = 92;
   Future<List<Stat>> fetchStats() async {
     List<Stat> estadisticas = [];
     estadisticas.add(await getStat(
         'count_vehicles',
         'Coches',
-        const Icon(
+        Icon(
           Icons.bus_alert,
-          size: 42,
+          size: iconSize,
           color: Colors.white,
         )));
     estadisticas.add(await getStat(
         'count_reports',
         'Reportes',
-        const Icon(
+        Icon(
           Icons.picture_as_pdf,
-          size: 42,
+          size: iconSize,
           color: Colors.white,
         )));
     estadisticas.add(await getStat(
         'count_drivers',
         'Choferes',
-        const Icon(
+        Icon(
           Icons.person_2,
-          size: 42,
+          size: iconSize,
           color: Colors.white,
         )));
     estadisticas.add(await getStat(
         'count_guardas',
         'Guardas',
-        const Icon(
+        Icon(
           Icons.person,
-          size: 42,
+          size: iconSize,
           color: Colors.white,
         )));
     estadisticas.add(await getStat(
         'count_groups',
         'Grupos',
-        const Icon(
+        Icon(
           Icons.map,
-          size: 42,
+          size: iconSize,
           color: Colors.white,
         )));
     return estadisticas;
@@ -108,30 +108,33 @@ class _ScreenHomeState extends State<ScreenHome>
                         padding: const EdgeInsets.all(18.0),
                         child: Container(
                           decoration: BoxDecoration(
-                              boxShadow: const [
+                              boxShadow: [
                                 BoxShadow(
-                                    color: Colors.black,
+                                    color: principalColor,
                                     blurRadius: 5,
-                                    offset: Offset(2, 1))
+                                    offset: const Offset(2, 1))
                               ],
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(5)),
                               color: gradPrincipalColor),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisSize: MainAxisSize.max,
                             children: [
-                              datos[index].icono,
+                              Expanded(child: datos[index].icono),
                               const Divider(
                                 color: Colors.transparent,
                                 height: 4,
                               ),
-                              Text(
-                                datos[index].dato,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24,
-                                    color: Colors.white),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 70.0),
+                                child: Text(
+                                  datos[index].dato,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24,
+                                      color: Colors.white),
+                                ),
                               )
                             ],
                           ),

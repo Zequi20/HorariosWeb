@@ -25,7 +25,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
       decoration:
           BoxDecoration(border: Border.all(color: principalColor), boxShadow: [
         BoxShadow(
-            color: Colors.black.withOpacity(0.8),
+            color: gradPrincipalColor,
             blurRadius: 5,
             offset: const Offset(-2, -2))
       ]),
