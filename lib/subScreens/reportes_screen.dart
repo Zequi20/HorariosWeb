@@ -166,15 +166,19 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
           child: Row(
             children: [
               Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text(
-                      'Filtrar por fecha:',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(color: colorBlanco),
-                    ),
-                  )),
+                  child: Text(
+                'Extraer Formato',
+                style: TextStyle(color: colorBlanco),
+                textAlign: TextAlign.center,
+              )),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  'Filtrar por fecha:',
+                  textAlign: TextAlign.right,
+                  style: TextStyle(color: colorBlanco),
+                ),
+              ),
               Expanded(
                   flex: 1,
                   child: CustomDatePicker(

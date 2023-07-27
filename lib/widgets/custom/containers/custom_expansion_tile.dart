@@ -3,8 +3,11 @@ import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/custom/tables/tabla_grupos.dart';
 
 class CustomExpansionTile extends StatefulWidget {
-  const CustomExpansionTile(
-      {super.key, required this.element, required this.tabla});
+  const CustomExpansionTile({
+    super.key,
+    required this.element,
+    required this.tabla,
+  });
   final Group element;
   final GroupTable tabla;
 
@@ -18,34 +21,45 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
   var resaltadoColor = Colors.orange;
+  Color borde = const Color.fromARGB(255, 99, 1, 1);
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(12),
-      decoration:
-          BoxDecoration(border: Border.all(color: principalColor), boxShadow: [
-        BoxShadow(
-            color: gradPrincipalColor,
-            blurRadius: 5,
-            offset: const Offset(-2, -2))
-      ]),
-      child: ExpansionTile(
-        tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-        initiallyExpanded: true,
-        iconColor: colorBlanco,
-        collapsedIconColor: colorBlanco,
-        collapsedTextColor: colorBlanco,
-        collapsedBackgroundColor: gradPrincipalColor,
-        textColor: colorBlanco,
-        backgroundColor: principalColor,
-        title: Text(
-          widget.element.name,
-          textAlign: TextAlign.center,
+    return Focus(
+      onFocusChange: (value) {
+        if (value) {
+          borde = resaltadoColor;
+          setState(() {});
+        } else {
+          borde = principalColor;
+          setState(() {});
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Container(
+          decoration: BoxDecoration(border: Border.all(width: 4, color: borde)),
+          child: ExcludeFocus(
+            child: ExpansionTile(
+              tilePadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+              initiallyExpanded: true,
+              textColor: colorBlanco,
+              iconColor: colorBlanco,
+              backgroundColor: gradPrincipalColor,
+              collapsedIconColor: colorBlanco,
+              collapsedTextColor: colorBlanco,
+              collapsedBackgroundColor: gradPrincipalColor,
+              title: Text(
+                widget.element.name,
+                textAlign: TextAlign.center,
+              ),
+              leading: Text('GRUPO ${widget.element.id}'),
+              children: [
+                widget.tabla,
+              ],
+            ),
+          ),
         ),
-        leading: Text('GRUPO ${widget.element.id}'),
-        children: [
-          widget.tabla,
-        ],
       ),
     );
   }

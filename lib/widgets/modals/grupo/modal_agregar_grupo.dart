@@ -40,7 +40,7 @@ class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
                   textController: descripcionController,
                   hint: 'Descripcion de grupo')),
           ModalRow(
-              sideTitle: 'Nombre',
+              sideTitle: 'Empresa',
               child: AsyncAutocomplete(
                 dataController: empresaController,
                 link: 'http://190.52.165.206:3000/companies',

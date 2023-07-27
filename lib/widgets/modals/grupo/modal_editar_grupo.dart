@@ -60,7 +60,7 @@ class _ModalEditarGrupoState extends State<ModalEditarGrupo> {
                   textController: descripcionController,
                   hint: 'Descripcion de grupo')),
           ModalRow(
-              sideTitle: 'Nombre',
+              sideTitle: 'Empresa',
               child: AsyncAutocomplete(
                 dataController: empresaController,
                 id: widget.empresa[0],

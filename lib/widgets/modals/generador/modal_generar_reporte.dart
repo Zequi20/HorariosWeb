@@ -156,41 +156,57 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
 
   void onAccept() async {
     if (empresaController.text.isNotEmpty) {
-      var reporte = Report(
-          widget.travels,
-          reportId,
-          dateFormaterString(widget.fecha),
-          int.tryParse(empresaController.text)!,
-          widget.userId,
-          listEmpresas,
-          ancho: int.tryParse(ancho.text)!,
-          alto: int.tryParse(alto.text)!,
-          texto: int.tryParse(tamanio.text)!,
-          margenes: [
-            double.tryParse(mTop.text)!,
-            double.tryParse(mBottom.text)!,
-            double.tryParse(mLeft.text)!,
-            double.tryParse(mRight.text)!
-          ]);
-      bool impreso = await reporte.generate(
-          context, [izquierdaController.text, derechaController.text]);
       //API---------------------------------------------------
-      if (impreso) {
-        //verificar si se ha impreso
-        List reportes = await fetchReports();
-        if (reportes.isEmpty) {
-          int idVal = await fetchMaxReportId() + 1;
-          await postReport(idVal);
-        } else {
-          await updateReport();
-        }
-        if (mounted) {
-          Navigator.of(context).pop(true);
-        }
+
+      //verificar si se ha impreso
+      List reportes = await fetchReports();
+
+      if (reportes.isEmpty) {
+        int idVal = await fetchMaxReportId() + 1;
+        reportId = idVal;
+        await postReport(idVal);
       } else {
-        msgBox('Empresa no especificada', 'Especifique la empresa');
+        reportId = mayorReporte(reportes);
+        await updateReport();
+      }
+      if (mounted) {
+        Navigator.of(context).pop(true);
+      }
+    } else {
+      msgBox('Empresa no especificada', 'Especifique la empresa');
+    }
+    var reporte = Report(
+        widget.travels,
+        reportId,
+        dateFormaterString(widget.fecha),
+        int.tryParse(empresaController.text)!,
+        widget.userId,
+        listEmpresas,
+        ancho: int.tryParse(ancho.text)!,
+        alto: int.tryParse(alto.text)!,
+        texto: int.tryParse(tamanio.text)!,
+        margenes: [
+          double.tryParse(mTop.text)!,
+          double.tryParse(mBottom.text)!,
+          double.tryParse(mLeft.text)!,
+          double.tryParse(mRight.text)!
+        ]);
+    if (mounted) {
+      reporte.generate(
+          context, [izquierdaController.text, derechaController.text]);
+    }
+  }
+
+  int mayorReporte(List lista) {
+    int mayor = 0;
+    int aux = 0;
+    for (var elem in lista) {
+      aux = elem['ID'];
+      if (aux > mayor) {
+        mayor = aux;
       }
     }
+    return aux;
   }
 
   Future<void> updateReport() async {
