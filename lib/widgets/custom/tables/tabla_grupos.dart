@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/modals/viaje/modal_agregar_viaje.dart';
 import 'package:horarios_web/widgets/modals/viaje/modal_editar_viaje.dart';
@@ -30,17 +31,39 @@ class _GroupTableState extends State<GroupTable> {
   var resaltadoColor = Colors.orange;
   var colorBlanco = Colors.white;
   List<int> selectedIndex = [];
+  List<DataRow> rows = [];
+  final FocusNode focoTabla = FocusNode();
+
+  void tablaCambioFoco() {
+    if (focoTabla.hasFocus) {
+      RawKeyboard.instance.addListener(_handleKeyPress);
+    } else {
+      RawKeyboard.instance.removeListener(_handleKeyPress);
+    }
+  }
+
+  void _handleKeyPress(RawKeyEvent event) {
+    if (event is RawKeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.keyA) {
+        onAdd();
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
-    List travelsRows = widget.travels[widget.index].travelsData;
-    List<DataRow> rows = travelsRows
+  void initState() {
+    super.initState();
+    rows = widget.travels[widget.index].travelsData
         .map((e) => DataRow(
-                selected: selectedIndex.contains(travelsRows.indexOf(e)),
+                selected: selectedIndex.contains(
+                    widget.travels[widget.index].travelsData.indexOf(e)),
                 onSelectChanged: (value) {
                   if (!value!) {
-                    selectedIndex.remove(travelsRows.indexOf(e));
+                    selectedIndex.remove(
+                        widget.travels[widget.index].travelsData.indexOf(e));
                   } else {
-                    selectedIndex.add(travelsRows.indexOf(e));
+                    selectedIndex.add(
+                        widget.travels[widget.index].travelsData.indexOf(e));
                   }
                   setState(() {});
                 },
@@ -63,187 +86,89 @@ class _GroupTableState extends State<GroupTable> {
                   DataCell(Text(e['NOTE'])),
                 ]))
         .toList();
-    return ExcludeFocus(
-      child: Table(
-        children: [
-          TableRow(children: [
-            DataTable(
-                decoration: BoxDecoration(color: colorBlanco),
-                onSelectAll: (value) {
-                  if (value!) {
-                    selectedIndex.addAll(travelsRows
-                        .map((e) => travelsRows.indexOf(e))
-                        .toList());
-                  } else {
-                    selectedIndex.clear();
-                  }
-                  setState(() {});
-                },
-                columns: const [
-                  DataColumn(label: Text('ID')),
-                  DataColumn(label: Text('PARTIDA')),
-                  DataColumn(label: Text('LLEGADA')),
-                  DataColumn(label: Text('COCHE')),
-                  DataColumn(label: Text('CONDUCTOR')),
-                  DataColumn(label: Text('GUARDA')),
-                  DataColumn(label: Text('NOTA')),
-                ],
-                rows: widget.travels[widget.index].travelsData.isNotEmpty
-                    ? rows
-                    : []),
-          ]),
-          TableRow(children: [
-            SizedBox(
-              height: 40,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                      focusColor: resaltadoColor,
-                      onPressed: () async {
-                        await showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ModalAgregarViaje(
-                                grupoId: widget.travels[widget.index].id,
-                                fecha: widget.fecha,
-                              );
-                            });
-                        widget.updateParent();
-                      },
-                      icon: Icon(
-                        Icons.add,
-                        color: colorBlanco,
-                      )),
-                  IconButton(
-                      focusColor: resaltadoColor,
-                      onPressed: () async {
-                        if (selectedIndex.isNotEmpty &&
-                            selectedIndex.length < 2) {
-                          await showDialog(
-                              context: context,
-                              builder: (context) {
-                                return ModalEditarViaje(
-                                  grupoId: widget.travels[widget.index].id,
-                                  seleccion: rows[selectedIndex.first],
-                                );
-                              });
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                    title:
-                                        const Text('Seleccion unica requerida'),
-                                    content: Wrap(
-                                      children: [
-                                        Text(selectedIndex.isEmpty
-                                            ? 'Usted no ha seleccionado ningun elemento'
-                                            : 'Seleccione un unico elemento')
-                                      ],
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        style: const ButtonStyle(
-                                            foregroundColor:
-                                                MaterialStatePropertyAll(
-                                                    Colors.white)),
-                                        child: const Text('Aceptar'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop(true);
-                                        },
-                                      ),
-                                    ]);
-                              });
-                        }
+  }
 
-                        selectedIndex.clear();
+  @override
+  void dispose() {
+    focoTabla.dispose();
+    RawKeyboard.instance.removeListener(_handleKeyPress);
+    super.dispose();
+  }
 
-                        widget.updateParent();
-                      },
-                      icon: Icon(
-                        Icons.edit,
-                        color: colorBlanco,
-                      )),
-                  IconButton(
-                      focusColor: resaltadoColor,
-                      onPressed: () async {
-                        if (selectedIndex.isNotEmpty) {
-                          await showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Eliminar registro'),
-                                content: Wrap(
-                                  children: [
-                                    Text(
-                                        'Seguro que desea eliminar ${selectedIndex.length} ${selectedIndex.length > 1 ? 'registros' : 'registro'}?')
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    style: const ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                Colors.white)),
-                                    child: const Text('Si, continuar'),
-                                    onPressed: () {
-                                      deleteReg(rows);
-                                    },
-                                  ),
-                                  TextButton(
-                                    style: const ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                Colors.white)),
-                                    child: const Text('Cancelar'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                  )
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Seleccionar registro(s)'),
-                                content: Wrap(
-                                  children: const [
-                                    Text(
-                                        'Para borrar un registro debe seleccionarlo de la lista')
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    style: const ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                Colors.white)),
-                                    child: const Text('Aceptar'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                        widget.updateParent();
-                      },
-                      icon: Icon(
-                        Icons.delete,
-                        color: colorBlanco,
-                      ))
-                ],
+  @override
+  Widget build(BuildContext context) {
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.keyA): () {
+          onAdd();
+        },
+      },
+      child: Focus(
+        focusNode: focoTabla,
+        autofocus: true,
+        child: Table(
+          children: [
+            TableRow(children: [
+              DataTable(
+                  decoration: BoxDecoration(color: colorBlanco),
+                  onSelectAll: (value) {
+                    if (value!) {
+                      selectedIndex.addAll(widget
+                          .travels[widget.index].travelsData
+                          .map((e) => widget.travels[widget.index].travelsData
+                              .indexOf(e))
+                          .toList());
+                    } else {
+                      selectedIndex.clear();
+                    }
+                    setState(() {});
+                  },
+                  columns: const [
+                    DataColumn(label: Text('ID')),
+                    DataColumn(label: Text('PARTIDA')),
+                    DataColumn(label: Text('LLEGADA')),
+                    DataColumn(label: Text('COCHE')),
+                    DataColumn(label: Text('CONDUCTOR')),
+                    DataColumn(label: Text('GUARDA')),
+                    DataColumn(label: Text('NOTA')),
+                  ],
+                  rows: widget.travels[widget.index].travelsData.isNotEmpty
+                      ? rows
+                      : []),
+            ]),
+            TableRow(children: [
+              SizedBox(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                        focusColor: resaltadoColor,
+                        onPressed: onAdd,
+                        icon: Icon(
+                          Icons.add,
+                          color: colorBlanco,
+                        )),
+                    IconButton(
+                        focusColor: resaltadoColor,
+                        onPressed: onEdit,
+                        icon: Icon(
+                          Icons.edit,
+                          color: colorBlanco,
+                        )),
+                    IconButton(
+                        focusColor: resaltadoColor,
+                        onPressed: onDelete,
+                        icon: Icon(
+                          Icons.delete,
+                          color: colorBlanco,
+                        ))
+                  ],
+                ),
               ),
-            ),
-          ])
-        ],
+            ])
+          ],
+        ),
       ),
     );
   }
@@ -316,5 +241,122 @@ class _GroupTableState extends State<GroupTable> {
             });
       }
     }
+  }
+
+  void onAdd() async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return ModalAgregarViaje(
+            grupoId: widget.travels[widget.index].id,
+            fecha: widget.fecha,
+          );
+        });
+    widget.updateParent();
+    setState(() {});
+  }
+
+  void onEdit() async {
+    if (selectedIndex.isNotEmpty && selectedIndex.length < 2) {
+      await showDialog(
+          context: context,
+          builder: (context) {
+            return ModalEditarViaje(
+              grupoId: widget.travels[widget.index].id,
+              seleccion: rows[selectedIndex.first],
+            );
+          });
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                title: const Text('Seleccion unica requerida'),
+                content: Wrap(
+                  children: [
+                    Text(selectedIndex.isEmpty
+                        ? 'Usted no ha seleccionado ningun elemento'
+                        : 'Seleccione un unico elemento')
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    style: const ButtonStyle(
+                        foregroundColor:
+                            MaterialStatePropertyAll(Colors.white)),
+                    child: const Text('Aceptar'),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                ]);
+          });
+    }
+
+    selectedIndex.clear();
+
+    widget.updateParent();
+  }
+
+  void onDelete() async {
+    if (selectedIndex.isNotEmpty) {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Eliminar registro'),
+            content: Wrap(
+              children: [
+                Text(
+                    'Seguro que desea eliminar ${selectedIndex.length} ${selectedIndex.length > 1 ? 'registros' : 'registro'}?')
+              ],
+            ),
+            actions: [
+              TextButton(
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Si, continuar'),
+                onPressed: () {
+                  deleteReg(rows);
+                },
+              ),
+              TextButton(
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              )
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Seleccionar registro(s)'),
+            content: Wrap(
+              children: const [
+                Text('Para borrar un registro debe seleccionarlo de la lista')
+              ],
+            ),
+            actions: [
+              TextButton(
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+    widget.updateParent();
   }
 }

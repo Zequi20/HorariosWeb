@@ -3,7 +3,7 @@ import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/custom/buttons/generate_report_button.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_date_picker.dart';
-import 'package:horarios_web/widgets/custom/lists/custom_list_view.dart';
+import 'package:horarios_web/widgets/custom/tables/view_table.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -24,12 +24,12 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
       text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
   @override
   void initState() {
+    super.initState();
     dateController.addListener(() {
       setState(() {
         show = true;
       });
     });
-    super.initState();
   }
 
   //campos de texto
@@ -48,7 +48,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   var fechaController = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   bool childUpdate = false;
-  List<Group> travels = [];
+  List<Group> locura = [];
   List<Empresa> empresasList = [];
   int dropDownValue = 0;
   var defaultDecoration = const InputDecoration(
@@ -81,7 +81,6 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
 
   Future<List<Group>> fetchTravelsByGroup(String fecha) async {
     List<Group> travels = [];
-
     var url = Uri.parse(
         'http://190.52.165.206:3000/travels_by_group?fecha=${dateFormaterString(fecha)}');
     var headers = {'Content-Type': 'application/json'};
@@ -97,7 +96,6 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
     } else {
       msgBox('Error de red', 'Vuelva a intentarlo en unos momentos');
     }
-
     return travels;
   }
 
@@ -116,48 +114,24 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: FutureBuilder(
+      body: Center(
+        child: FutureBuilder(
           future: fetchTravelsByGroup(dateController.text),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              travels = snapshot.data!;
-              if (checkEmptyTravel(travels) && show) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('No hay reportes en esta fecha'),
-                      const Divider(
-                        height: 30,
-                        color: Colors.transparent,
-                      ),
-                      FilledButton.icon(
-                          onPressed: () {
-                            show = false;
-                            setState(() {});
-                          },
-                          icon: const Icon(Icons.new_label),
-                          label: const Text('Crear'))
-                    ],
-                  ),
-                );
-              } else {
-                return Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: CustomListView(
-                    list: travels,
-                    updateParent: updateParent,
-                    fecha: dateFormaterString(dateController.text),
-                  ),
-                );
-              }
+              return ViewTable(
+                grupos: snapshot.data!,
+              );
             } else {
               return const Center(
-                  child: CircularProgressIndicator(
-                color: Colors.red,
-              ));
+                child: CircularProgressIndicator(
+                  color: Colors.red,
+                ),
+              );
             }
-          }),
+          },
+        ),
+      ),
       bottomNavigationBar: BottomAppBar(
           elevation: 8,
           padding: const EdgeInsets.all(4),
@@ -186,10 +160,11 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                       title: 'Fecha de reporte')),
               Expanded(
                   child: GenerateReportButton(
-                      fecha: dateFormaterString(dateController.text),
-                      padding: 22,
-                      userId: widget.userId!,
-                      futureCallback: fetchTravelsByGroup(dateController.text)))
+                fecha: dateFormaterString(dateController.text),
+                padding: 22,
+                userId: widget.userId!,
+                viajes: locura,
+              ))
             ],
           )),
     );
@@ -215,12 +190,6 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
             ],
           );
         });
-  }
-
-  void updateParent() {
-    setState(() {
-      childUpdate = true;
-    });
   }
 
   List<int> dateFormater(String inputDate) {
