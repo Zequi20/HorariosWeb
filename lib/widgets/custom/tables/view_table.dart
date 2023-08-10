@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_date_picker.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 
 class ViewTable extends StatefulWidget {
   const ViewTable({super.key, required this.grupos});
@@ -10,9 +12,29 @@ class ViewTable extends StatefulWidget {
 
 class _ViewTableState extends State<ViewTable> {
   late Table mainTable;
-
+  var principalColor = const Color.fromARGB(255, 99, 1, 1);
+  var resaltadoColor = Colors.orange;
   @override
   void initState() {
+    escarapela();
+
+    super.initState();
+  }
+
+  checkEmptyGroup() {
+    if (widget.grupos.isNotEmpty) {
+      return mainTable;
+    } else {
+      return const Center(
+        child: Text('Esta vacio'),
+      );
+    }
+  }
+
+  void escarapela() {}
+
+  @override
+  Widget build(BuildContext context) {
     List<TableRow> lista = widget.grupos
         .map((e) => TableRow(children: [
               Table(
@@ -20,14 +42,20 @@ class _ViewTableState extends State<ViewTable> {
                     horizontalInside: BorderSide(color: Colors.black)),
                 children: [
                   TableRow(children: [
-                    Text(
-                      e.name,
-                      textAlign: TextAlign.center,
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        e.name,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     )
                   ]),
                   TableRow(
                     children: [
                       Table(
+                        defaultVerticalAlignment:
+                            TableCellVerticalAlignment.middle,
                         border: const TableBorder(
                             verticalInside: BorderSide(color: Colors.black)),
                         columnWidths: const {
@@ -36,15 +64,18 @@ class _ViewTableState extends State<ViewTable> {
                           2: FractionColumnWidth(1 / 6),
                           3: FractionColumnWidth(1 / 6),
                           4: FractionColumnWidth(1 / 20),
-                          5: FractionColumnWidth(1 / 6)
+                          5: FractionColumnWidth(1 / 6),
+                          6: FractionColumnWidth(1 / 20),
                         },
-                        children: [
+                        children: addEntryRow([
                           TableRow(
                               children: e.travelsData.isNotEmpty
                                   ? [
                                       TableCell(
                                           child: Text(
-                                        e.travelsData.first['DEPARTURE_TIME'],
+                                        e.travelsData.first['DEPARTURE_TIME']
+                                            .toString()
+                                            .split('.')[0],
                                         textAlign: TextAlign.center,
                                       )),
                                       TableCell(
@@ -65,17 +96,28 @@ class _ViewTableState extends State<ViewTable> {
                                       )),
                                       TableCell(
                                           child: Text(
-                                        e.travelsData.first['ARRIVAL_TIME'],
+                                        e.travelsData.first['ARRIVAL_TIME']
+                                            .toString()
+                                            .split('.')[0],
                                         textAlign: TextAlign.center,
                                       )),
                                       TableCell(
                                           child: Text(
                                         e.travelsData.first['NOTE'],
                                         textAlign: TextAlign.center,
-                                      ))
+                                      )),
+                                      TableCell(
+                                          child: IconButton(
+                                              onPressed: () async {
+                                                msgBox('kk', 'kk');
+                                              },
+                                              icon: Icon(
+                                                Icons.edit,
+                                                color: principalColor,
+                                              )))
                                     ]
-                                  : [const Text(' ')])
-                        ],
+                                  : [])
+                        ]),
                       )
                     ],
                   )
@@ -98,7 +140,8 @@ class _ViewTableState extends State<ViewTable> {
                 2: FractionColumnWidth(1 / 6),
                 3: FractionColumnWidth(1 / 6),
                 4: FractionColumnWidth(1 / 20),
-                5: FractionColumnWidth(1 / 6)
+                5: FractionColumnWidth(1 / 6),
+                6: FractionColumnWidth(1 / 20)
               },
               children: const [
                 TableRow(children: [
@@ -106,54 +149,92 @@ class _ViewTableState extends State<ViewTable> {
                       child: Text(
                     'Salida',
                     textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   )),
                   TableCell(
                       child: Text(
                     'Coche',
                     textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   )),
                   TableCell(
                       child: Text(
                     'Conductor',
                     textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   )),
                   TableCell(
                       child: Text(
                     'Guarda',
                     textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   )),
                   TableCell(
                       child: Text(
                     'Retorno',
                     textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   )),
                   TableCell(
                       child: Text(
                     'Nota',
                     textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  )),
+                  TableCell(
+                      child: Text(
+                    'Acciones',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ))
                 ])
               ],
             )
           ]),
     );
+
     mainTable =
         Table(border: TableBorder.all(color: Colors.black), children: lista);
-    super.initState();
-  }
-
-  checkEmptyGroup() {
-    if (widget.grupos.isNotEmpty) {
-      return mainTable;
-    } else {
-      return const Center(
-        child: Text('Esta vacio'),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return mainTable;
+  }
+
+  Future<void> msgBox(String title, String message) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                autofocus: true,
+                style: const ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  List<TableRow> addEntryRow(List<TableRow> data) {
+    data.add(TableRow(
+        children: List.generate(
+            7,
+            (index) => TableCell(
+                  child: CustomTextField(
+                    textController: TextEditingController(),
+                    hint: 'Ho',
+                  ),
+                ))));
+
+    if (data.first.children!.isEmpty) {
+      data.removeAt(0);
+    }
+
+    return data;
   }
 }

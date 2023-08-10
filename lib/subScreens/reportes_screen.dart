@@ -114,23 +114,21 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: Center(
-        child: FutureBuilder(
-          future: fetchTravelsByGroup(dateController.text),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ViewTable(
-                grupos: snapshot.data!,
-              );
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.red,
-                ),
-              );
-            }
-          },
-        ),
+      body: FutureBuilder(
+        future: fetchTravelsByGroup(dateController.text),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ViewTable(
+              grupos: snapshot.data!,
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.red,
+              ),
+            );
+          }
+        },
       ),
       bottomNavigationBar: BottomAppBar(
           elevation: 8,
