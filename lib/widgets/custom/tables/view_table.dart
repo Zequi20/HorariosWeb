@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
+import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_date_picker.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 
@@ -47,7 +48,8 @@ class _ViewTableState extends State<ViewTable> {
                       child: Text(
                         e.name,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                     )
                   ]),
@@ -57,6 +59,7 @@ class _ViewTableState extends State<ViewTable> {
                         defaultVerticalAlignment:
                             TableCellVerticalAlignment.middle,
                         border: const TableBorder(
+                            horizontalInside: BorderSide(color: Colors.black),
                             verticalInside: BorderSide(color: Colors.black)),
                         columnWidths: const {
                           0: FractionColumnWidth(1 / 20),
@@ -107,14 +110,13 @@ class _ViewTableState extends State<ViewTable> {
                                         textAlign: TextAlign.center,
                                       )),
                                       TableCell(
-                                          child: IconButton(
-                                              onPressed: () async {
-                                                msgBox('kk', 'kk');
-                                              },
-                                              icon: Icon(
-                                                Icons.edit,
-                                                color: principalColor,
-                                              )))
+                                        child: FocusButton(
+                                            onClick: () {
+                                              msgBox('Edicion', 'Aca se edita');
+                                            },
+                                            icono: Icons.edit,
+                                            text: 'Editar'),
+                                      )
                                     ]
                                   : [])
                         ]),
@@ -149,31 +151,31 @@ class _ViewTableState extends State<ViewTable> {
                       child: Text(
                     'Salida',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   )),
                   TableCell(
                       child: Text(
                     'Coche',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   )),
                   TableCell(
                       child: Text(
                     'Conductor',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   )),
                   TableCell(
                       child: Text(
                     'Guarda',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   )),
                   TableCell(
                       child: Text(
                     'Retorno',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   )),
                   TableCell(
                       child: Text(
@@ -185,8 +187,8 @@ class _ViewTableState extends State<ViewTable> {
                       child: Text(
                     'Acciones',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ))
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  )),
                 ])
               ],
             )
@@ -221,20 +223,103 @@ class _ViewTableState extends State<ViewTable> {
   }
 
   List<TableRow> addEntryRow(List<TableRow> data) {
-    data.add(TableRow(
-        children: List.generate(
-            7,
-            (index) => TableCell(
-                  child: CustomTextField(
-                    textController: TextEditingController(),
-                    hint: 'Ho',
-                  ),
-                ))));
+    data.add(TableRow(children: [
+      TableCell(
+          child: CustomDatePicker(
+              fechaControlador: TextEditingController(), title: 'salida')),
+      TableCell(
+          child: AsyncAutocomplete(
+        icon: Icons.person,
+        dataController: TextEditingController(),
+        link: 'http://190.52.165.206:3000/just_drivers',
+        label: 'chofer',
+        filtro: 'NAME',
+      )),
+      TableCell(
+          child: AsyncAutocomplete(
+        icon: Icons.bus_alert,
+        dataController: TextEditingController(),
+        link: 'http://190.52.165.206:3000/vehicles',
+        label: 'coche',
+        filtro: 'NUMBER',
+      )),
+      TableCell(
+          child: AsyncAutocomplete(
+        icon: Icons.person,
+        dataController: TextEditingController(),
+        link: 'http://190.52.165.206:3000/just_copilots',
+        label: 'guarda',
+        filtro: 'NAME',
+      )),
+      TableCell(
+          child: CustomDatePicker(
+              fechaControlador: TextEditingController(), title: 'retorno')),
+      TableCell(
+          child: CustomTextField(
+              lenght: null,
+              textController: TextEditingController(),
+              hint: 'Nota')),
+      TableCell(
+          child: FocusButton(
+        onClick: () {
+          msgBox('tembo', 'Tembo lgmnt jajaja');
+        },
+        icono: Icons.arrow_drop_up,
+        text: 'Agregar',
+      ))
+    ]));
 
     if (data.first.children!.isEmpty) {
       data.removeAt(0);
     }
 
     return data;
+  }
+}
+
+class FocusButton extends StatefulWidget {
+  const FocusButton(
+      {super.key,
+      this.resaltadoColor = Colors.orange,
+      this.principalColor = const Color.fromARGB(255, 99, 1, 1),
+      required this.onClick,
+      this.icono = Icons.arrow_drop_up,
+      required this.text});
+  final MaterialColor resaltadoColor;
+  final Color principalColor;
+  final IconData icono;
+  final String text;
+  final VoidCallback? onClick;
+  @override
+  State<FocusButton> createState() => _FocusButtonState();
+}
+
+class _FocusButtonState extends State<FocusButton> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: TextButton.icon(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+            (states) {
+              if (states.contains(MaterialState.focused)) {
+                return widget.resaltadoColor;
+              }
+              return Colors.white;
+            },
+          ),
+        ),
+        onPressed: widget.onClick,
+        icon: Icon(
+          widget.icono,
+          color: widget.principalColor,
+        ),
+        label: Text(
+          widget.text,
+          style: TextStyle(color: widget.principalColor),
+        ),
+      ),
+    );
   }
 }

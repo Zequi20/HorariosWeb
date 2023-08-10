@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
-  const CustomTextField(
-      {super.key,
-      required this.textController,
-      required this.hint,
-      this.expand = false,
-      this.lenght = 50,
-      this.numeric = false,
-      this.icon = Icons.abc});
+  const CustomTextField({
+    super.key,
+    required this.textController,
+    required this.hint,
+    this.expand = false,
+    this.lenght = 50,
+    this.numeric = false,
+    this.icon = Icons.abc,
+  });
   final TextEditingController textController;
   final String hint;
-  final int lenght;
+  final int? lenght;
   final bool numeric;
   final bool expand;
   final IconData icon;
+
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
@@ -55,6 +57,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
           prefixIconColor: gradPrincipalColor,
           focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.orange, width: 7)),
+          border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black)),
           hintText: widget.hint,
           filled: true,
           fillColor: fillColor),
