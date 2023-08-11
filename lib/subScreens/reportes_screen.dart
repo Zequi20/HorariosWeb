@@ -118,8 +118,11 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
         future: fetchTravelsByGroup(dateController.text),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return ViewTable(
-              grupos: snapshot.data!,
+            return SingleChildScrollView(
+              child: ViewTable(
+                grupos: snapshot.data!,
+                fecha: dateController.text,
+              ),
             );
           } else {
             return const Center(

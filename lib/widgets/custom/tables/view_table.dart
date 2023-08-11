@@ -1,12 +1,15 @@
+import 'dart:convert';
+import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
-import 'package:horarios_web/widgets/custom/fields/custom_date_picker.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 
 class ViewTable extends StatefulWidget {
-  const ViewTable({super.key, required this.grupos});
+  const ViewTable({super.key, required this.grupos, required this.fecha});
   final List<Group> grupos;
+  final String fecha;
   @override
   State<ViewTable> createState() => _ViewTableState();
 }
@@ -70,56 +73,58 @@ class _ViewTableState extends State<ViewTable> {
                           5: FractionColumnWidth(1 / 6),
                           6: FractionColumnWidth(1 / 20),
                         },
-                        children: addEntryRow([
-                          TableRow(
-                              children: e.travelsData.isNotEmpty
-                                  ? [
-                                      TableCell(
-                                          child: Text(
-                                        e.travelsData.first['DEPARTURE_TIME']
-                                            .toString()
-                                            .split('.')[0],
-                                        textAlign: TextAlign.center,
-                                      )),
-                                      TableCell(
-                                          child: Text(
-                                        e.travelsData.first['VEHICLE']
-                                            .toString(),
-                                        textAlign: TextAlign.center,
-                                      )),
-                                      TableCell(
-                                          child: Text(
-                                        e.travelsData.first['DRIVER1'],
-                                        textAlign: TextAlign.center,
-                                      )),
-                                      TableCell(
-                                          child: Text(
-                                        e.travelsData.first['DRIVER2'],
-                                        textAlign: TextAlign.center,
-                                      )),
-                                      TableCell(
-                                          child: Text(
-                                        e.travelsData.first['ARRIVAL_TIME']
-                                            .toString()
-                                            .split('.')[0],
-                                        textAlign: TextAlign.center,
-                                      )),
-                                      TableCell(
-                                          child: Text(
-                                        e.travelsData.first['NOTE'],
-                                        textAlign: TextAlign.center,
-                                      )),
-                                      TableCell(
-                                        child: FocusButton(
-                                            onClick: () {
-                                              msgBox('Edicion', 'Aca se edita');
-                                            },
-                                            icono: Icons.edit,
-                                            text: 'Editar'),
-                                      )
-                                    ]
-                                  : [])
-                        ]),
+                        children: addEntryRow(
+                            e.id,
+                            widget.fecha,
+                            e.travelsData.isNotEmpty
+                                ? e.travelsData
+                                    .map((data) => TableRow(children: [
+                                          TableCell(
+                                              child: Text(
+                                            data['DEPARTURE_TIME']
+                                                .toString()
+                                                .split('.')[0],
+                                            textAlign: TextAlign.center,
+                                          )),
+                                          TableCell(
+                                              child: Text(
+                                            data['VEHICLE'].toString(),
+                                            textAlign: TextAlign.center,
+                                          )),
+                                          TableCell(
+                                              child: Text(
+                                            data['DRIVER1'],
+                                            textAlign: TextAlign.center,
+                                          )),
+                                          TableCell(
+                                              child: Text(
+                                            data['DRIVER2'],
+                                            textAlign: TextAlign.center,
+                                          )),
+                                          TableCell(
+                                              child: Text(
+                                            data['ARRIVAL_TIME']
+                                                .toString()
+                                                .split('.')[0],
+                                            textAlign: TextAlign.center,
+                                          )),
+                                          TableCell(
+                                              child: Text(
+                                            data['NOTE'],
+                                            textAlign: TextAlign.center,
+                                          )),
+                                          TableCell(
+                                            child: FocusButton(
+                                                onClick: () {
+                                                  msgBox('Edicion',
+                                                      'Aca se edita');
+                                                },
+                                                icono: Icons.edit,
+                                                text: 'Editar'),
+                                          )
+                                        ]))
+                                    .toList()
+                                : []),
                       )
                     ],
                   )
@@ -222,15 +227,22 @@ class _ViewTableState extends State<ViewTable> {
         });
   }
 
-  List<TableRow> addEntryRow(List<TableRow> data) {
+  List<TableRow> addEntryRow(int id, String fecha, List<TableRow> data) {
+    TextEditingController guardaController = TextEditingController();
+    TextEditingController choferController = TextEditingController();
+    TextEditingController cocheController = TextEditingController();
+    TextEditingController llegadaController = TextEditingController();
+    TextEditingController partidaController = TextEditingController();
+    TextEditingController notaController = TextEditingController();
+
     data.add(TableRow(children: [
       TableCell(
-          child: CustomDatePicker(
-              fechaControlador: TextEditingController(), title: 'salida')),
+          child: CustomTimePicker(
+              timeController: partidaController, title: 'salida')),
       TableCell(
           child: AsyncAutocomplete(
         icon: Icons.person,
-        dataController: TextEditingController(),
+        dataController: choferController,
         link: 'http://190.52.165.206:3000/just_drivers',
         label: 'chofer',
         filtro: 'NAME',
@@ -238,7 +250,7 @@ class _ViewTableState extends State<ViewTable> {
       TableCell(
           child: AsyncAutocomplete(
         icon: Icons.bus_alert,
-        dataController: TextEditingController(),
+        dataController: cocheController,
         link: 'http://190.52.165.206:3000/vehicles',
         label: 'coche',
         filtro: 'NUMBER',
@@ -246,34 +258,92 @@ class _ViewTableState extends State<ViewTable> {
       TableCell(
           child: AsyncAutocomplete(
         icon: Icons.person,
-        dataController: TextEditingController(),
+        dataController: guardaController,
         link: 'http://190.52.165.206:3000/just_copilots',
         label: 'guarda',
         filtro: 'NAME',
       )),
       TableCell(
-          child: CustomDatePicker(
-              fechaControlador: TextEditingController(), title: 'retorno')),
+          child: CustomTimePicker(
+              timeController: llegadaController, title: 'retorno')),
       TableCell(
           child: CustomTextField(
-              lenght: null,
-              textController: TextEditingController(),
-              hint: 'Nota')),
+              lenght: null, textController: notaController, hint: 'Nota')),
       TableCell(
           child: FocusButton(
         onClick: () {
-          msgBox('tembo', 'Tembo lgmnt jajaja');
+          onAccept(
+              id.toString(),
+              guardaController.text,
+              choferController.text,
+              cocheController.text,
+              llegadaController.text,
+              partidaController.text,
+              notaController.text,
+              dateFormaterString(fecha));
         },
         icono: Icons.arrow_drop_up,
         text: 'Agregar',
       ))
     ]));
 
-    if (data.first.children!.isEmpty) {
-      data.removeAt(0);
-    }
-
     return data;
+  }
+
+  void onAccept(String grupo, String guarda, String chofer, String coche,
+      String llegada, String partida, String nota, String fecha) async {
+    if (validateFields([guarda, chofer, coche, llegada, partida])) {
+      final response = await http
+          .get(Uri.parse('http://190.52.165.206:3000/max_travels_id'));
+      int idMax = json.decode(response.body)[0]['MAX'];
+
+      var requestPost = http.Request(
+          'POST', Uri.parse('http://190.52.165.206:3000/add_travels'));
+
+      idMax += 1;
+      requestPost.bodyFields = {
+        'id': idMax.toString(),
+        'grupo': grupo,
+        'coche': coche,
+        'chofer': chofer,
+        'guarda': guarda,
+        'nota': nota,
+        'partida': partida,
+        'llegada': llegada,
+        'fecha': fecha
+      };
+      http.StreamedResponse responseStream = await requestPost.send();
+
+      if (responseStream.statusCode == 200) {
+        if (mounted) {
+          msgBox('Operacion exitosa', 'Operacion realizada con exito');
+        }
+      } else {
+        if (mounted) {
+          msgBox('Error', 'Algo ha salido mal');
+        }
+      }
+    } else {
+      if (mounted) {
+        msgBox('Campos obligatorios', 'Faltan uno o mas campos');
+      }
+    }
+  }
+
+  String dateFormaterString(String inputDate) {
+    List<String> numbers = inputDate.split('/');
+    if (numbers.length > 1) {
+      return '${numbers[2]}-${numbers[1]}-${numbers[0]}';
+    }
+    return inputDate;
+  }
+
+  bool validateFields(List<String> lista) {
+    for (var i in lista) {
+      if (i.isEmpty) return false;
+      break;
+    }
+    return true;
   }
 }
 
