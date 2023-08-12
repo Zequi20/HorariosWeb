@@ -46,8 +46,8 @@ class _ViewTableState extends State<ViewTable> {
               Table(
                 border: TableBorder(
                     horizontalInside: const BorderSide(color: Colors.black),
-                    bottom: BorderSide(color: principalColor, width: 2),
-                    top: BorderSide(color: principalColor, width: 2)),
+                    bottom: BorderSide(color: principalColor, width: 1),
+                    top: BorderSide(color: principalColor, width: 1)),
                 children: [
                   TableRow(children: [
                     Container(
@@ -161,7 +161,7 @@ class _ViewTableState extends State<ViewTable> {
 
     mainTable =
         Table(border: TableBorder.all(color: Colors.black), children: lista);
-    return mainTable;
+    return FocusTraversalGroup(child: Focus(autofocus: true, child: mainTable));
   }
 
   Future<void> msgBox(String title, String message) {
