@@ -12,7 +12,7 @@ class ModalEditarViaje extends StatefulWidget {
     required this.datos,
     required this.grupoId,
   });
-  final List datos;
+  final Map datos;
   final int grupoId;
   @override
   State<ModalEditarViaje> createState() => _ModalEditarViajeState();
@@ -33,7 +33,6 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
   //id de viaje
   late String idViaje;
   //identificadores
-
   String idCoche = '';
   String idChofer = '';
   String idGuarda = '';
@@ -44,6 +43,23 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
     filled: true,
     fillColor: Colors.white,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    Map data = widget.datos;
+    //print(data);
+    idViaje = data['ID'].toString();
+    choferController.text = data['DRIVER1'];
+    guardaController.text = data['DRIVER2'];
+    partidaController.text = data['DEPARTURE_TIME'].toString().split('.')[0];
+    cocheController.text = data['VEHICLE'].toString();
+    llegadaController.text = data['ARRIVAL_TIME'].toString().split('.')[0];
+    notaController.text = data['NOTE'];
+    idChofer = data['DRIVER1_ID'].toString();
+    idGuarda = data['DRIVER2_ID'].toString();
+    idCoche = data['VEHICLE_ID'].toString();
+  }
 
   @override
   Widget build(BuildContext context) {

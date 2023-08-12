@@ -44,8 +44,10 @@ class _ViewTableState extends State<ViewTable> {
     List<TableRow> lista = widget.grupos
         .map((e) => TableRow(children: [
               Table(
-                border: const TableBorder(
-                    horizontalInside: BorderSide(color: Colors.black)),
+                border: TableBorder(
+                    horizontalInside: const BorderSide(color: Colors.black),
+                    bottom: BorderSide(color: principalColor, width: 2),
+                    top: BorderSide(color: principalColor, width: 2)),
                 children: [
                   TableRow(children: [
                     Container(
@@ -122,8 +124,8 @@ class _ViewTableState extends State<ViewTable> {
                                                   MainAxisAlignment.center,
                                               children: [
                                                 FocusButton(
-                                                  onClick: () {
-                                                    showDialog(
+                                                  onClick: () async {
+                                                    await showDialog(
                                                         context: context,
                                                         builder: (context) {
                                                           return ModalEditarViaje(
@@ -131,6 +133,7 @@ class _ViewTableState extends State<ViewTable> {
                                                             grupoId: e.id,
                                                           );
                                                         });
+                                                    widget.updateParent();
                                                   },
                                                   icono: Icons.edit,
                                                 ),
