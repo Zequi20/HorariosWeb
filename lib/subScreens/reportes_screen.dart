@@ -118,11 +118,108 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
         future: fetchTravelsByGroup(dateController.text),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return SingleChildScrollView(
-              child: ViewTable(
-                grupos: snapshot.data!,
-                fecha: dateController.text,
-              ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Table(
+                  border: TableBorder.all(color: Colors.black, width: 1),
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  columnWidths: const {
+                    0: FractionColumnWidth(1 / 20),
+                    1: FractionColumnWidth(1 / 6),
+                    2: FractionColumnWidth(1 / 6),
+                    3: FractionColumnWidth(1 / 6),
+                    4: FractionColumnWidth(1 / 20),
+                    5: FractionColumnWidth(1 / 6),
+                    6: FractionColumnWidth(1 / 20),
+                  },
+                  children: const [
+                    TableRow(children: [
+                      TableCell(
+                          child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Salida',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      )),
+                      TableCell(
+                          child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Coche',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      )),
+                      TableCell(
+                          child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Conductor',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      )),
+                      TableCell(
+                          child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Guarda',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      )),
+                      TableCell(
+                          child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Retorno',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      )),
+                      TableCell(
+                          child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Nota',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      )),
+                      TableCell(
+                          child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Acciones',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                      )),
+                    ])
+                  ],
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: ViewTable(
+                      grupos: snapshot.data!,
+                      fecha: dateController.text,
+                      updateParent: () {
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ),
+              ],
             );
           } else {
             return const Center(

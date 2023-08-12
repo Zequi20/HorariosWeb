@@ -7,11 +7,25 @@ import 'package:horarios_web/widgets/custom/containers/modal_row.dart';
 import 'package:http/http.dart' as http;
 
 class ModalEditarViaje extends StatefulWidget {
-  const ModalEditarViaje(
-      {super.key, required this.grupoId, required this.seleccion});
+  const ModalEditarViaje({
+    super.key,
+    required this.grupoId,
+    required this.chofer,
+    required this.guarda,
+    required this.partida,
+    required this.coche,
+    required this.llegada,
+    required this.nota,
+    required this.viajeId,
+  });
   final int grupoId;
-  final DataRow seleccion;
-
+  final String viajeId;
+  final String chofer;
+  final String guarda;
+  final String partida;
+  final String coche;
+  final String llegada;
+  final String nota;
   @override
   State<ModalEditarViaje> createState() => _ModalEditarViajeState();
 }
@@ -45,32 +59,25 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
   @override
   void initState() {
     super.initState();
-    List<DataCell> aux = widget.seleccion.cells;
-    idViaje = (aux[0].child as Text).data!;
-    partidaController.text = (aux[1].child as Text).data!;
-    llegadaController.text = (aux[2].child as Text).data!;
-    cocheController.text = (aux[3].child as Text).data!;
-    idCoche = regex
-        .allMatches((aux[3].child as Text).key.toString())
-        .map((match) => match.group(0)!)
-        .join('');
-    idChofer = regex
-        .allMatches((aux[4].child as Text).key.toString())
-        .map((match) => match.group(0)!)
-        .join('');
-    idGuarda = regex
-        .allMatches((aux[5].child as Text).key.toString())
-        .map((match) => match.group(0)!)
-        .join('');
-    choferController.text = (aux[4].child as Text).data!;
-    guardaController.text = (aux[5].child as Text).data!;
-    notaController.text = (aux[6].child as Text).data!;
+    choferController.text = widget.chofer;
+    guardaController.text = widget.guarda;
+    partidaController.text = widget.partida;
+    cocheController.text = widget.coche;
+    llegadaController.text = widget.llegada;
+    notaController.text = widget.nota;
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomModalDialog(
-        onAccept: onAccept,
+        onAccept: () {
+          onAccept(
+              guardaController.text,
+              choferController.text,
+              cocheController.text,
+              llegadaController.text,
+              partidaController.text);
+        },
         title: 'Editar Viaje',
         content: [
           ModalRow(
@@ -145,14 +152,10 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
         });
   }
 
-  Future onAccept() async {
-    if (validateFields([
-      guardaController.text,
-      choferController.text,
-      cocheController.text,
-      llegadaController.text,
-      partidaController.text
-    ])) {
+  void onAccept(String guarda, String chofer, String coche, String llegada,
+      String partida) async {
+    print([guarda, chofer, coche, llegada, partida]);
+    if (validateFields([guarda, chofer, coche, llegada, partida])) {
       var requestPost = http.Request(
           'POST', Uri.parse('http://190.52.165.206:3000/edit_travels'));
       requestPost.bodyFields = {
@@ -186,6 +189,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
   }
 
   bool validateFields(List<String> lista) {
+    print(lista);
     for (var i in lista) {
       if (i.isEmpty) return false;
       break;

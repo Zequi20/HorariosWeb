@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
+import 'package:horarios_web/widgets/modals/viaje/modal_editar_viaje.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
@@ -7,9 +8,14 @@ import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 
 class ViewTable extends StatefulWidget {
-  const ViewTable({super.key, required this.grupos, required this.fecha});
+  const ViewTable(
+      {super.key,
+      required this.grupos,
+      required this.fecha,
+      required this.updateParent});
   final List<Group> grupos;
   final String fecha;
+  final VoidCallback updateParent;
   @override
   State<ViewTable> createState() => _ViewTableState();
 }
@@ -20,8 +26,6 @@ class _ViewTableState extends State<ViewTable> {
   var resaltadoColor = Colors.orange;
   @override
   void initState() {
-    escarapela();
-
     super.initState();
   }
 
@@ -35,8 +39,6 @@ class _ViewTableState extends State<ViewTable> {
     }
   }
 
-  void escarapela() {}
-
   @override
   Widget build(BuildContext context) {
     List<TableRow> lista = widget.grupos
@@ -46,8 +48,9 @@ class _ViewTableState extends State<ViewTable> {
                     horizontalInside: BorderSide(color: Colors.black)),
                 children: [
                   TableRow(children: [
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
+                    Container(
+                      color: resaltadoColor,
+                      padding: const EdgeInsets.all(4),
                       child: Text(
                         e.name,
                         textAlign: TextAlign.center,
@@ -114,13 +117,46 @@ class _ViewTableState extends State<ViewTable> {
                                             textAlign: TextAlign.center,
                                           )),
                                           TableCell(
-                                            child: FocusButton(
-                                                onClick: () {
-                                                  msgBox('Edicion',
-                                                      'Aca se edita');
-                                                },
-                                                icono: Icons.edit,
-                                                text: 'Editar'),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                FocusButton(
+                                                  onClick: () {
+                                                    print(data['DRIVER1']);
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return ModalEditarViaje(
+                                                            grupoId: e.id,
+                                                            chofer:
+                                                                data['DRIVER1'],
+                                                            guarda:
+                                                                data['DRIVER2'],
+                                                            partida: data[
+                                                                'DEPARTURE_TIME'],
+                                                            coche:
+                                                                data['VEHICLE']
+                                                                    .toString(),
+                                                            llegada: data[
+                                                                'ARRIVAL_TIME'],
+                                                            nota: data['NOTE'],
+                                                            viajeId: data['ID']
+                                                                .toString(),
+                                                          );
+                                                        });
+                                                  },
+                                                  icono: Icons.edit,
+                                                ),
+                                                FocusButton(
+                                                  onClick: () {
+                                                    msgBox('borrar',
+                                                        'Aca se brra');
+                                                  },
+                                                  icono: Icons.delete,
+                                                )
+                                              ],
+                                            ),
                                           )
                                         ]))
                                     .toList()
@@ -132,73 +168,6 @@ class _ViewTableState extends State<ViewTable> {
               )
             ]))
         .toList();
-    lista.insert(
-      0,
-      TableRow(
-          decoration: const BoxDecoration(color: Colors.orange),
-          children: [
-            Table(
-              border: const TableBorder(
-                  verticalInside: BorderSide(color: Colors.black)),
-              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              columnWidths: const {
-                0: FractionColumnWidth(1 / 20),
-                1: FractionColumnWidth(1 / 6),
-                2: FractionColumnWidth(1 / 6),
-                3: FractionColumnWidth(1 / 6),
-                4: FractionColumnWidth(1 / 20),
-                5: FractionColumnWidth(1 / 6),
-                6: FractionColumnWidth(1 / 20)
-              },
-              children: const [
-                TableRow(children: [
-                  TableCell(
-                      child: Text(
-                    'Salida',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )),
-                  TableCell(
-                      child: Text(
-                    'Coche',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )),
-                  TableCell(
-                      child: Text(
-                    'Conductor',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )),
-                  TableCell(
-                      child: Text(
-                    'Guarda',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )),
-                  TableCell(
-                      child: Text(
-                    'Retorno',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )),
-                  TableCell(
-                      child: Text(
-                    'Nota',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )),
-                  TableCell(
-                      child: Text(
-                    'Acciones',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )),
-                ])
-              ],
-            )
-          ]),
-    );
 
     mainTable =
         Table(border: TableBorder.all(color: Colors.black), children: lista);
@@ -237,53 +206,66 @@ class _ViewTableState extends State<ViewTable> {
 
     data.add(TableRow(children: [
       TableCell(
-          child: CustomTimePicker(
-              timeController: partidaController, title: 'salida')),
-      TableCell(
-          child: AsyncAutocomplete(
-        icon: Icons.person,
-        dataController: choferController,
-        link: 'http://190.52.165.206:3000/just_drivers',
-        label: 'chofer',
-        filtro: 'NAME',
+          child: MetalGrad(
+        child: CustomTimePicker(
+            timeController: partidaController, title: 'salida'),
       )),
       TableCell(
-          child: AsyncAutocomplete(
-        icon: Icons.bus_alert,
-        dataController: cocheController,
-        link: 'http://190.52.165.206:3000/vehicles',
-        label: 'coche',
-        filtro: 'NUMBER',
+          child: MetalGrad(
+        child: AsyncAutocomplete(
+          icon: Icons.person,
+          dataController: choferController,
+          link: 'http://190.52.165.206:3000/just_drivers',
+          label: 'chofer',
+          filtro: 'NAME',
+        ),
       )),
       TableCell(
-          child: AsyncAutocomplete(
-        icon: Icons.person,
-        dataController: guardaController,
-        link: 'http://190.52.165.206:3000/just_copilots',
-        label: 'guarda',
-        filtro: 'NAME',
+          child: MetalGrad(
+        child: AsyncAutocomplete(
+          icon: Icons.bus_alert,
+          dataController: cocheController,
+          link: 'http://190.52.165.206:3000/vehicles',
+          label: 'coche',
+          filtro: 'NUMBER',
+        ),
       )),
       TableCell(
-          child: CustomTimePicker(
-              timeController: llegadaController, title: 'retorno')),
+          child: MetalGrad(
+        child: AsyncAutocomplete(
+          icon: Icons.person,
+          dataController: guardaController,
+          link: 'http://190.52.165.206:3000/just_copilots',
+          label: 'guarda',
+          filtro: 'NAME',
+        ),
+      )),
       TableCell(
-          child: CustomTextField(
-              lenght: null, textController: notaController, hint: 'Nota')),
+          child: MetalGrad(
+        child: CustomTimePicker(
+            timeController: llegadaController, title: 'retorno'),
+      )),
       TableCell(
-          child: FocusButton(
-        onClick: () {
-          onAccept(
-              id.toString(),
-              guardaController.text,
-              choferController.text,
-              cocheController.text,
-              llegadaController.text,
-              partidaController.text,
-              notaController.text,
-              dateFormaterString(fecha));
-        },
-        icono: Icons.arrow_drop_up,
-        text: 'Agregar',
+          child: MetalGrad(
+        child: CustomTextField(
+            lenght: null, textController: notaController, hint: 'Nota'),
+      )),
+      TableCell(
+          child: MetalGrad(
+        child: FocusButton(
+          onClick: () {
+            onAccept(
+                id.toString(),
+                guardaController.text,
+                choferController.text,
+                cocheController.text,
+                llegadaController.text,
+                partidaController.text,
+                notaController.text,
+                dateFormaterString(fecha));
+          },
+          icono: Icons.add_box_sharp,
+        ),
       ))
     ]));
 
@@ -317,6 +299,7 @@ class _ViewTableState extends State<ViewTable> {
       if (responseStream.statusCode == 200) {
         if (mounted) {
           msgBox('Operacion exitosa', 'Operacion realizada con exito');
+          widget.updateParent();
         }
       } else {
         if (mounted) {
@@ -354,7 +337,7 @@ class FocusButton extends StatefulWidget {
       this.principalColor = const Color.fromARGB(255, 99, 1, 1),
       required this.onClick,
       this.icono = Icons.arrow_drop_up,
-      required this.text});
+      this.text = ''});
   final MaterialColor resaltadoColor;
   final Color principalColor;
   final IconData icono;
@@ -369,27 +352,67 @@ class _FocusButtonState extends State<FocusButton> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50,
-      child: TextButton.icon(
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.resolveWith<Color>(
-            (states) {
-              if (states.contains(MaterialState.focused)) {
-                return widget.resaltadoColor;
-              }
-              return Colors.white;
-            },
-          ),
-        ),
-        onPressed: widget.onClick,
-        icon: Icon(
-          widget.icono,
-          color: widget.principalColor,
-        ),
-        label: Text(
-          widget.text,
-          style: TextStyle(color: widget.principalColor),
-        ),
-      ),
+      child: widget.text.isEmpty
+          ? TextButton.icon(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return widget.resaltadoColor;
+                    }
+                    return Colors.white;
+                  },
+                ),
+              ),
+              onPressed: widget.onClick,
+              icon: Icon(
+                widget.icono,
+                color: widget.principalColor,
+              ),
+              label: Text(
+                widget.text,
+                style: TextStyle(color: widget.principalColor),
+              ),
+            )
+          : IconButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (states) {
+                    if (states.contains(MaterialState.focused)) {
+                      return widget.resaltadoColor;
+                    }
+                    return Colors.white;
+                  },
+                ),
+              ),
+              onPressed: widget.onClick,
+              icon: Icon(
+                widget.icono,
+                color: widget.principalColor,
+              ),
+            ),
+    );
+  }
+}
+
+class MetalGrad extends StatefulWidget {
+  const MetalGrad({super.key, required this.child});
+  final Widget child;
+
+  @override
+  State<MetalGrad> createState() => _MetalGradState();
+}
+
+class _MetalGradState extends State<MetalGrad> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.black38, Colors.white, Colors.black38])),
+      child: widget.child,
     );
   }
 }
