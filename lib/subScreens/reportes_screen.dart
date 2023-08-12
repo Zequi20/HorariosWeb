@@ -230,41 +230,43 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
           }
         },
       ),
-      bottomNavigationBar: BottomAppBar(
-          elevation: 8,
-          padding: const EdgeInsets.all(4),
-          height: 70,
-          color: gradPrincipalColor,
-          child: Row(
-            children: [
-              Expanded(
-                  child: Text(
-                'Extraer Formato',
-                style: TextStyle(color: colorBlanco),
-                textAlign: TextAlign.center,
-              )),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  'Filtrar por fecha:',
-                  textAlign: TextAlign.right,
+      bottomNavigationBar: ExcludeFocus(
+        child: BottomAppBar(
+            elevation: 8,
+            padding: const EdgeInsets.all(4),
+            height: 70,
+            color: gradPrincipalColor,
+            child: Row(
+              children: [
+                Expanded(
+                    child: Text(
+                  'Extraer Formato',
                   style: TextStyle(color: colorBlanco),
+                  textAlign: TextAlign.center,
+                )),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    'Filtrar por fecha:',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(color: colorBlanco),
+                  ),
                 ),
-              ),
-              Expanded(
-                  flex: 1,
-                  child: CustomDatePicker(
-                      fechaControlador: dateController,
-                      title: 'Fecha de reporte')),
-              Expanded(
-                  child: GenerateReportButton(
-                fecha: dateFormaterString(dateController.text),
-                padding: 22,
-                userId: widget.userId!,
-                viajes: locura,
-              ))
-            ],
-          )),
+                Expanded(
+                    flex: 1,
+                    child: CustomDatePicker(
+                        fechaControlador: dateController,
+                        title: 'Fecha de reporte')),
+                Expanded(
+                    child: GenerateReportButton(
+                  fecha: dateFormaterString(dateController.text),
+                  padding: 22,
+                  userId: widget.userId!,
+                  viajes: locura,
+                ))
+              ],
+            )),
+      ),
     );
   }
 

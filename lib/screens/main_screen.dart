@@ -54,27 +54,29 @@ class _MainScreenState extends State<MainScreen> {
             opacity: isVisible ? 1.0 : 00,
             child: Visibility(
               visible: isVisible,
-              child: NavigationRail(
-                backgroundColor: gradPrincipalColor,
-                minExtendedWidth: 150,
-                elevation: 5,
-                extended: extended,
-                destinations: const [
-                  NavigationRailDestination(
-                      icon: Icon(Icons.home), label: Text('Inicio')),
-                  NavigationRailDestination(
-                      icon: Icon(Icons.edit_note), label: Text('Datos')),
-                  NavigationRailDestination(
-                      icon: Icon(Icons.note_add), label: Text('Reporte')),
-                  NavigationRailDestination(
-                      icon: Icon(Icons.login), label: Text('Salir')),
-                ],
-                selectedIndex: selected,
-                onDestinationSelected: (int index) {
-                  setState(() {
-                    selected = index;
-                  });
-                },
+              child: ExcludeFocus(
+                child: NavigationRail(
+                  backgroundColor: gradPrincipalColor,
+                  minExtendedWidth: 150,
+                  elevation: 5,
+                  extended: extended,
+                  destinations: const [
+                    NavigationRailDestination(
+                        icon: Icon(Icons.home), label: Text('Inicio')),
+                    NavigationRailDestination(
+                        icon: Icon(Icons.edit_note), label: Text('Datos')),
+                    NavigationRailDestination(
+                        icon: Icon(Icons.note_add), label: Text('Reporte')),
+                    NavigationRailDestination(
+                        icon: Icon(Icons.login), label: Text('Salir')),
+                  ],
+                  selectedIndex: selected,
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      selected = index;
+                    });
+                  },
+                ),
               ),
             ),
           ),

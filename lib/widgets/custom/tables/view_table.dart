@@ -24,6 +24,7 @@ class _ViewTableState extends State<ViewTable> {
   late Table mainTable;
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
+  FocusNode tablaFoco = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -134,6 +135,7 @@ class _ViewTableState extends State<ViewTable> {
                                                           );
                                                         });
                                                     widget.updateParent();
+                                                    tablaFoco.requestFocus();
                                                   },
                                                   icono: Icons.edit,
                                                 ),
@@ -161,7 +163,9 @@ class _ViewTableState extends State<ViewTable> {
 
     mainTable =
         Table(border: TableBorder.all(color: Colors.black), children: lista);
-    return FocusTraversalGroup(child: Focus(autofocus: true, child: mainTable));
+    return FocusTraversalGroup(
+        policy: OrderedTraversalPolicy(),
+        child: Focus(autofocus: true, focusNode: tablaFoco, child: mainTable));
   }
 
   Future<void> msgBox(String title, String message) {
@@ -290,15 +294,18 @@ class _ViewTableState extends State<ViewTable> {
         if (mounted) {
           msgBox('Operacion exitosa', 'Operacion realizada con exito');
           widget.updateParent();
+          tablaFoco.requestFocus();
         }
       } else {
         if (mounted) {
           msgBox('Error', 'Algo ha salido mal');
+          tablaFoco.requestFocus();
         }
       }
     } else {
       if (mounted) {
         msgBox('Campos obligatorios', 'Faltan uno o mas campos');
+        tablaFoco.requestFocus();
       }
     }
   }
@@ -378,7 +385,9 @@ class _ViewTableState extends State<ViewTable> {
                     onPressed: () {
                       Navigator.of(context).pop(true);
                       Navigator.of(context).pop(true);
-                      setState(() {});
+                      setState(() {
+                        tablaFoco.requestFocus();
+                      });
                     },
                   ),
                 ],
@@ -389,6 +398,7 @@ class _ViewTableState extends State<ViewTable> {
       if (mounted) {
         Navigator.of(context).pop(true);
         msgBox('Error', 'Algo ha salido mal');
+        tablaFoco.requestFocus();
       }
     }
   }
