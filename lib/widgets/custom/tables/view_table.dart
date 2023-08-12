@@ -138,10 +138,10 @@ class _ViewTableState extends State<ViewTable> {
                                                   icono: Icons.edit,
                                                 ),
                                                 FocusButton(
-                                                  onClick: () async {
-                                                    await deleteReg(
-                                                        data['ID'].toString());
-                                                    widget.updateParent();
+                                                  onClick: () {
+                                                    onDelete(
+                                                        data['ID'].toString(),
+                                                        data);
                                                   },
                                                   icono: Icons.delete,
                                                 )
@@ -319,7 +319,7 @@ class _ViewTableState extends State<ViewTable> {
     return true;
   }
 
-  void onDelete(String idReg) {
+  void onDelete(String idReg, Map data) async {
     showDialog(
       context: context,
       builder: (context) {
@@ -333,8 +333,9 @@ class _ViewTableState extends State<ViewTable> {
               style: const ButtonStyle(
                   foregroundColor: MaterialStatePropertyAll(Colors.white)),
               child: const Text('Si, continuar'),
-              onPressed: () {
-                deleteReg(idReg);
+              onPressed: () async {
+                await deleteReg(idReg);
+                widget.updateParent();
               },
             ),
             TextButton(
@@ -376,7 +377,7 @@ class _ViewTableState extends State<ViewTable> {
                     child: const Text('Aceptar'),
                     onPressed: () {
                       Navigator.of(context).pop(true);
-
+                      Navigator.of(context).pop(true);
                       setState(() {});
                     },
                   ),
