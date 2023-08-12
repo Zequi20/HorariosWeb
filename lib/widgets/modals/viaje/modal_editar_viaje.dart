@@ -9,23 +9,11 @@ import 'package:http/http.dart' as http;
 class ModalEditarViaje extends StatefulWidget {
   const ModalEditarViaje({
     super.key,
+    required this.datos,
     required this.grupoId,
-    required this.chofer,
-    required this.guarda,
-    required this.partida,
-    required this.coche,
-    required this.llegada,
-    required this.nota,
-    required this.viajeId,
   });
+  final List datos;
   final int grupoId;
-  final String viajeId;
-  final String chofer;
-  final String guarda;
-  final String partida;
-  final String coche;
-  final String llegada;
-  final String nota;
   @override
   State<ModalEditarViaje> createState() => _ModalEditarViajeState();
 }
@@ -45,6 +33,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
   //id de viaje
   late String idViaje;
   //identificadores
+
   String idCoche = '';
   String idChofer = '';
   String idGuarda = '';
@@ -55,17 +44,6 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
     filled: true,
     fillColor: Colors.white,
   );
-
-  @override
-  void initState() {
-    super.initState();
-    choferController.text = widget.chofer;
-    guardaController.text = widget.guarda;
-    partidaController.text = widget.partida;
-    cocheController.text = widget.coche;
-    llegadaController.text = widget.llegada;
-    notaController.text = widget.nota;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +164,6 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
   }
 
   bool validateFields(List<String> lista) {
-    print(lista);
     for (var i in lista) {
       if (i.isEmpty) return false;
       break;

@@ -123,26 +123,12 @@ class _ViewTableState extends State<ViewTable> {
                                               children: [
                                                 FocusButton(
                                                   onClick: () {
-                                                    print(data['DRIVER1']);
                                                     showDialog(
                                                         context: context,
                                                         builder: (context) {
                                                           return ModalEditarViaje(
+                                                            datos: data,
                                                             grupoId: e.id,
-                                                            chofer:
-                                                                data['DRIVER1'],
-                                                            guarda:
-                                                                data['DRIVER2'],
-                                                            partida: data[
-                                                                'DEPARTURE_TIME'],
-                                                            coche:
-                                                                data['VEHICLE']
-                                                                    .toString(),
-                                                            llegada: data[
-                                                                'ARRIVAL_TIME'],
-                                                            nota: data['NOTE'],
-                                                            viajeId: data['ID']
-                                                                .toString(),
                                                           );
                                                         });
                                                   },
