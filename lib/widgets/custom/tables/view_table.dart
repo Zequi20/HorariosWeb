@@ -138,9 +138,10 @@ class _ViewTableState extends State<ViewTable> {
                                                   icono: Icons.edit,
                                                 ),
                                                 FocusButton(
-                                                  onClick: () {
-                                                    msgBox('borrar',
-                                                        'Aca se brra');
+                                                  onClick: () async {
+                                                    await deleteReg(
+                                                        data['ID'].toString());
+                                                    widget.updateParent();
                                                   },
                                                   icono: Icons.delete,
                                                 )
@@ -316,6 +317,79 @@ class _ViewTableState extends State<ViewTable> {
       break;
     }
     return true;
+  }
+
+  void onDelete(String idReg) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Eliminar registro'),
+          content: Wrap(
+            children: const [Text('Seguro que desea eliminar este registro?')],
+          ),
+          actions: [
+            TextButton(
+              style: const ButtonStyle(
+                  foregroundColor: MaterialStatePropertyAll(Colors.white)),
+              child: const Text('Si, continuar'),
+              onPressed: () {
+                deleteReg(idReg);
+              },
+            ),
+            TextButton(
+              style: const ButtonStyle(
+                  foregroundColor: MaterialStatePropertyAll(Colors.white)),
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Future deleteReg(String id) async {
+    var requestPost = http.Request(
+        'DELETE', Uri.parse('http://190.52.165.206:3000/delete_travels'));
+
+    String idList = id;
+
+    requestPost.bodyFields = {'id': idList};
+    http.StreamedResponse responseStream = await requestPost.send();
+
+    if (responseStream.statusCode == 200) {
+      if (mounted) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Operacion exitosa'),
+                content: const Text('Operacion realizada con exito :)'),
+                actions: [
+                  TextButton(
+                    style: const ButtonStyle(
+                        foregroundColor:
+                            MaterialStatePropertyAll(Colors.white)),
+                    child: const Text('Aceptar'),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+
+                      setState(() {});
+                    },
+                  ),
+                ],
+              );
+            });
+      }
+    } else {
+      if (mounted) {
+        Navigator.of(context).pop(true);
+        msgBox('Error', 'Algo ha salido mal');
+      }
+    }
   }
 }
 
