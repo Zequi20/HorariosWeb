@@ -70,14 +70,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
   @override
   Widget build(BuildContext context) {
     return CustomModalDialog(
-        onAccept: () {
-          onAccept(
-              guardaController.text,
-              choferController.text,
-              cocheController.text,
-              llegadaController.text,
-              partidaController.text);
-        },
+        onAccept: onAccept,
         title: 'Editar Viaje',
         content: [
           ModalRow(
@@ -152,10 +145,14 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
         });
   }
 
-  void onAccept(String guarda, String chofer, String coche, String llegada,
-      String partida) async {
-    print([guarda, chofer, coche, llegada, partida]);
-    if (validateFields([guarda, chofer, coche, llegada, partida])) {
+  Future onAccept() async {
+    if (validateFields([
+      guardaController.text,
+      choferController.text,
+      cocheController.text,
+      llegadaController.text,
+      partidaController.text
+    ])) {
       var requestPost = http.Request(
           'POST', Uri.parse('http://190.52.165.206:3000/edit_travels'));
       requestPost.bodyFields = {
