@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
 import 'package:horarios_web/widgets/modals/viaje/modal_editar_viaje.dart';
 import 'package:http/http.dart' as http;
@@ -269,16 +268,10 @@ class _ViewTableState extends State<ViewTable> {
   void onAccept(String grupo, String guarda, String chofer, String coche,
       String llegada, String partida, String nota, String fecha) async {
     if (validateFields([guarda, chofer, coche, llegada, partida])) {
-      final response = await http
-          .get(Uri.parse('http://190.52.165.206:3000/max_travels_id'));
-      int idMax = json.decode(response.body)[0]['MAX'];
-
       var requestPost = http.Request(
           'POST', Uri.parse('http://190.52.165.206:3000/add_travels'));
 
-      idMax += 1;
       requestPost.bodyFields = {
-        'id': idMax.toString(),
         'grupo': grupo,
         'coche': coche,
         'chofer': chofer,
@@ -295,7 +288,49 @@ class _ViewTableState extends State<ViewTable> {
           msgBox('Operacion exitosa', 'Operacion realizada con exito');
           widget.updateParent();
           tablaFoco.requestFocus();
+        }app.post('/duplicate_travels', (req, res) => {
+	const begin = req.body.begin;
+	const end = req.body.end;
+  pool.get((err, db) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Error getting connection from the pool' });
+      return;
+    }
+
+    db.transaction((err, transaction) => {
+      if (err) {
+        console.error(err);
+        db.detach();
+        res.status(500).json({ error: 'Error starting transaction' });
+        return;
+      }
+
+      const insertQuery = `INSERT INTO TRAVELS (ID_GROUP, ID_VEHICLE, ID_FIRST_DRIVER, ID_SECOND_DRIVER, DEPARTURE_TIME, ARRIVAL_TIME, NOTE, KM, "DATE")
+			SELECT ID_GROUP, ID_VEHICLE, ID_FIRST_DRIVER, ID_SECOND_DRIVER, DEPARTURE_TIME, ARRIVAL_TIME, NOTE, KM, '${begin}'
+			FROM TRAVELS t
+			WHERE t."DATE" = '${end}';
+			`; // Tu consulta de inserción
+      transaction.query(insertQuery, (err, result) => {
+        if (err) {
+          console.error(err);
+          transaction.rollback(() => {
+            transaction.commit(() => {
+              db.detach();
+              res.status(500).json({ error: 'Error executing query' });
+            });
+          });
+          return;
         }
+
+        transaction.commit(() => {
+          db.detach();
+          res.status(200).json({ message: 'Data inserted and committed successfully' });
+        });
+      });
+    });
+  });
+  });
       } else {
         if (mounted) {
           msgBox('Error', 'Algo ha salido mal');
@@ -490,3 +525,46 @@ class _MetalGradState extends State<MetalGrad> {
     );
   }
 }
+/* app.post('/duplicate_travels', (req, res) => {
+	const begin = req.body.begin;
+	const end = req.body.end;
+  pool.get((err, db) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Error getting connection from the pool' });
+      return;
+    }
+
+    db.transaction((err, transaction) => {
+      if (err) {
+        console.error(err);
+        db.detach();
+        res.status(500).json({ error: 'Error starting transaction' });
+        return;
+      }
+
+      const insertQuery = `INSERT INTO TRAVELS (ID_GROUP, ID_VEHICLE, ID_FIRST_DRIVER, ID_SECOND_DRIVER, DEPARTURE_TIME, ARRIVAL_TIME, NOTE, KM, "DATE")
+			SELECT ID_GROUP, ID_VEHICLE, ID_FIRST_DRIVER, ID_SECOND_DRIVER, DEPARTURE_TIME, ARRIVAL_TIME, NOTE, KM, '${begin}'
+			FROM TRAVELS t
+			WHERE t."DATE" = '${end}';
+			`; // Tu consulta de inserción
+      transaction.query(insertQuery, (err, result) => {
+        if (err) {
+          console.error(err);
+          transaction.rollback(() => {
+            transaction.commit(() => {
+              db.detach();
+              res.status(500).json({ error: 'Error executing query' });
+            });
+          });
+          return;
+        }
+
+        transaction.commit(() => {
+          db.detach();
+          res.status(200).json({ message: 'Data inserted and committed successfully' });
+        });
+      });
+    });
+  });
+  }); */

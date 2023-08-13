@@ -87,13 +87,15 @@ class _MainScreenState extends State<MainScreen> {
       ),
       appBar: AppBar(
         titleTextStyle: const TextStyle(fontSize: 18, color: Colors.white),
-        leading: IconButton(
-            tooltip: 'desplegar/ocultar navegacion',
-            onPressed: () {
-              visibilityCheck();
-              setState(() {});
-            },
-            icon: const Icon(Icons.menu)),
+        leading: ExcludeFocus(
+          child: IconButton(
+              tooltip: 'desplegar/ocultar navegacion',
+              onPressed: () {
+                visibilityCheck();
+                setState(() {});
+              },
+              icon: const Icon(Icons.menu)),
+        ),
         toolbarHeight: 38,
         title: const Text(
           'ReporteExpress',

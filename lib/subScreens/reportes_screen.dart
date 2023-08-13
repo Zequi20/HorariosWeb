@@ -239,11 +239,16 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
             child: Row(
               children: [
                 Expanded(
-                    child: Text(
-                  'Extraer Formato',
-                  style: TextStyle(color: colorBlanco),
-                  textAlign: TextAlign.center,
-                )),
+                    child: TextButton.icon(
+                        onPressed: () {
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.sim_card_download_outlined),
+                        label: Text(
+                          'Extraer Formato',
+                          style: TextStyle(color: colorBlanco),
+                          textAlign: TextAlign.center,
+                        ))),
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
