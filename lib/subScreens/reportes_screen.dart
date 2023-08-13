@@ -4,6 +4,7 @@ import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/custom/buttons/generate_report_button.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_date_picker.dart';
 import 'package:horarios_web/widgets/custom/tables/view_table.dart';
+import 'package:horarios_web/widgets/modals/viaje/modal_extraer_viajes.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -240,12 +241,27 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
               children: [
                 Expanded(
                     child: TextButton.icon(
-                        onPressed: () {
+                        style: ButtonStyle(
+                            side: const MaterialStatePropertyAll(BorderSide(
+                              color: Colors.white,
+                            )),
+                            backgroundColor:
+                                MaterialStatePropertyAll(principalColor)),
+                        onPressed: () async {
+                          await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ModalExtraer(
+                                    fechaActual: dateController.text);
+                              });
                           setState(() {});
                         },
-                        icon: const Icon(Icons.sim_card_download_outlined),
+                        icon: const Icon(
+                          Icons.sim_card_download_outlined,
+                          color: Colors.white,
+                        ),
                         label: Text(
-                          'Extraer Formato',
+                          'Extraer Viajes',
                           style: TextStyle(color: colorBlanco),
                           textAlign: TextAlign.center,
                         ))),
