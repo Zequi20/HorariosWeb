@@ -288,49 +288,7 @@ class _ViewTableState extends State<ViewTable> {
           msgBox('Operacion exitosa', 'Operacion realizada con exito');
           widget.updateParent();
           tablaFoco.requestFocus();
-        }app.post('/duplicate_travels', (req, res) => {
-	const begin = req.body.begin;
-	const end = req.body.end;
-  pool.get((err, db) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Error getting connection from the pool' });
-      return;
-    }
-
-    db.transaction((err, transaction) => {
-      if (err) {
-        console.error(err);
-        db.detach();
-        res.status(500).json({ error: 'Error starting transaction' });
-        return;
-      }
-
-      const insertQuery = `INSERT INTO TRAVELS (ID_GROUP, ID_VEHICLE, ID_FIRST_DRIVER, ID_SECOND_DRIVER, DEPARTURE_TIME, ARRIVAL_TIME, NOTE, KM, "DATE")
-			SELECT ID_GROUP, ID_VEHICLE, ID_FIRST_DRIVER, ID_SECOND_DRIVER, DEPARTURE_TIME, ARRIVAL_TIME, NOTE, KM, '${begin}'
-			FROM TRAVELS t
-			WHERE t."DATE" = '${end}';
-			`; // Tu consulta de inserción
-      transaction.query(insertQuery, (err, result) => {
-        if (err) {
-          console.error(err);
-          transaction.rollback(() => {
-            transaction.commit(() => {
-              db.detach();
-              res.status(500).json({ error: 'Error executing query' });
-            });
-          });
-          return;
         }
-
-        transaction.commit(() => {
-          db.detach();
-          res.status(200).json({ message: 'Data inserted and committed successfully' });
-        });
-      });
-    });
-  });
-  });
       } else {
         if (mounted) {
           msgBox('Error', 'Algo ha salido mal');
@@ -525,6 +483,8 @@ class _MetalGradState extends State<MetalGrad> {
     );
   }
 }
+
+
 /* app.post('/duplicate_travels', (req, res) => {
 	const begin = req.body.begin;
 	const end = req.body.end;
