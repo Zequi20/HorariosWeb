@@ -244,21 +244,19 @@ class _ViewTableState extends State<ViewTable> {
             lenght: null, textController: notaController, hint: 'Nota'),
       )),
       TableCell(
-          child: MetalGrad(
-        child: FocusButton(
-          onClick: () {
-            onAccept(
-                id.toString(),
-                guardaController.text,
-                choferController.text,
-                cocheController.text,
-                llegadaController.text,
-                partidaController.text,
-                notaController.text,
-                dateFormaterString(fecha));
-          },
-          icono: Icons.add_box_sharp,
-        ),
+          child: FocusButton(
+        onClick: () {
+          onAccept(
+              id.toString(),
+              guardaController.text,
+              choferController.text,
+              cocheController.text,
+              llegadaController.text,
+              partidaController.text,
+              notaController.text,
+              dateFormaterString(fecha));
+        },
+        icono: Icons.add_box_sharp,
       ))
     ]));
 
@@ -427,7 +425,7 @@ class _FocusButtonState extends State<FocusButton> {
                     if (states.contains(MaterialState.focused)) {
                       return widget.resaltadoColor;
                     }
-                    return Colors.white;
+                    return Colors.black12;
                   },
                 ),
               ),

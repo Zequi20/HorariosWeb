@@ -283,7 +283,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                   fecha: dateFormaterString(dateController.text),
                   padding: 22,
                   userId: widget.userId!,
-                  viajes: locura,
+                  dateController: dateController,
                 ))
               ],
             )),

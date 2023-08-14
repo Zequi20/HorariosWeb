@@ -90,7 +90,11 @@ class Report {
             ]);
       },
       footer: (context) => pw.Table(
-        border: pw.TableBorder.all(color: xd.PdfColors.black, width: 0.5),
+        border: pw.TableBorder.all(
+            color: coments[0].isNotEmpty || coments[1].isNotEmpty
+                ? xd.PdfColors.black
+                : xd.PdfColors.white,
+            width: 0.5),
         children: [
           pw.TableRow(children: [
             pw.Column(
@@ -101,7 +105,11 @@ class Report {
                       padding: const pw.EdgeInsets.all(5),
                       child: pw.Text(coments[0],
                           style: pw.TextStyle(fontSize: texto.toDouble()))),
-                  pw.Divider(color: xd.PdfColors.black, height: 1),
+                  pw.Divider(
+                      color: coments[0].isNotEmpty || coments[1].isNotEmpty
+                          ? xd.PdfColors.black
+                          : xd.PdfColors.white,
+                      height: 1),
                   pw.Container(
                     padding: const pw.EdgeInsets.all(5),
                     child: pw.Text(coments[1],
