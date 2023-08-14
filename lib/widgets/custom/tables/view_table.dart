@@ -123,28 +123,32 @@ class _ViewTableState extends State<ViewTable> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                FocusButton(
-                                                  onClick: () async {
-                                                    await showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return ModalEditarViaje(
-                                                            datos: data,
-                                                            grupoId: e.id,
-                                                          );
-                                                        });
-                                                    widget.updateParent();
-                                                    tablaFoco.requestFocus();
-                                                  },
-                                                  icono: Icons.edit,
+                                                Expanded(
+                                                  child: FocusButton(
+                                                    onClick: () async {
+                                                      await showDialog(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return ModalEditarViaje(
+                                                              datos: data,
+                                                              grupoId: e.id,
+                                                            );
+                                                          });
+                                                      widget.updateParent();
+                                                      tablaFoco.requestFocus();
+                                                    },
+                                                    icono: Icons.edit,
+                                                  ),
                                                 ),
-                                                FocusButton(
-                                                  onClick: () {
-                                                    onDelete(
-                                                        data['ID'].toString(),
-                                                        data);
-                                                  },
-                                                  icono: Icons.delete,
+                                                Expanded(
+                                                  child: FocusButton(
+                                                    onClick: () {
+                                                      onDelete(
+                                                          data['ID'].toString(),
+                                                          data);
+                                                    },
+                                                    icono: Icons.delete,
+                                                  ),
                                                 )
                                               ],
                                             ),
