@@ -92,6 +92,7 @@ class Titled extends StatelessWidget {
   @override
   Widget build(Context context) {
     List<Widget> contenido = list
+        .where((element) => element.travelsData.isNotEmpty)
         .map((e) => Table(
                 defaultColumnWidth: const FractionColumnWidth(1),
                 border: TableBorder(
