@@ -28,7 +28,7 @@ class _ModalExtraerState extends State<ModalExtraer> {
         title: 'Extraer Viajes por fecha',
         content: [
           ModalRow(
-              sideTitle: 'Ingrese horario de Partida',
+              sideTitle: 'Ingrese fecha para extraer horarios',
               child: CustomDatePicker(
                   fechaControlador: fechaExtraccion,
                   title: 'Extraer de la fecha:'))
