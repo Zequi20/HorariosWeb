@@ -89,39 +89,46 @@ class Report {
                   ])
             ]);
       },
-      footer: (context) => pw.Table(
-        border: pw.TableBorder.all(
-            color: coments[0].isNotEmpty || coments[1].isNotEmpty
-                ? xd.PdfColors.black
-                : xd.PdfColors.white,
-            width: 0.5),
-        children: [
-          pw.TableRow(children: [
-            pw.Column(
-                mainAxisAlignment: pw.MainAxisAlignment.start,
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Container(
-                      padding: const pw.EdgeInsets.all(5),
-                      child: pw.Text(coments[0],
-                          style: pw.TextStyle(fontSize: texto.toDouble()))),
-                  pw.Divider(
-                      color: coments[0].isNotEmpty || coments[1].isNotEmpty
-                          ? xd.PdfColors.black
-                          : xd.PdfColors.white,
-                      height: 1),
-                  pw.Container(
-                    padding: const pw.EdgeInsets.all(5),
-                    child: pw.Text(coments[1],
-                        style: pw.TextStyle(fontSize: texto.toDouble())),
-                  )
-                ])
-          ])
-        ],
-      ),
       pageFormat: format,
       build: (context) {
-        return [Titled(lista, texto)];
+        return [
+          Titled(
+              lista,
+              texto,
+              pw.Table(
+                border: pw.TableBorder.all(
+                    color: coments[0].isNotEmpty || coments[1].isNotEmpty
+                        ? xd.PdfColors.black
+                        : xd.PdfColors.white,
+                    width: 0.5),
+                children: [
+                  pw.TableRow(children: [
+                    pw.Column(
+                        mainAxisAlignment: pw.MainAxisAlignment.start,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Container(
+                              padding: const pw.EdgeInsets.all(5),
+                              child: pw.Text(coments[0],
+                                  style: pw.TextStyle(
+                                      fontSize: texto.toDouble()))),
+                          pw.Divider(
+                              color:
+                                  coments[0].isNotEmpty || coments[1].isNotEmpty
+                                      ? xd.PdfColors.black
+                                      : xd.PdfColors.white,
+                              height: 0.5),
+                          pw.Container(
+                            padding: const pw.EdgeInsets.all(5),
+                            child: pw.Text(coments[1],
+                                style:
+                                    pw.TextStyle(fontSize: texto.toDouble())),
+                          )
+                        ])
+                  ])
+                ],
+              ))
+        ];
       },
     );
 

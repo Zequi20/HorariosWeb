@@ -85,9 +85,10 @@ class TableCell extends StatelessWidget {
 }
 
 class Titled extends StatelessWidget {
-  Titled(this.list, this.textoSize);
+  Titled(this.list, this.textoSize, this.footerWidget);
   final int textoSize;
   final List<Group> list;
+  final Widget footerWidget;
   var blackColor = const PdfColor(0, 0, 0);
   @override
   Widget build(Context context) {
@@ -117,9 +118,6 @@ class Titled extends StatelessWidget {
                   TableRow(children: [Estructura(e.travelsData, textoSize)])
                 ]))
         .toList();
-    contenido.add(Table(children: [
-      TableRow(children: [Padding(padding: const EdgeInsets.all(8.0))])
-    ]));
 
     contenido.insert(
         0,
@@ -154,7 +152,7 @@ class Titled extends StatelessWidget {
                         style: TextStyle(fontSize: textoSize.toDouble())))
                   ]),
             ]));
-
+    contenido.add(footerWidget);
     return Column(children: contenido);
   }
 }
