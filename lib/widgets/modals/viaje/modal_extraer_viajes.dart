@@ -36,25 +36,30 @@ class _ModalExtraerState extends State<ModalExtraer> {
   }
 
   Future onAccept() async {
-    var requestPost = http.Request(
-        'POST', Uri.parse('http://190.52.165.206:3000/duplicate_travels'));
+    if (invertirFecha(fechaExtraccion.text) != widget.fechaActual) {
+      var requestPost = http.Request(
+          'POST', Uri.parse('http://190.52.165.206:3000/duplicate_travels'));
 
-    requestPost.bodyFields = {
-      'begin': invertirFecha(widget.fechaActual),
-      'end': invertirFecha(fechaExtraccion.text)
-    };
-    http.StreamedResponse responseStream = await requestPost.send();
+      requestPost.bodyFields = {
+        'begin': invertirFecha(widget.fechaActual),
+        'end': invertirFecha(fechaExtraccion.text)
+      };
+      http.StreamedResponse responseStream = await requestPost.send();
 
-    if (responseStream.statusCode == 200) {
-      if (mounted) {
-        Navigator.of(context).pop(true);
-        msgBox('Operacion exitosa', 'Operacion realizada con exito');
+      if (responseStream.statusCode == 200) {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Operacion exitosa', 'Operacion realizada con exito');
+        }
+      } else {
+        if (mounted) {
+          Navigator.of(context).pop(true);
+          msgBox('Error', 'Algo ha salido mal');
+        }
       }
     } else {
-      if (mounted) {
-        Navigator.of(context).pop(true);
-        msgBox('Error', 'Algo ha salido mal');
-      }
+      msgBox('Coincidencia de fechas',
+          'La fecha de extraccion y fecha actual son las mismas, seleccione otra fecha diferente');
     }
   }
 
