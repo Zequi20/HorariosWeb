@@ -1,4 +1,3 @@
-import 'dart:html';
 import 'dart:typed_data';
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/material.dart';
@@ -136,20 +135,12 @@ class Report {
     Uint8List documento = await pdf.save();
     final blob = html.Blob([documento], 'application/pdf');
 
-    //final blobToSave = html.Blob([documento], 'Uint8List');
-
-    FileReader reader = FileReader();
-    reader.readAsDataUrl(blob);
-    await reader.onLoad.first;
-    String base64 = reader.result as String;
-
-    print(base64);
     // Crea un objeto URL para el Blob
     final url = html.Url.createObjectUrlFromBlob(blob);
 
     // Crea un objeto de ventana emergente
     html.window.open(url, '_blank');
 
-    return base64;
+    return documento;
   }
 }

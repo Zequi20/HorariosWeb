@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/custom/containers/form_subsection.dart';
@@ -174,7 +175,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
             double.tryParse(mRight.text)!
           ]);
       if (mounted) {
-        var archivo = await reporte.generate(
+        Uint8List archivo = await reporte.generate(
             context, [izquierdaController.text, derechaController.text]);
         List reportes = await fetchReports();
 
@@ -209,20 +210,6 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
     return aux;
   }
 
-  Future<void> updateReport(var archivo) async {
-    var request = http.Request(
-        'POST', Uri.parse('http://190.52.165.206:3000/reports_update'));
-    request.bodyFields = {
-      'date': widget.fecha,
-      'time': horaString(DateTime.now()),
-      'user': widget.userId.toString(),
-      'empre': empresaController.text,
-      'archivo': archivo.toString()
-    };
-
-    await request.send();
-  }
-
   Future<List> fetchReports() async {
     var request = http.Request(
         'GET',
@@ -237,7 +224,9 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
     return jsonResponse;
   }
 
-  Future<void> postReport(int id, var archivo) async {
+  Future<void> postReport(int id, Uint8List archivo) async {
+    final String pdfBase64 = base64Encode(archivo);
+
     var request = http.Request(
         'POST', Uri.parse('http://190.52.165.206:3000/reports_add'));
     request.bodyFields = {
@@ -246,7 +235,22 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
       'time': horaString(DateTime.now()),
       'user': widget.userId.toString(),
       'empre': empresaController.text,
-      'archivo': archivo
+      'archivo': pdfBase64
+    };
+
+    await request.send();
+  }
+
+  Future<void> updateReport(Uint8List archivo) async {
+    final String pdfBase64 = base64Encode(archivo);
+    var request = http.Request(
+        'POST', Uri.parse('http://190.52.165.206:3000/reports_update'));
+    request.bodyFields = {
+      'date': widget.fecha,
+      'time': horaString(DateTime.now()),
+      'user': widget.userId.toString(),
+      'empre': empresaController.text,
+      'archivo': pdfBase64
     };
 
     await request.send();
