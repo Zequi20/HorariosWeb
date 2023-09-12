@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:typed_data';
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/material.dart';
@@ -24,11 +25,11 @@ class Report {
   final int alto;
   final List<double> margenes;
   final int texto;
-  Future<bool> generate(BuildContext context, List<String> coments) async {
+  Future generate(BuildContext context, List<String> coments) async {
     return await _printPdf(context, coments);
   }
 
-  Future<bool> _printPdf(BuildContext context, List<String> coments) async {
+  Future _printPdf(BuildContext context, List<String> coments) async {
     final formato = xd.PdfPageFormat(
             ancho * xd.PdfPageFormat.cm, alto * xd.PdfPageFormat.cm)
         .copyWith(
@@ -40,8 +41,7 @@ class Report {
     return await _generatePdf(formato, coments);
   }
 
-  Future<bool> _generatePdf(
-      xd.PdfPageFormat format, List<String> coments) async {
+  Future _generatePdf(xd.PdfPageFormat format, List<String> coments) async {
     final pdf = pw.Document();
 
     final page = pw.MultiPage(
@@ -136,12 +136,20 @@ class Report {
     Uint8List documento = await pdf.save();
     final blob = html.Blob([documento], 'application/pdf');
 
+    //final blobToSave = html.Blob([documento], 'Uint8List');
+
+    FileReader reader = FileReader();
+    reader.readAsDataUrl(blob);
+    await reader.onLoad.first;
+    String base64 = reader.result as String;
+
+    print(base64);
     // Crea un objeto URL para el Blob
     final url = html.Url.createObjectUrlFromBlob(blob);
 
     // Crea un objeto de ventana emergente
     html.window.open(url, '_blank');
 
-    return true;
+    return base64;
   }
 }

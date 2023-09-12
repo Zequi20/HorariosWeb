@@ -210,21 +210,21 @@ class _ViewTableState extends State<ViewTable> {
       TableCell(
           child: MetalGrad(
         child: AsyncAutocomplete(
-          icon: Icons.person,
-          dataController: choferController,
-          link: 'http://190.52.165.206:3000/just_drivers',
-          label: 'chofer',
-          filtro: 'NAME',
-        ),
-      )),
-      TableCell(
-          child: MetalGrad(
-        child: AsyncAutocomplete(
           icon: Icons.bus_alert,
           dataController: cocheController,
           link: 'http://190.52.165.206:3000/vehicles',
           label: 'coche',
           filtro: 'NUMBER',
+        ),
+      )),
+      TableCell(
+          child: MetalGrad(
+        child: AsyncAutocomplete(
+          icon: Icons.person,
+          dataController: choferController,
+          link: 'http://190.52.165.206:3000/just_drivers',
+          label: 'chofer',
+          filtro: 'NAME',
         ),
       )),
       TableCell(

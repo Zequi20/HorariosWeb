@@ -157,43 +157,43 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
   void onAccept() async {
     if (empresaController.text.isNotEmpty) {
       //API---------------------------------------------------
+      var reporte = Report(
+          widget.travels,
+          reportId,
+          dateFormaterString(widget.fecha),
+          int.tryParse(empresaController.text)!,
+          widget.userId,
+          listEmpresas,
+          ancho: int.tryParse(ancho.text)!,
+          alto: int.tryParse(alto.text)!,
+          texto: int.tryParse(tamanio.text)!,
+          margenes: [
+            double.tryParse(mTop.text)!,
+            double.tryParse(mBottom.text)!,
+            double.tryParse(mLeft.text)!,
+            double.tryParse(mRight.text)!
+          ]);
+      if (mounted) {
+        var archivo = await reporte.generate(
+            context, [izquierdaController.text, derechaController.text]);
+        List reportes = await fetchReports();
+
+        if (reportes.isEmpty) {
+          int idVal = await fetchMaxReportId() + 1;
+          reportId = idVal;
+          await postReport(idVal, archivo);
+        } else {
+          reportId = mayorReporte(reportes);
+          await updateReport(archivo);
+        }
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
+      }
 
       //verificar si se ha impreso
-      List reportes = await fetchReports();
-
-      if (reportes.isEmpty) {
-        int idVal = await fetchMaxReportId() + 1;
-        reportId = idVal;
-        await postReport(idVal);
-      } else {
-        reportId = mayorReporte(reportes);
-        await updateReport();
-      }
-      if (mounted) {
-        Navigator.of(context).pop(true);
-      }
     } else {
       msgBox('Empresa no especificada', 'Especifique la empresa');
-    }
-    var reporte = Report(
-        widget.travels,
-        reportId,
-        dateFormaterString(widget.fecha),
-        int.tryParse(empresaController.text)!,
-        widget.userId,
-        listEmpresas,
-        ancho: int.tryParse(ancho.text)!,
-        alto: int.tryParse(alto.text)!,
-        texto: int.tryParse(tamanio.text)!,
-        margenes: [
-          double.tryParse(mTop.text)!,
-          double.tryParse(mBottom.text)!,
-          double.tryParse(mLeft.text)!,
-          double.tryParse(mRight.text)!
-        ]);
-    if (mounted) {
-      reporte.generate(
-          context, [izquierdaController.text, derechaController.text]);
     }
   }
 
@@ -209,14 +209,15 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
     return aux;
   }
 
-  Future<void> updateReport() async {
+  Future<void> updateReport(var archivo) async {
     var request = http.Request(
         'POST', Uri.parse('http://190.52.165.206:3000/reports_update'));
     request.bodyFields = {
       'date': widget.fecha,
       'time': horaString(DateTime.now()),
       'user': widget.userId.toString(),
-      'empre': empresaController.text
+      'empre': empresaController.text,
+      'archivo': archivo.toString()
     };
 
     await request.send();
@@ -236,7 +237,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
     return jsonResponse;
   }
 
-  Future<void> postReport(int id) async {
+  Future<void> postReport(int id, var archivo) async {
     var request = http.Request(
         'POST', Uri.parse('http://190.52.165.206:3000/reports_add'));
     request.bodyFields = {
@@ -244,7 +245,8 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
       'date': widget.fecha,
       'time': horaString(DateTime.now()),
       'user': widget.userId.toString(),
-      'empre': empresaController.text
+      'empre': empresaController.text,
+      'archivo': archivo
     };
 
     await request.send();
