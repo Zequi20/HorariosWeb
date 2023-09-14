@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hex/hex.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/material.dart';
@@ -36,7 +37,9 @@ class ShowPdfButton extends StatelessWidget {
       html.window.open(url, '_blank');
     } else {
       // Manejar errores de solicitud aquí si es necesario
-      print('Error al obtener el PDF: ${response.statusCode}');
+      if (kDebugMode) {
+        print('Error al obtener el PDF: ${response.statusCode}');
+      }
     }
   }
 }
