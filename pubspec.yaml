@@ -41,6 +41,7 @@ dependencies:
   universal_html: ^2.2.2
   web_date_picker: ^1.0.0+3
   vph_web_date_picker: ^0.0.4
+  hex: ^0.2.0
 
 dev_dependencies:
   flutter_test:

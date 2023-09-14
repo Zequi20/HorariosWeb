@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:horarios_web/widgets/custom/buttons/show_pdf_button.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -36,6 +37,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
                     DataColumn(label: Text('Hora')),
                     DataColumn(label: Text('Usuario')),
                     DataColumn(label: Text('Empresa')),
+                    DataColumn(label: Text('Documento'))
                   ], rows: rows),
                 ]),
               ]),
@@ -74,6 +76,7 @@ class _HorariosGuardadosState extends State<HorariosGuardados>
         DataCell(Text(jsonResponse[i]['TIME_OF'].toString().split('.')[0])),
         DataCell(Text(jsonResponse[i]['NAME'])),
         DataCell(Text(jsonResponse[i]['COMPANIE'])),
+        DataCell(ShowPdfButton(id: jsonResponse[i]['ID'].toString()))
       ]));
     }
 
