@@ -1,4 +1,5 @@
 import 'dart:convert';
+import "package:universal_html/html.dart" as html;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:horarios_web/models/model_empresa.dart';
@@ -45,6 +46,24 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
   void initState() {
     super.initState();
     obtenerEmpresas();
+    verifyLocalStorageComments();
+    izquierdaController.addListener(() {
+      html.window.localStorage['cm1'] = izquierdaController.text;
+    });
+    derechaController.addListener(() {
+      html.window.localStorage['cm2'] = derechaController.text;
+    });
+  }
+
+  void verifyLocalStorageComments() {
+    String? comentarioArriba = html.window.localStorage['cm1'];
+    String? comentarioAbajo = html.window.localStorage['cm2'];
+    if (comentarioArriba != null) {
+      izquierdaController.text = comentarioArriba;
+    }
+    if (comentarioAbajo != null) {
+      derechaController.text = comentarioAbajo;
+    }
   }
 
   @override
