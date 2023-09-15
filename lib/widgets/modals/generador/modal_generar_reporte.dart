@@ -158,33 +158,52 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
   void onAccept() async {
     if (empresaController.text.isNotEmpty) {
       //API---------------------------------------------------
-      var reporte = Report(
-          widget.travels,
-          reportId,
-          dateFormaterString(widget.fecha),
-          int.tryParse(empresaController.text)!,
-          widget.userId,
-          listEmpresas,
-          ancho: int.tryParse(ancho.text)!,
-          alto: int.tryParse(alto.text)!,
-          texto: int.tryParse(tamanio.text)!,
-          margenes: [
-            double.tryParse(mTop.text)!,
-            double.tryParse(mBottom.text)!,
-            double.tryParse(mLeft.text)!,
-            double.tryParse(mRight.text)!
-          ]);
+
       if (mounted) {
-        Uint8List archivo = await reporte.generate(
-            context, [izquierdaController.text, derechaController.text]);
         List reportes = await fetchReports();
 
         if (reportes.isEmpty) {
           int idVal = await fetchMaxReportId() + 1;
-          reportId = idVal;
+
+          var reporte = Report(
+              widget.travels,
+              idVal,
+              dateFormaterString(widget.fecha),
+              int.tryParse(empresaController.text)!,
+              widget.userId,
+              listEmpresas,
+              ancho: int.tryParse(ancho.text)!,
+              alto: int.tryParse(alto.text)!,
+              texto: int.tryParse(tamanio.text)!,
+              margenes: [
+                double.tryParse(mTop.text)!,
+                double.tryParse(mBottom.text)!,
+                double.tryParse(mLeft.text)!,
+                double.tryParse(mRight.text)!
+              ]);
+          Uint8List archivo = await reporte
+              .generate([izquierdaController.text, derechaController.text]);
           await postReport(idVal, archivo);
         } else {
           reportId = mayorReporte(reportes);
+          var reporte = Report(
+              widget.travels,
+              reportId,
+              dateFormaterString(widget.fecha),
+              int.tryParse(empresaController.text)!,
+              widget.userId,
+              listEmpresas,
+              ancho: int.tryParse(ancho.text)!,
+              alto: int.tryParse(alto.text)!,
+              texto: int.tryParse(tamanio.text)!,
+              margenes: [
+                double.tryParse(mTop.text)!,
+                double.tryParse(mBottom.text)!,
+                double.tryParse(mLeft.text)!,
+                double.tryParse(mRight.text)!
+              ]);
+          Uint8List archivo = await reporte
+              .generate([izquierdaController.text, derechaController.text]);
           await updateReport(archivo);
         }
         if (mounted) {

@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:universal_html/html.dart' as html;
-import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_empresa.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/pdf/pdf_est.dart';
@@ -24,11 +23,11 @@ class Report {
   final int alto;
   final List<double> margenes;
   final int texto;
-  Future generate(BuildContext context, List<String> coments) async {
-    return await _printPdf(context, coments);
+  Future generate(List<String> coments) async {
+    return await _printPdf(coments);
   }
 
-  Future _printPdf(BuildContext context, List<String> coments) async {
+  Future _printPdf(List<String> coments) async {
     final formato = xd.PdfPageFormat(
             ancho * xd.PdfPageFormat.cm, alto * xd.PdfPageFormat.cm)
         .copyWith(
