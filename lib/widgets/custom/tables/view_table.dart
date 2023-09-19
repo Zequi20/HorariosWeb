@@ -1,4 +1,5 @@
-import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_in_form_time_picker.dart';
+
 import 'package:horarios_web/widgets/custom/fields/sugest_text_field.dart';
 import 'package:horarios_web/widgets/modals/viaje/modal_editar_viaje.dart';
 import 'package:http/http.dart' as http;
@@ -204,8 +205,9 @@ class _ViewTableState extends State<ViewTable> {
     data.add(TableRow(children: [
       TableCell(
           child: MetalGrad(
-        child: CustomTimePicker(
-            timeController: partidaController, title: 'salida'),
+        child: InFormTimePicker(
+          horaController: partidaController,
+        ),
       )),
       TableCell(
           child: MetalGrad(
@@ -239,10 +241,14 @@ class _ViewTableState extends State<ViewTable> {
       )),
       TableCell(
           child: MetalGrad(
-        child: CustomTimePicker(
-            timeController: llegadaController, title: 'retorno'),
+        child: InFormTimePicker(
+          horaController: llegadaController,
+        ),
       )),
-      const TableCell(child: SugestTextField()),
+      TableCell(
+          child: SugestTextField(
+        notaController: notaController,
+      )),
       TableCell(
           child: FocusButton(
         onClick: () {

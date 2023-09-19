@@ -6,10 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class SugestTextField extends StatefulWidget {
-  const SugestTextField({
-    super.key,
-  });
-
+  const SugestTextField({super.key, required this.notaController});
+  final TextEditingController notaController;
   @override
   State<SugestTextField> createState() => _SugestTextFieldState();
 }
@@ -18,7 +16,7 @@ class _SugestTextFieldState extends State<SugestTextField> {
   FocusNode foco = FocusNode();
   List<String> sugestions = [];
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
-  TextEditingController notaController = TextEditingController();
+
   Color fillColor = Colors.white70;
   //double opacidad = 0.5;
   Future getSugestData(String searched) async {
@@ -42,8 +40,8 @@ class _SugestTextFieldState extends State<SugestTextField> {
   @override
   void initState() {
     super.initState();
-    notaController.addListener(() {
-      getSugestData(notaController.text);
+    widget.notaController.addListener(() {
+      getSugestData(widget.notaController.text);
     });
     foco.addListener(() {
       setState(() {});
@@ -51,7 +49,7 @@ class _SugestTextFieldState extends State<SugestTextField> {
   }
 
   void selectSuggestion(String sugest) {
-    notaController.text = sugest;
+    widget.notaController.text = sugest;
   }
 
   @override
@@ -63,8 +61,8 @@ class _SugestTextFieldState extends State<SugestTextField> {
           // Cuando se presiona Enter, selecciona la primera sugerencia si está disponible.
           if (sugestions.isNotEmpty) {
             selectSuggestion(sugestions.first);
-            notaController.selection = TextSelection.fromPosition(
-                TextPosition(offset: notaController.text.length));
+            widget.notaController.selection = TextSelection.fromPosition(
+                TextPosition(offset: widget.notaController.text.length));
           }
         }
       },
@@ -73,7 +71,7 @@ class _SugestTextFieldState extends State<SugestTextField> {
         children: [
           MetalGrad(
             child: CustomTextField(
-                lenght: null, textController: notaController, hint: ''),
+                lenght: null, textController: widget.notaController, hint: ''),
           ),
           Opacity(
             opacity: foco.hasFocus ? 0.5 : 0,
@@ -88,7 +86,7 @@ class _SugestTextFieldState extends State<SugestTextField> {
   }
 
   Widget getSugestText() {
-    if (sugestions.isNotEmpty && notaController.text != '') {
+    if (sugestions.isNotEmpty && widget.notaController.text != '') {
       return Text(
         sugestions.first,
         style: const TextStyle(fontSize: 16),
