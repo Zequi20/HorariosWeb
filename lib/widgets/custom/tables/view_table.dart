@@ -1,10 +1,10 @@
 import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
+import 'package:horarios_web/widgets/custom/fields/sugest_text_field.dart';
 import 'package:horarios_web/widgets/modals/viaje/modal_editar_viaje.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:horarios_web/models/model_group.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
-import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 
 class ViewTable extends StatefulWidget {
   const ViewTable(
@@ -242,11 +242,7 @@ class _ViewTableState extends State<ViewTable> {
         child: CustomTimePicker(
             timeController: llegadaController, title: 'retorno'),
       )),
-      TableCell(
-          child: MetalGrad(
-        child: CustomTextField(
-            lenght: null, textController: notaController, hint: 'Nota'),
-      )),
+      const TableCell(child: SugestTextField()),
       TableCell(
           child: FocusButton(
         onClick: () {
