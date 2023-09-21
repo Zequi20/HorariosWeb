@@ -11,9 +11,17 @@ class InFormTimePicker extends StatefulWidget {
 class _InFormTimePickerState extends State<InFormTimePicker> {
   TextEditingController hourController = TextEditingController();
   TextEditingController minuteController = TextEditingController();
+  int initialHour = 0;
+  int initialMinute = 0;
   @override
   void initState() {
     super.initState();
+    print(widget.horaController.text);
+    if (widget.horaController.text.isNotEmpty) {
+      List<String> horaLista = widget.horaController.text.split(':');
+      initialHour = int.parse(horaLista[0]);
+      initialMinute = int.parse(horaLista[1]);
+    }
     hourController.addListener(() {
       widget.horaController.text =
           '${hourController.text}:${minuteController.text}:00';
@@ -49,13 +57,13 @@ class _InFormTimePickerState extends State<InFormTimePicker> {
             textController: hourController,
             hint: '',
             max: 23,
-            initialValue: 0,
+            initialValue: initialHour,
           ),
           CustomTimeNumberPicker(
             textController: minuteController,
             hint: '',
             max: 59,
-            initialValue: 0,
+            initialValue: initialMinute,
           )
         ],
       ),

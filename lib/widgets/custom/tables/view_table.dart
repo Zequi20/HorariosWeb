@@ -199,7 +199,8 @@ class _ViewTableState extends State<ViewTable> {
     TextEditingController choferController = TextEditingController();
     TextEditingController cocheController = TextEditingController();
     TextEditingController llegadaController = TextEditingController();
-    TextEditingController partidaController = TextEditingController();
+    TextEditingController partidaController =
+        TextEditingController(text: '01:00:00');
     TextEditingController notaController = TextEditingController();
 
     data.add(TableRow(children: [

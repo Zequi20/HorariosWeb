@@ -65,6 +65,21 @@ class _SugestTextFieldState extends State<SugestTextField> {
                 TextPosition(offset: widget.notaController.text.length));
           }
         }
+        /* if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+          if (sugestIndex < sugestions.length - 1) {
+            sugestIndex++;
+            widget.notaController.selection = TextSelection.fromPosition(
+                TextPosition(offset: widget.notaController.text.length));
+          }
+        }
+
+        if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+          if (sugestIndex > 0) {
+            sugestIndex--;
+            widget.notaController.selection = TextSelection.fromPosition(
+                TextPosition(offset: widget.notaController.text.length));
+          }
+        } */
       },
       child: Stack(
         alignment: Alignment.centerLeft,
