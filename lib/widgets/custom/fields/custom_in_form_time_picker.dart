@@ -39,7 +39,12 @@ class _InFormTimePickerState extends State<InFormTimePicker> {
             Colors.grey.shade300
           ])),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const Icon(
+            Icons.access_time,
+            color: Color.fromARGB(255, 136, 2, 2),
+          ),
           CustomTimeNumberPicker(
             textController: hourController,
             hint: '',
