@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:horarios_web/widgets/custom/containers/form_subsection.dart';
 import 'package:horarios_web/widgets/custom/dialogs/custom_modal_dialog.dart';
 import 'package:horarios_web/widgets/custom/fields/autocompletado.dart';
+import 'package:horarios_web/widgets/custom/fields/custom_in_form_time_picker.dart';
+
 import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
-import 'package:horarios_web/widgets/custom/fields/custom_time_picker.dart';
 import 'package:horarios_web/widgets/custom/containers/modal_row.dart';
 import 'package:http/http.dart' as http;
 
@@ -68,13 +70,25 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
         title: 'Editar Viaje',
         content: [
           ModalRow(
-              sideTitle: 'Ingrese horario de Partida',
-              child: CustomTimePicker(
-                  timeController: partidaController, title: 'Hora de salida')),
-          ModalRow(
-              sideTitle: 'Ingrese horario de Retorno',
-              child: CustomTimePicker(
-                  timeController: llegadaController, title: 'Hora de retorno')),
+              sideTitle: 'Ingrese horarios',
+              child: FormSubsection(childList: [
+                TitledWidget('Hora de salida',
+                    InFormTimePicker(horaController: partidaController)),
+                TitledWidget(
+                    '',
+                    const Divider(
+                      indent: 50,
+                      color: Colors.transparent,
+                    )),
+                TitledWidget('Hora de retorno',
+                    InFormTimePicker(horaController: llegadaController)),
+                TitledWidget(
+                    '',
+                    const Divider(
+                      indent: 150,
+                      color: Colors.transparent,
+                    )),
+              ])),
           ModalRow(
             sideTitle: 'Ingrese Chofer',
             child: AsyncAutocomplete(

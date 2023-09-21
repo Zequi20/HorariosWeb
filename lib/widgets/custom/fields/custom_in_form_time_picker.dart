@@ -16,7 +16,6 @@ class _InFormTimePickerState extends State<InFormTimePicker> {
   @override
   void initState() {
     super.initState();
-    print(widget.horaController.text);
     if (widget.horaController.text.isNotEmpty) {
       List<String> horaLista = widget.horaController.text.split(':');
       initialHour = int.parse(horaLista[0]);
