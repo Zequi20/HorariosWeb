@@ -1,5 +1,6 @@
+import 'package:flutter/services.dart';
+import 'package:horarios_web/widgets/custom/containers/focusable.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_in_form_time_picker.dart';
-
 import 'package:horarios_web/widgets/custom/fields/sugest_text_field.dart';
 import 'package:horarios_web/widgets/modals/viaje/modal_editar_viaje.dart';
 import 'package:http/http.dart' as http;
@@ -167,9 +168,16 @@ class _ViewTableState extends State<ViewTable> {
 
     mainTable =
         Table(border: TableBorder.all(color: Colors.black), children: lista);
-    return FocusTraversalGroup(
-        policy: OrderedTraversalPolicy(),
-        child: Focus(autofocus: true, focusNode: tablaFoco, child: mainTable));
+    return FocusScope(
+        onKeyEvent: (node, event) {
+          if (event is KeyUpEvent &&
+              event.logicalKey == LogicalKeyboardKey.arrowRight) {
+            FocusScope.of(context).nextFocus();
+          }
+          return KeyEventResult.ignored;
+        },
+        autofocus: true,
+        child: mainTable);
   }
 
   Future<void> msgBox(String title, String message) {
@@ -204,63 +212,76 @@ class _ViewTableState extends State<ViewTable> {
 
     data.add(TableRow(children: [
       TableCell(
-          child: MetalGrad(
-        child: InFormTimePicker(
-          horaController: partidaController,
+          child: FocusableWidget(
+        child: MetalGrad(
+          child: InFormTimePicker(
+            horaController: partidaController,
+          ),
         ),
       )),
       TableCell(
-          child: MetalGrad(
-        child: AsyncAutocomplete(
-          icon: Icons.bus_alert,
-          dataController: cocheController,
-          link: 'http://190.52.165.206:3000/vehicles',
-          label: 'coche',
-          filtro: 'NUMBER',
+          child: FocusableWidget(
+        child: MetalGrad(
+          child: AsyncAutocomplete(
+            icon: Icons.bus_alert,
+            dataController: cocheController,
+            link: 'http://190.52.165.206:3000/vehicles',
+            label: 'coche',
+            filtro: 'NUMBER',
+          ),
         ),
       )),
       TableCell(
-          child: MetalGrad(
-        child: AsyncAutocomplete(
-          icon: Icons.person,
-          dataController: choferController,
-          link: 'http://190.52.165.206:3000/just_drivers',
-          label: 'chofer',
-          filtro: 'NAME',
+          child: FocusableWidget(
+        child: MetalGrad(
+          child: AsyncAutocomplete(
+            icon: Icons.person,
+            dataController: choferController,
+            link: 'http://190.52.165.206:3000/just_drivers',
+            label: 'chofer',
+            filtro: 'NAME',
+          ),
         ),
       )),
       TableCell(
-          child: MetalGrad(
-        child: AsyncAutocomplete(
-          icon: Icons.person,
-          dataController: guardaController,
-          link: 'http://190.52.165.206:3000/just_copilots',
-          label: 'guarda',
-          filtro: 'NAME',
+          child: FocusableWidget(
+        child: MetalGrad(
+          child: AsyncAutocomplete(
+            icon: Icons.person,
+            dataController: guardaController,
+            link: 'http://190.52.165.206:3000/just_copilots',
+            label: 'guarda',
+            filtro: 'NAME',
+          ),
         ),
       )),
       TableCell(
-          child: MetalGrad(
-        child: InFormTimePicker(
-          horaController: llegadaController,
+          child: FocusableWidget(
+        child: MetalGrad(
+          child: InFormTimePicker(
+            horaController: llegadaController,
+          ),
         ),
       )),
       TableCell(
-          child: SugestTextField(
-        notaController: notaController,
+          child: FocusableWidget(
+        child: SugestTextField(
+          notaController: notaController,
+        ),
       )),
       TableCell(
           child: FocusButton(
         onClick: () {
           onAccept(
-              id.toString(),
-              guardaController.text,
-              choferController.text,
-              cocheController.text,
-              llegadaController.text,
-              partidaController.text,
-              notaController.text,
-              dateFormaterString(fecha));
+            id.toString(),
+            guardaController.text,
+            choferController.text,
+            cocheController.text,
+            llegadaController.text,
+            partidaController.text,
+            notaController.text,
+            dateFormaterString(fecha),
+          );
         },
         icono: Icons.add_box_sharp,
       ))
@@ -269,8 +290,16 @@ class _ViewTableState extends State<ViewTable> {
     return data;
   }
 
-  void onAccept(String grupo, String guarda, String chofer, String coche,
-      String llegada, String partida, String nota, String fecha) async {
+  void onAccept(
+    String grupo,
+    String guarda,
+    String chofer,
+    String coche,
+    String llegada,
+    String partida,
+    String nota,
+    String fecha,
+  ) async {
     if (validateFields([guarda, chofer, coche, llegada, partida])) {
       var requestPost = http.Request(
           'POST', Uri.parse('http://190.52.165.206:3000/add_travels'));
@@ -289,9 +318,7 @@ class _ViewTableState extends State<ViewTable> {
 
       if (responseStream.statusCode == 200) {
         if (mounted) {
-          msgBox('Operacion exitosa', 'Operacion realizada con exito');
           widget.updateParent();
-          tablaFoco.requestFocus();
         }
       } else {
         if (mounted) {

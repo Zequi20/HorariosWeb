@@ -69,11 +69,13 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: Container(
           decoration: BoxDecoration(
-              gradient: RadialGradient(colors: [
-            principalColor,
-            gradPrincipalColor,
-            principalColor
-          ])),
+              border: Border.all(color: resaltadoColor),
+              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(colors: [
+                principalColor,
+                gradPrincipalColor,
+                principalColor
+              ])),
           width: 500,
           height: 500,
           child: Column(
@@ -101,7 +103,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           const Expanded(
                             child: Text(
                               'Usuario',
-                              style: TextStyle(color: Colors.white),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 22),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -126,8 +129,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           const Expanded(
                             child: Text(
-                              'Clave',
-                              style: TextStyle(color: Colors.white),
+                              'Contraseña',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 22),
                               textAlign: TextAlign.center,
                             ),
                           ),

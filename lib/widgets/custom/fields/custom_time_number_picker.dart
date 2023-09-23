@@ -47,6 +47,9 @@ class _CustomTimeNumberPickerState extends State<CustomTimeNumberPicker> {
             widget.textController.text = '0$value';
           }
         }
+      } else {
+        widget.textController.selection = TextSelection(
+            baseOffset: 0, extentOffset: widget.textController.text.length);
       }
     });
   }
@@ -61,82 +64,72 @@ class _CustomTimeNumberPickerState extends State<CustomTimeNumberPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
-      focusNode: FocusNode(),
-      onKey: (RawKeyEvent event) {
-        if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-          aumentar();
-        } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-          disminuir();
-        }
-      },
-      child: SizedBox(
-        height: 50,
-        child: Row(
-          children: [
-            SizedBox(
-              width: 45,
-              child: TextFormField(
-                textAlign: TextAlign.center,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  FilteringTextInputFormatter.allow(
-                      RegExp(r'^[0-9]{0,2}$')), // Limitar a 2 dígitos
-                  FilteringTextInputFormatter.digitsOnly,
+    return SizedBox(
+      height: 50,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 45,
+            child: TextFormField(
+              textAlign: TextAlign.center,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                FilteringTextInputFormatter.allow(
+                    RegExp(r'^[0-9]{0,2}$')), // Limitar a 2 dígitos
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              focusNode: foco,
+              onFieldSubmitted: (value) {
+                FocusScope.of(context).requestFocus(foco);
+              },
+              controller: widget.textController,
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange, width: 7)),
+                  hintText: widget.hint,
+                  filled: true,
+                  fillColor: fillColor),
+            ),
+          ),
+          FittedBox(
+            child: Container(
+              width: 30,
+              decoration: const BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: Column(
+                children: [
+                  ExcludeFocus(
+                    excluding: true,
+                    child: IconButton(
+                        focusColor: Colors.orange,
+                        onPressed: () {
+                          aumentar();
+                        },
+                        icon: const Icon(
+                          Icons.arrow_drop_up,
+                          size: 15,
+                        )),
+                  ),
+                  ExcludeFocus(
+                    excluding: true,
+                    child: IconButton(
+                        focusColor: Colors.orange,
+                        onPressed: () {
+                          disminuir();
+                        },
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          size: 15,
+                        )),
+                  )
                 ],
-                focusNode: foco,
-                onFieldSubmitted: (value) {
-                  FocusScope.of(context).requestFocus(foco);
-                },
-                controller: widget.textController,
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.orange, width: 7)),
-                    hintText: widget.hint,
-                    filled: true,
-                    fillColor: fillColor),
               ),
             ),
-            FittedBox(
-              child: Container(
-                width: 30,
-                decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.all(Radius.circular(5))),
-                child: Column(
-                  children: [
-                    ExcludeFocus(
-                      excluding: true,
-                      child: IconButton(
-                          focusColor: Colors.orange,
-                          onPressed: () {
-                            aumentar();
-                          },
-                          icon: const Icon(
-                            Icons.arrow_drop_up,
-                            size: 15,
-                          )),
-                    ),
-                    ExcludeFocus(
-                      excluding: true,
-                      child: IconButton(
-                          focusColor: Colors.orange,
-                          onPressed: () {
-                            disminuir();
-                          },
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            size: 15,
-                          )),
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

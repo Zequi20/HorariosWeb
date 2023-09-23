@@ -4,14 +4,15 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AsyncAutocomplete extends StatefulWidget {
-  const AsyncAutocomplete(
-      {super.key,
-      required this.dataController,
-      required this.link,
-      required this.label,
-      required this.filtro,
-      this.id = '',
-      required this.icon});
+  const AsyncAutocomplete({
+    super.key,
+    required this.dataController,
+    required this.link,
+    required this.label,
+    required this.filtro,
+    this.id = '',
+    required this.icon,
+  });
 
   final TextEditingController dataController;
   final String link;
@@ -19,6 +20,7 @@ class AsyncAutocomplete extends StatefulWidget {
   final String label;
   final String id;
   final IconData icon;
+
   @override
   State<AsyncAutocomplete> createState() => _AsyncAutocompleteState();
 }

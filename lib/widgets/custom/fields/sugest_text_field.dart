@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:horarios_web/widgets/custom/fields/custom_text_field.dart';
 import 'package:horarios_web/widgets/custom/tables/view_table.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -40,6 +39,7 @@ class _SugestTextFieldState extends State<SugestTextField> {
   @override
   void initState() {
     super.initState();
+
     widget.notaController.addListener(() {
       getSugestData(widget.notaController.text);
     });
@@ -54,9 +54,9 @@ class _SugestTextFieldState extends State<SugestTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
-      focusNode: foco,
-      onKey: (RawKeyEvent event) {
+    return Focus(
+      autofocus: true,
+      onKey: (node, event) {
         if (event.logicalKey == LogicalKeyboardKey.enter) {
           // Cuando se presiona Enter, selecciona la primera sugerencia si está disponible.
           if (sugestions.isNotEmpty) {
@@ -65,28 +65,18 @@ class _SugestTextFieldState extends State<SugestTextField> {
                 TextPosition(offset: widget.notaController.text.length));
           }
         }
-        /* if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-          if (sugestIndex < sugestions.length - 1) {
-            sugestIndex++;
-            widget.notaController.selection = TextSelection.fromPosition(
-                TextPosition(offset: widget.notaController.text.length));
-          }
-        }
-
-        if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-          if (sugestIndex > 0) {
-            sugestIndex--;
-            widget.notaController.selection = TextSelection.fromPosition(
-                TextPosition(offset: widget.notaController.text.length));
-          }
-        } */
+        return KeyEventResult.ignored;
       },
       child: Stack(
         alignment: Alignment.centerLeft,
         children: [
           MetalGrad(
-            child: CustomTextField(
-                lenght: null, textController: widget.notaController, hint: ''),
+            child: CustomField(
+              lenght: null,
+              textController: widget.notaController,
+              hint: '',
+              foco: foco,
+            ),
           ),
           Opacity(
             opacity: foco.hasFocus ? 0.5 : 0,
@@ -113,5 +103,60 @@ class _SugestTextFieldState extends State<SugestTextField> {
         style: TextStyle(fontSize: 16),
       );
     }
+  }
+}
+
+class CustomField extends StatefulWidget {
+  const CustomField({
+    super.key,
+    required this.textController,
+    required this.hint,
+    this.lenght = 50,
+    this.icon = Icons.abc,
+    required this.foco,
+  });
+  final TextEditingController textController;
+  final String hint;
+  final int? lenght;
+
+  final IconData icon;
+  final FocusNode foco;
+  @override
+  State<CustomField> createState() => _CustomFieldState();
+}
+
+class _CustomFieldState extends State<CustomField> {
+  var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
+
+  Color fillColor = Colors.white70;
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      autofocus: true,
+      focusNode: widget.foco,
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).requestFocus(widget.foco);
+      },
+      onChanged: (value) {
+        if (value.isEmpty) {
+          fillColor = Colors.white70;
+        } else {
+          fillColor = Colors.white;
+        }
+        setState(() {});
+      },
+      controller: widget.textController,
+      maxLength: widget.lenght,
+      decoration: InputDecoration(
+          prefixIcon: Icon(widget.icon),
+          prefixIconColor: gradPrincipalColor,
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange, width: 7)),
+          border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black)),
+          hintText: widget.hint,
+          filled: true,
+          fillColor: fillColor),
+    );
   }
 }
