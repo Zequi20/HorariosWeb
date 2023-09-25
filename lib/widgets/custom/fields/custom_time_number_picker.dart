@@ -71,6 +71,7 @@ class _CustomTimeNumberPickerState extends State<CustomTimeNumberPicker> {
           SizedBox(
             width: 45,
             child: TextFormField(
+              autofocus: true,
               textAlign: TextAlign.center,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
