@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:horarios_web/widgets/custom/tables/view_table.dart';
+import 'package:horarios_web/widgets/custom/containers/focusable.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -55,7 +55,8 @@ class _SugestTextFieldState extends State<SugestTextField> {
   @override
   Widget build(BuildContext context) {
     return Focus(
-      autofocus: true,
+      focusNode: foco,
+      skipTraversal: true,
       onKey: (node, event) {
         if (event.logicalKey == LogicalKeyboardKey.enter) {
           // Cuando se presiona Enter, selecciona la primera sugerencia si está disponible.
@@ -70,13 +71,10 @@ class _SugestTextFieldState extends State<SugestTextField> {
       child: Stack(
         alignment: Alignment.centerLeft,
         children: [
-          MetalGrad(
-            child: CustomField(
-              lenght: null,
-              textController: widget.notaController,
-              hint: '',
-              foco: foco,
-            ),
+          CustomField(
+            lenght: null,
+            textController: widget.notaController,
+            hint: '',
           ),
           Opacity(
             opacity: foco.hasFocus ? 0.5 : 0,
@@ -113,29 +111,28 @@ class CustomField extends StatefulWidget {
     required this.hint,
     this.lenght = 50,
     this.icon = Icons.abc,
-    required this.foco,
   });
   final TextEditingController textController;
   final String hint;
   final int? lenght;
 
   final IconData icon;
-  final FocusNode foco;
+
   @override
   State<CustomField> createState() => _CustomFieldState();
 }
 
 class _CustomFieldState extends State<CustomField> {
   var gradPrincipalColor = const Color.fromARGB(255, 136, 2, 2);
-
+  final FocusNode _foco = FocusNode();
   Color fillColor = Colors.white70;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       autofocus: true,
-      focusNode: widget.foco,
+      focusNode: _foco,
       onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(widget.foco);
+        FocusScope.of(context).requestFocus(_foco);
       },
       onChanged: (value) {
         if (value.isEmpty) {

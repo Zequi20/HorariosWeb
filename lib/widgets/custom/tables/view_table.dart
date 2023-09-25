@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:horarios_web/widgets/custom/containers/focusable.dart';
 import 'package:horarios_web/widgets/custom/fields/custom_in_form_time_picker.dart';
 import 'package:horarios_web/widgets/custom/fields/sugest_text_field.dart';
 import 'package:horarios_web/widgets/modals/viaje/modal_editar_viaje.dart';
@@ -25,7 +24,7 @@ class _ViewTableState extends State<ViewTable> {
   late Table mainTable;
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
-  FocusNode tablaFoco = FocusNode();
+  FocusScopeNode tablaFoco = FocusScopeNode();
   @override
   void initState() {
     super.initState();
@@ -171,13 +170,29 @@ class _ViewTableState extends State<ViewTable> {
     return FocusScope(
         onKeyEvent: (node, event) {
           if (event is KeyUpEvent &&
+              event.logicalKey == LogicalKeyboardKey.arrowDown) {
+            node.focusInDirection(TraversalDirection.down);
+            return KeyEventResult.handled;
+          }
+          if (event is KeyUpEvent &&
+              event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+            node.focusInDirection(TraversalDirection.left);
+            return KeyEventResult.handled;
+          }
+          if (event is KeyUpEvent &&
               event.logicalKey == LogicalKeyboardKey.arrowRight) {
-            FocusScope.of(context).nextFocus();
+            node.focusInDirection(TraversalDirection.right);
+            return KeyEventResult.handled;
+          }
+          if (event is KeyUpEvent &&
+              event.logicalKey == LogicalKeyboardKey.arrowUp) {
+            node.focusInDirection(TraversalDirection.up);
+            return KeyEventResult.handled;
           }
           return KeyEventResult.ignored;
         },
         autofocus: true,
-        child: mainTable);
+        child: SingleChildScrollView(child: mainTable));
   }
 
   Future<void> msgBox(String title, String message) {
@@ -209,62 +224,52 @@ class _ViewTableState extends State<ViewTable> {
     TextEditingController llegadaController = TextEditingController();
     TextEditingController partidaController = TextEditingController();
     TextEditingController notaController = TextEditingController();
-
+    //FocusNode foco = FocusNode();
     data.add(TableRow(children: [
       TableCell(
-          child: FocusableWidget(
-        child: MetalGrad(
-          child: InFormTimePicker(
-            horaController: partidaController,
-          ),
+          child: MetalGrad(
+        child: InFormTimePicker(
+          horaController: partidaController,
         ),
       )),
       TableCell(
-          child: FocusableWidget(
-        child: MetalGrad(
-          child: AsyncAutocomplete(
-            icon: Icons.bus_alert,
-            dataController: cocheController,
-            link: 'http://190.52.165.206:3000/vehicles',
-            label: 'coche',
-            filtro: 'NUMBER',
-          ),
+          child: MetalGrad(
+        child: AsyncAutocomplete(
+          icon: Icons.bus_alert,
+          dataController: cocheController,
+          link: 'http://190.52.165.206:3000/vehicles',
+          label: 'coche',
+          filtro: 'NUMBER',
         ),
       )),
       TableCell(
-          child: FocusableWidget(
-        child: MetalGrad(
-          child: AsyncAutocomplete(
-            icon: Icons.person,
-            dataController: choferController,
-            link: 'http://190.52.165.206:3000/just_drivers',
-            label: 'chofer',
-            filtro: 'NAME',
-          ),
+          child: MetalGrad(
+        child: AsyncAutocomplete(
+          icon: Icons.person,
+          dataController: choferController,
+          link: 'http://190.52.165.206:3000/just_drivers',
+          label: 'chofer',
+          filtro: 'NAME',
         ),
       )),
       TableCell(
-          child: FocusableWidget(
-        child: MetalGrad(
-          child: AsyncAutocomplete(
-            icon: Icons.person,
-            dataController: guardaController,
-            link: 'http://190.52.165.206:3000/just_copilots',
-            label: 'guarda',
-            filtro: 'NAME',
-          ),
+          child: MetalGrad(
+        child: AsyncAutocomplete(
+          icon: Icons.person,
+          dataController: guardaController,
+          link: 'http://190.52.165.206:3000/just_copilots',
+          label: 'guarda',
+          filtro: 'NAME',
         ),
       )),
       TableCell(
-          child: FocusableWidget(
-        child: MetalGrad(
-          child: InFormTimePicker(
-            horaController: llegadaController,
-          ),
+          child: MetalGrad(
+        child: InFormTimePicker(
+          horaController: llegadaController,
         ),
       )),
       TableCell(
-          child: FocusableWidget(
+          child: MetalGrad(
         child: SugestTextField(
           notaController: notaController,
         ),

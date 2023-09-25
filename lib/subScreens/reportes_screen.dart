@@ -45,7 +45,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
   var resaltadoColor = Colors.orange;
   var colorBlanco = Colors.white;
 //varios
-
+  // FocusNode _foco = FocusNode();
   var fechaController = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   bool childUpdate = false;
@@ -82,6 +82,7 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
 
   Future<List<Group>> fetchTravelsByGroup(String fecha) async {
     List<Group> travels = [];
+
     var url = Uri.parse(
         'http://190.52.165.206:3000/travels_by_group?fecha=${dateFormaterString(fecha)}');
     var headers = {'Content-Type': 'application/json'};
@@ -210,14 +211,12 @@ class _HorariosMantenimientoState extends State<HorariosMantenimiento>
                   ],
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    child: ViewTable(
-                      grupos: snapshot.data!,
-                      fecha: dateController.text,
-                      updateParent: () {
-                        setState(() {});
-                      },
-                    ),
+                  child: ViewTable(
+                    grupos: snapshot.data!,
+                    fecha: dateController.text,
+                    updateParent: () {
+                      setState(() {});
+                    },
                   ),
                 ),
               ],

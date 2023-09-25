@@ -51,10 +51,8 @@ class _FocusableWidgetState extends State<FocusableWidget> {
   void excludeHandler() {
     if (isExcluded) {
       isExcluded = false;
-      print(isExcluded);
     } else {
       isExcluded = true;
-      print(isExcluded);
     }
     setState(() {});
   }
