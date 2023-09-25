@@ -28,13 +28,11 @@ class Report {
   }
 
   Future _printPdf(List<String> coments) async {
-    final formato = xd.PdfPageFormat(
-            ancho * xd.PdfPageFormat.cm, alto * xd.PdfPageFormat.cm)
-        .copyWith(
-            marginTop: margenes[0],
-            marginBottom: margenes[1],
-            marginLeft: margenes[2],
-            marginRight: margenes[3]);
+    final formato = xd.PdfPageFormat.legal.copyWith(
+        marginTop: margenes[0],
+        marginBottom: margenes[1],
+        marginLeft: margenes[2],
+        marginRight: margenes[3]);
 
     return await _generatePdf(formato, coments);
   }

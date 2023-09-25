@@ -32,7 +32,8 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
   int reportId = 0;
   //controladores
   TextEditingController fechaController = TextEditingController();
-  TextEditingController empresaController = TextEditingController();
+  TextEditingController empresaController = TextEditingController(
+      text: 'Empresa Guaireña de Transporte y Turismo SRL');
   TextEditingController izquierdaController = TextEditingController();
   TextEditingController derechaController = TextEditingController();
   TextEditingController ancho = TextEditingController(text: '21');
@@ -143,6 +144,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
           ModalRow(
               sideTitle: 'Empresa',
               child: AsyncAutocomplete(
+                id: '0',
                 dataController: empresaController,
                 link: 'http://190.52.165.206:3000/companies',
                 label: 'Empresa',
