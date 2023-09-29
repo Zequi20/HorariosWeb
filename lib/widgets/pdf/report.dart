@@ -105,9 +105,8 @@ class Report {
                         children: [
                           pw.Container(
                               padding: const pw.EdgeInsets.all(5),
-                              child: pw.Text(coments[0],
-                                  style: pw.TextStyle(
-                                      fontSize: texto.toDouble()))),
+                              child: getRichFromText(coments[0],
+                                  pw.TextStyle(fontSize: texto.toDouble()))),
                           pw.Divider(
                               color:
                                   coments[0].isNotEmpty || coments[1].isNotEmpty
@@ -116,9 +115,8 @@ class Report {
                               height: 0.5),
                           pw.Container(
                             padding: const pw.EdgeInsets.all(5),
-                            child: pw.Text(coments[1],
-                                style:
-                                    pw.TextStyle(fontSize: texto.toDouble())),
+                            child: getRichFromText(coments[1],
+                                pw.TextStyle(fontSize: texto.toDouble())),
                           )
                         ])
                   ])
@@ -139,5 +137,48 @@ class Report {
     html.window.open(url, '_blank');
 
     return documento;
+  }
+
+  pw.RichText getRichFromText(String text, pw.TextStyle style) {
+    final RegExp boldRegExp = RegExp(r'\*(.*?)\*');
+    List<pw.InlineSpan> children = [];
+    int currentIndex = 0;
+
+    for (var match in boldRegExp.allMatches(text)) {
+      final boldText = match.group(1);
+      final startIndex = match.start;
+      final endIndex = match.end;
+
+      if (boldText != null) {
+        if (startIndex > currentIndex) {
+          // Agregar el texto antes de la expresión en negrita
+          children.add(pw.TextSpan(
+            text: text.substring(currentIndex, startIndex),
+          ));
+        }
+
+        // Agregar el texto en negrita
+        children.add(pw.TextSpan(
+          text: boldText,
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        ));
+
+        currentIndex = endIndex;
+      }
+    }
+
+    if (currentIndex < text.length) {
+      // Agregar cualquier texto restante
+      children.add(pw.TextSpan(
+        text: text.substring(currentIndex),
+      ));
+    }
+
+    return pw.RichText(
+      text: pw.TextSpan(
+        style: style,
+        children: children,
+      ),
+    );
   }
 }
