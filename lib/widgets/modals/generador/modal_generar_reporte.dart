@@ -160,6 +160,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
                 label: 'Empresa',
                 filtro: 'NAME',
                 icon: Icons.work,
+                setUpAndDown: (bool value) {},
               )),
           ModalRow(
               sideTitle: 'Comentario superior',

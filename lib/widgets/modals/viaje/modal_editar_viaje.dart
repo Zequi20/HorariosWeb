@@ -98,6 +98,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
               link: 'http://190.52.165.206:3000/just_drivers',
               label: 'Nombre del chofer',
               filtro: 'NAME',
+              setUpAndDown: (bool value) {},
             ),
           ),
           ModalRow(
@@ -109,6 +110,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
               link: 'http://190.52.165.206:3000/just_copilots',
               label: 'Nombre del guarda',
               filtro: 'NAME',
+              setUpAndDown: (bool value) {},
             ),
           ),
           ModalRow(
@@ -120,6 +122,7 @@ class _ModalEditarViajeState extends State<ModalEditarViaje> {
               link: 'http://190.52.165.206:3000/vehicles',
               label: 'Numero de coche',
               filtro: 'NUMBER',
+              setUpAndDown: (bool value) {},
             ),
           ),
           ModalRow(

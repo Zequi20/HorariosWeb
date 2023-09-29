@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+
 import 'package:horarios_web/models/model_generic_object.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AsyncAutocomplete extends StatefulWidget {
-  const AsyncAutocomplete({
-    super.key,
-    required this.dataController,
-    required this.link,
-    required this.label,
-    required this.filtro,
-    this.id = '',
-    required this.icon,
-  });
+  const AsyncAutocomplete(
+      {super.key,
+      required this.dataController,
+      required this.link,
+      required this.label,
+      required this.filtro,
+      this.id = '',
+      required this.icon,
+      required this.setUpAndDown});
 
   final TextEditingController dataController;
   final String link;
@@ -20,7 +21,7 @@ class AsyncAutocomplete extends StatefulWidget {
   final String label;
   final String id;
   final IconData icon;
-
+  final Function(bool) setUpAndDown;
   @override
   State<AsyncAutocomplete> createState() => _AsyncAutocompleteState();
 }
@@ -64,6 +65,7 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
         if (control.text.isEmpty) {
           return const Iterable<String>.empty();
         }
+
         return options
             .map((e) => e.nombre)
             .where((option) =>
@@ -77,6 +79,7 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
             .first
             .id
             .toString();
+        widget.setUpAndDown(true);
         setState(() {});
       },
       fieldViewBuilder: (BuildContext context, control, FocusNode focusNode,
@@ -85,14 +88,17 @@ class _AsyncAutocompleteState<T> extends State<AsyncAutocomplete> {
           focusNode: focusNode,
           onFieldSubmitted: (String? value) {
             FocusScope.of(context).requestFocus(focusNode);
+
             onFieldSubmitted();
           },
           controller: control,
           onChanged: (value) {
-            if (value.isEmpty) {
+            if (value.trim().isEmpty) {
               bordeColor = Colors.white70;
+              widget.setUpAndDown(true);
             } else {
               bordeColor = Colors.white;
+              widget.setUpAndDown(false);
             }
             setState(() {});
           },

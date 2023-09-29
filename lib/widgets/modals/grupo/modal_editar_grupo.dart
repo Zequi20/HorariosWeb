@@ -68,6 +68,7 @@ class _ModalEditarGrupoState extends State<ModalEditarGrupo> {
                 label: 'Empresa',
                 filtro: 'NAME',
                 icon: Icons.work,
+                setUpAndDown: (bool value) {},
               )),
         ]);
   }

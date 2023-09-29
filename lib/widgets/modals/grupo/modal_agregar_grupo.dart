@@ -47,6 +47,7 @@ class _ModalAgregarGrupoState extends State<ModalAgregarGrupo> {
                 label: 'Empresa',
                 filtro: 'NAME',
                 icon: Icons.work,
+                setUpAndDown: (bool value) {},
               )),
         ]);
   }

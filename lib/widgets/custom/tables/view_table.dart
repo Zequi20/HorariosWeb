@@ -22,6 +22,7 @@ class ViewTable extends StatefulWidget {
 
 class _ViewTableState extends State<ViewTable> {
   late Table mainTable;
+  bool upAndDown = true;
   var principalColor = const Color.fromARGB(255, 99, 1, 1);
   var resaltadoColor = Colors.orange;
   FocusScopeNode tablaFoco = FocusScopeNode();
@@ -170,22 +171,26 @@ class _ViewTableState extends State<ViewTable> {
     return FocusScope(
         onKeyEvent: (node, event) {
           if (event is KeyUpEvent &&
-              event.logicalKey == LogicalKeyboardKey.arrowDown) {
+              event.logicalKey == LogicalKeyboardKey.arrowDown &&
+              upAndDown) {
             node.focusInDirection(TraversalDirection.down);
             return KeyEventResult.handled;
           }
           if (event is KeyUpEvent &&
-              event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+              event.logicalKey == LogicalKeyboardKey.arrowLeft &&
+              upAndDown) {
             node.focusInDirection(TraversalDirection.left);
             return KeyEventResult.handled;
           }
           if (event is KeyUpEvent &&
-              event.logicalKey == LogicalKeyboardKey.arrowRight) {
+              event.logicalKey == LogicalKeyboardKey.arrowRight &&
+              upAndDown) {
             node.focusInDirection(TraversalDirection.right);
             return KeyEventResult.handled;
           }
           if (event is KeyUpEvent &&
-              event.logicalKey == LogicalKeyboardKey.arrowUp) {
+              event.logicalKey == LogicalKeyboardKey.arrowUp &&
+              upAndDown) {
             node.focusInDirection(TraversalDirection.up);
             return KeyEventResult.handled;
           }
@@ -240,6 +245,9 @@ class _ViewTableState extends State<ViewTable> {
           link: 'http://190.52.165.206:3000/vehicles',
           label: 'coche',
           filtro: 'NUMBER',
+          setUpAndDown: (bool value) {
+            upAndDown = value;
+          },
         ),
       )),
       TableCell(
@@ -250,6 +258,9 @@ class _ViewTableState extends State<ViewTable> {
           link: 'http://190.52.165.206:3000/just_drivers',
           label: 'chofer',
           filtro: 'NAME',
+          setUpAndDown: (bool value) {
+            upAndDown = value;
+          },
         ),
       )),
       TableCell(
@@ -260,6 +271,9 @@ class _ViewTableState extends State<ViewTable> {
           link: 'http://190.52.165.206:3000/just_copilots',
           label: 'guarda',
           filtro: 'NAME',
+          setUpAndDown: (bool value) {
+            upAndDown = value;
+          },
         ),
       )),
       TableCell(
