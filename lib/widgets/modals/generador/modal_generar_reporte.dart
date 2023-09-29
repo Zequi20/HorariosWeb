@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:horarios_web/widgets/custom/controllers/custom_text_controller.dart';
 import "package:universal_html/html.dart" as html;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,8 +35,17 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
   TextEditingController fechaController = TextEditingController();
   TextEditingController empresaController = TextEditingController(
       text: 'Empresa Guaireña de Transporte y Turismo SRL');
-  TextEditingController izquierdaController = TextEditingController();
-  TextEditingController derechaController = TextEditingController();
+  CustomTextEditingController izquierdaController =
+      CustomTextEditingController({
+    r'\*(.*?)\*': const TextStyle(
+      fontWeight: FontWeight.bold,
+    ),
+  });
+  CustomTextEditingController derechaController = CustomTextEditingController({
+    r'\*(.*?)\*': const TextStyle(
+      fontWeight: FontWeight.bold,
+    ),
+  });
   TextEditingController ancho = TextEditingController(text: '21');
   TextEditingController alto = TextEditingController(text: '33');
   TextEditingController mTop = TextEditingController(text: '2');
