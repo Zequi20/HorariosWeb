@@ -52,7 +52,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
   TextEditingController mBottom = TextEditingController(text: '2');
   TextEditingController mLeft = TextEditingController(text: '2');
   TextEditingController mRight = TextEditingController(text: '2');
-  TextEditingController tamanio = TextEditingController(text: '5');
+  TextEditingController tamanio = TextEditingController(text: '8');
   @override
   void initState() {
     super.initState();
@@ -91,7 +91,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
                       'Superior',
                       CustomNumberPicker(
                           icon: Icons.border_top,
-                          initialValue: 2,
+                          initialValue: 5,
                           textController: mTop,
                           hint: 'margen superior',
                           max: 50)),
@@ -99,7 +99,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
                       'Inferior',
                       CustomNumberPicker(
                           icon: Icons.border_bottom,
-                          initialValue: 2,
+                          initialValue: 5,
                           textController: mBottom,
                           hint: 'margen inferior',
                           max: 50)),
@@ -107,7 +107,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
                       'Izquierdo',
                       CustomNumberPicker(
                           icon: Icons.border_left,
-                          initialValue: 2,
+                          initialValue: 5,
                           textController: mLeft,
                           hint: 'margen izquierdo',
                           max: 50)),
@@ -115,37 +115,37 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
                       'Derecho',
                       CustomNumberPicker(
                           icon: Icons.border_right,
-                          initialValue: 2,
+                          initialValue: 5,
                           textController: mRight,
                           hint: 'margen derecho',
                           max: 50)),
                 ],
               )),
           ModalRow(
-              sideTitle: 'Dimensiones',
+              sideTitle: 'Dimensiones (mm)',
               child: FormSubsection(
                 childList: [
                   TitledWidget(
                       'Ancho',
                       CustomNumberPicker(
                           icon: Icons.width_normal,
-                          initialValue: 21,
+                          initialValue: 216,
                           textController: ancho,
                           hint: 'ancho de pagina',
-                          max: 50)),
+                          max: 500)),
                   TitledWidget(
                       'Alto',
                       CustomNumberPicker(
                           icon: Icons.height,
-                          initialValue: 33,
+                          initialValue: 330,
                           textController: alto,
                           hint: 'alto de pagina',
-                          max: 50)),
+                          max: 500)),
                   TitledWidget(
                       'Tamaño de texto',
                       CustomNumberPicker(
                           icon: Icons.format_size,
-                          initialValue: 5,
+                          initialValue: 8,
                           textController: tamanio,
                           hint: 'tamaño de texo',
                           max: 50)),

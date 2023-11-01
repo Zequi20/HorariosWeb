@@ -43,7 +43,7 @@ class _CustomNumberPickerState extends State<CustomNumberPicker> {
       child: Row(
         children: [
           SizedBox(
-            width: 85,
+            width: 120,
             child: TextFormField(
               textAlign: TextAlign.center,
               onChanged: (value) {

@@ -28,11 +28,22 @@ class Report {
   }
 
   Future _printPdf(List<String> coments) async {
-    final formato = xd.PdfPageFormat.legal.copyWith(
+    double pageWidthInMm =
+        ancho.toDouble(); // Ancho en mm (por ejemplo, tamaño A4)
+    double pageHeightInMm =
+        alto.toDouble(); // Alto en mm (por ejemplo, tamaño A4)
+
+    // Convierte milímetros a puntos (1 mm = 2.83464567 puntos)
+    double pageWidthInPoints = pageWidthInMm * 2.83464567;
+    double pageHeightInPoints = pageHeightInMm * 2.83464567;
+
+    final formato = xd.PdfPageFormat.letter.copyWith(
         marginTop: margenes[0],
         marginBottom: margenes[1],
         marginLeft: margenes[2],
-        marginRight: margenes[3]);
+        marginRight: margenes[3],
+        width: pageWidthInPoints,
+        height: pageHeightInPoints);
 
     return await _generatePdf(formato, coments);
   }
@@ -50,7 +61,7 @@ class Report {
                     padding: const pw.EdgeInsets.all(2),
                     child: pw.Table(children: [
                       pw.TableRow(children: [
-                        pw.Expanded(
+                        pw.Container(
                             child: pw.Text('ID $reportId',
                                 textAlign: pw.TextAlign.left,
                                 style: pw.TextStyle(
@@ -67,7 +78,7 @@ class Report {
                                 style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.bold,
                                     fontSize: texto.toDouble()))),
-                        pw.Expanded(child: pw.Text(' ')),
+                        pw.Container(child: pw.Text(' ')),
                       ])
                     ]))
               ]),
@@ -96,7 +107,7 @@ class Report {
                     color: coments[0].isNotEmpty || coments[1].isNotEmpty
                         ? xd.PdfColors.black
                         : xd.PdfColors.white,
-                    width: 0.5),
+                    width: 1),
                 children: [
                   pw.TableRow(children: [
                     pw.Column(
