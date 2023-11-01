@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:horarios_web/widgets/custom/fields/custom_time_number_picker.dart';
+import 'package:horarios_web/widgets/custom/fields/simple_time_number_picker.dart';
 
 class InFormTimePicker extends StatefulWidget {
   const InFormTimePicker({super.key, required this.horaController});
@@ -52,13 +52,13 @@ class _InFormTimePickerState extends State<InFormTimePicker> {
             Icons.access_time,
             color: Color.fromARGB(255, 136, 2, 2),
           ),
-          CustomTimeNumberPicker(
+          SimpleTimeNumberPicker(
             textController: hourController,
             hint: '',
             max: 23,
             initialValue: initialHour,
           ),
-          CustomTimeNumberPicker(
+          SimpleTimeNumberPicker(
             textController: minuteController,
             hint: '',
             max: 59,

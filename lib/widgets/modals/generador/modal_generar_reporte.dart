@@ -84,14 +84,14 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
         title: 'Generar reporte',
         content: [
           ModalRow(
-              sideTitle: 'Margenes',
+              sideTitle: 'Margenes verticales',
               child: FormSubsection(
                 childList: [
                   TitledWidget(
                       'Superior',
                       CustomNumberPicker(
                           icon: Icons.border_top,
-                          initialValue: 5,
+                          initialValue: 15,
                           textController: mTop,
                           hint: 'margen superior',
                           max: 50)),
@@ -99,15 +99,21 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
                       'Inferior',
                       CustomNumberPicker(
                           icon: Icons.border_bottom,
-                          initialValue: 5,
+                          initialValue: 15,
                           textController: mBottom,
                           hint: 'margen inferior',
                           max: 50)),
+                ],
+              )),
+          ModalRow(
+              sideTitle: 'Margenes horizontales',
+              child: FormSubsection(
+                childList: [
                   TitledWidget(
                       'Izquierdo',
                       CustomNumberPicker(
                           icon: Icons.border_left,
-                          initialValue: 5,
+                          initialValue: 15,
                           textController: mLeft,
                           hint: 'margen izquierdo',
                           max: 50)),
@@ -115,7 +121,7 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
                       'Derecho',
                       CustomNumberPicker(
                           icon: Icons.border_right,
-                          initialValue: 5,
+                          initialValue: 15,
                           textController: mRight,
                           hint: 'margen derecho',
                           max: 50)),
@@ -141,6 +147,12 @@ class _ModalGeneradorReporteState extends State<ModalGeneradorReporte> {
                           textController: alto,
                           hint: 'alto de pagina',
                           max: 500)),
+                ],
+              )),
+          ModalRow(
+              sideTitle: 'Texto',
+              child: FormSubsection(
+                childList: [
                   TitledWidget(
                       'Tamaño de texto',
                       CustomNumberPicker(

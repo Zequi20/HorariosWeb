@@ -21,6 +21,8 @@ class Estructura extends StatelessWidget {
       defaultVerticalAlignment: TableCellVerticalAlignment.full,
       border: TableBorder(
           //horizontalInside: BorderSide(color: blackColor, width: 0.5),
+          bottom: BorderSide(
+              color: blackColor, width: 0.8, style: BorderStyle.solid),
           verticalInside: list.isNotEmpty
               ? BorderSide(color: blackColor, width: 0.5)
               : BorderSide.none),
@@ -113,7 +115,7 @@ class Titled extends StatelessWidget {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: textoSize.toDouble()))))
+                                    fontSize: textoSize.toDouble() + 2))))
                   ]),
                   TableRow(children: [Estructura(e.travelsData, textoSize)])
                 ]))
